@@ -7,3 +7,7 @@
 *.iml
 out
 gen
+
+demand.txt
+stationInitial.txt
+vehicleInitial.txt
