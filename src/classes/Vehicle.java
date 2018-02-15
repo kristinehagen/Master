@@ -13,7 +13,7 @@ public class Vehicle {
     private int capacity;
     private int load;
     private int initialLoad;
-    private ArrayList<Station> cluster = new ArrayList<>();
+    private ArrayList<Station> clusterIdList = new ArrayList<>();
 
     public Vehicle(int id, HashMap<Integer, Station> stations) {
         this.id = id;
@@ -26,15 +26,15 @@ public class Vehicle {
         for (Station station : stations.values()) {
             stationsList.add(station);
         }
-        this.cluster = stationsList;
+        this.clusterIdList = stationsList;
     }
 
 
 
     //Getter and setters
 
-    public ArrayList<Station> getCluster(HashMap<Integer, Station> stations) {
-        return cluster;
+    public ArrayList<Station> getClusterIdList() {
+        return clusterIdList;
     }
 
     public int getId() {

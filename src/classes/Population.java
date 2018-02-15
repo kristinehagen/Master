@@ -26,7 +26,7 @@ public class Population {
             //Lag hver bilrute for individet
             for (Vehicle vehicle : input.getVehicles().values()){
                 int numberOfVisitsForVehicle = ThreadLocalRandom.current().nextInt(0, input.getMaxVisitsForEachVehicle() + 1);
-                ArrayList<Station> possibleStationVisits = new ArrayList<>(vehicle.getCluster(input.getStations()));
+                ArrayList<Station> possibleStationVisits = new ArrayList<>(vehicle.getClusterIdList());
                 ArrayList<Station> stationVisitsForVehicle = new ArrayList<>();
 
                 //Lag rute for bil j individ i
