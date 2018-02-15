@@ -11,6 +11,7 @@ public class GA {
 
     static Population population;
     static GraphViewer graphViewer;
+    static Individual bestGlobalSolution;
 
     private static void init(String filename, Input input) {
 
@@ -21,6 +22,9 @@ public class GA {
         population = new Population(input);
         System.out.println("Initial population created");
         graphViewer = new GraphViewer();
+
+        bestGlobalSolution = population.getBestIndividual();
+        bestGlobalSolution.printIndividual(input.getVehicles());
 
     }
 

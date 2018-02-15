@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Population {
 
     ArrayList<Individual> individuals;
+    Individual bestPopulationIndividual;
 
     //Constructor: tar inn mange parametre, og setter lokale parametere lik disse
     public Population (Input input) {
@@ -14,8 +15,9 @@ public class Population {
 
     }
 
-    //Her lages den initielle populasjonen
     private ArrayList<Individual> initializePopulation(Input input) {
+        double bestFitness = 10000;
+
         ArrayList<Individual> individuals = new ArrayList<>();
 
         //Lag hvert individ i populasjonen
@@ -25,7 +27,7 @@ public class Population {
 
             //Lag hver bilrute for individet
             for (Vehicle vehicle : input.getVehicles().values()){
-                int numberOfVisitsForVehicle = ThreadLocalRandom.current().nextInt(0, input.getMaxVisitsForEachVehicle() + 1);
+                int numberOfVisitsForVehicle = ThreadLocalRandom.current().nextInt(1, input.getMaxVisitsForEachVehicle() + 1);
                 ArrayList<Station> possibleStationVisits = new ArrayList<>(vehicle.getClusterIdList());
                 ArrayList<Station> stationVisitsForVehicle = new ArrayList<>();
 
@@ -41,6 +43,11 @@ public class Population {
             }
             Individual individual = new Individual(newSolution);
             individuals.add(individual);
+
+            if (individual.getFitness()<bestFitness) {
+                bestFitness = individual.getFitness();
+                bestPopulationIndividual = individual;
+            }
         }
 
         return individuals;
@@ -57,7 +64,6 @@ public class Population {
 
 
     public Individual getBestIndividual() {
-        Solution solution = new Solution();
-        return new Individual(solution);
+        return bestPopulationIndividual;
     }
 }
