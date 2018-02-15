@@ -1,6 +1,6 @@
 package functions;
 
-import Classes.Station;
+import classes.Station;
 
 import java.io.File;
 import java.io.FileNotFoundException;

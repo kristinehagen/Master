@@ -1,6 +1,4 @@
-package Classes;
-
-import java.util.ArrayList;
+package classes;
 
 public class Individual {
 

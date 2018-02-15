@@ -1,9 +1,9 @@
 package main;
 
-import Classes.GraphViewer;
-import Classes.Individual;
-import Classes.Input;
-import Classes.Population;
+import classes.GraphViewer;
+import classes.Individual;
+import classes.Input;
+import classes.Population;
 
 import java.io.FileNotFoundException;
 

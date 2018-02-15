@@ -1,7 +1,8 @@
-package Classes;
+package classes;
 
 import functions.ReadDemandAndNumberOfBikes;
 import functions.ReadStationInitialState;
+import functions.ReadVehicleInput;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -10,20 +11,17 @@ import java.util.HashMap;
 public class Input {
 
     private int maxNumberOfGenerations = 400;
-    private int maxVisitsForEachVehicle = 5;
-
-
-
-    private int sizeOfPopulation = 100;
-    private int numberOfVehicles = 5;
-    private ArrayList<Vehicle> vehicles = new ArrayList<>();
+    private int maxVisitsForEachVehicle = 3;
+    private int sizeOfPopulation = 20;
 
     private String filename = "filename.txt";
     private String demandFile = "demand.txt";
     private String initialStationFile = "stationInitial.txt";
+    private String vehicleInitialFile = "vehicleInitial.txt";
 
-    private HashMap<Integer, Station> stations;
     private ArrayList<Integer> stationIdList;
+    private HashMap<Integer, Station> stations;
+    private HashMap<Integer, Vehicle> vehicles;
 
 
 
@@ -34,11 +32,7 @@ public class Input {
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
         //Mangler å lese inn latitude/longitude og distanser
 
-        //Midlertidig
-        for (int i = 0; i < numberOfVehicles; i++) {
-            Vehicle vehicle = new Vehicle();
-            this.vehicles.add(vehicle);
-        }
+        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile, stations);
     }
 
 
@@ -52,11 +46,8 @@ public class Input {
         return maxVisitsForEachVehicle;
     }
 
-    public int getNumberOfVehicles() {
-        return numberOfVehicles;
-    }
 
-    public ArrayList<Vehicle> getVehicles() {
+    public HashMap<Integer, Vehicle> getVehicles() {
         return vehicles;
     }
 

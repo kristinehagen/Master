@@ -1,4 +1,4 @@
-package Classes;
+package classes;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,16 +15,16 @@ public class Population {
     }
 
     //Her lages den initielle populasjonen
-    //MARTE JOBBER HER
     private ArrayList<Individual> initializePopulation(Input input) {
         ArrayList<Individual> individuals = new ArrayList<>();
+
         //Lag hvert individ i populasjonen
         for (int i = 0; i < input.getSizeOfPopulation(); i++){
 
             Solution newSolution = new Solution();
 
             //Lag hver bilrute for individet
-            for (Vehicle vehicle : input.getVehicles()){
+            for (Vehicle vehicle : input.getVehicles().values()){
                 int numberOfVisitsForVehicle = ThreadLocalRandom.current().nextInt(0, input.getMaxVisitsForEachVehicle() + 1);
                 ArrayList<Station> possibleStationVisits = new ArrayList<>(vehicle.getCluster(input.getStations()));
                 ArrayList<Station> stationVisitsForVehicle = new ArrayList<>();
