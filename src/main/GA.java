@@ -1,3 +1,12 @@
+package main;
+
+import Classes.GraphViewer;
+import Classes.Individual;
+import Classes.Input;
+import Classes.Population;
+
+import java.io.FileNotFoundException;
+
 public class GA {
 
     static Population population;
@@ -36,7 +45,6 @@ public class GA {
                 //her oppdateres en improvement count
             }
             break;
-
         }
 
     }
@@ -44,7 +52,7 @@ public class GA {
 
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         Input input = new Input();
         String filename = input.getFilename();
         init(filename, input);
