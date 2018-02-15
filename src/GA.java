@@ -3,13 +3,14 @@ public class GA {
     static Population population;
     static GraphViewer graphViewer;
 
-    private static void init(String filename) {
+    private static void init(String filename, Input input) {
 
         //Her leses all informasjon inn. (info om distanse, kunder, depot ol)
         //depot, customers, distansematrise og liknende blir satt
         // Se Aksel
 
-        population = new Population();
+        population = new Population(input);
+        System.out.println("Initial population created");
         graphViewer = new GraphViewer();
 
     }
@@ -25,6 +26,7 @@ public class GA {
         while (count < maxNumberOfGenerations) {
 
             population.createNewGeneration();
+            System.out.println("One generation created");
             generationBestIndividual = population.getBestIndividual();
 
             if (generationBestIndividual.getFitness() < globalBestIndividual.getFitness() && generationBestIndividual.getFeasibility()) {
@@ -33,6 +35,7 @@ public class GA {
             } else {
                 //her oppdateres en improvement count
             }
+            break;
 
         }
 
@@ -44,7 +47,7 @@ public class GA {
     public static void main(String[] args) {
         Input input = new Input();
         String filename = input.getFilename();
-        init(filename);
+        init(filename, input);
         run(input);
 
         System.out.println("algoritm successfully terminated");

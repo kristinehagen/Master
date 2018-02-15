@@ -3,9 +3,12 @@ import java.util.ArrayList;
 public class Individual {
 
     private double fitness;
-    private ArrayList<ArrayList<Integer>> solution;
+    private Solution solution = new Solution();
 
-
+    public Individual(Solution solution) {
+        this.fitness = calculateFitness(solution);
+        this.solution = solution;
+    }
 
 
     public void setFitness(double fitness) {
@@ -19,11 +22,13 @@ public class Individual {
 
     }
 
-    public ArrayList<ArrayList<Integer>> getSolution() {
+    public Solution getSolution() {
         return solution;
     }
 
-    public void setSolution(ArrayList<ArrayList<Integer>> solution) {
+
+    public void setSolution(Solution solution) {
+
         this.solution = solution;
     }
 
@@ -33,6 +38,10 @@ public class Individual {
         //returnerer true hvis feasible, false ellers
 
         return true;
+    }
+
+    private double calculateFitness(Solution solution) {
+        return 0;
     }
 
 }
