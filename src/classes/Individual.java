@@ -51,24 +51,34 @@ public class Individual {
     }
 
     public Solution getSolution() {
-
         return this.solution;
     }
 
     public void setSolution(Solution solution) {
-
         this.solution = solution;
     }
 
     public boolean getFeasibility() {
-
         //returnerer true hvis feasible, false ellers
-
         return true;
     }
 
     private double calculateFitness(Solution solution) {
         return 0;
+    }
+
+    public void doIntraMutation(Input input) {
+        //Trekker random bil som skal muteres
+        int mutationVehicleIndex = ThreadLocalRandom.current().nextInt(0, this.solution.getNumberOfVehiclesForSolution());
+        ArrayList<Station> vehicleSequence;
+        vehicleSequence = this.solution.getVehicleSequence(mutationVehicleIndex);
+        //Trekker stasjon som skal byttes ut og stasjon som skal settes inn
+        int mutationStationIndexOld = ThreadLocalRandom.current().nextInt(0, vehicleSequence.size());
+        int mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, input.getStationIdList().size());
+        //Muterer vehiclesequence
+        vehicleSequence.set(mutationStationIndexOld, input.getStation(mutationStationIndexNew));
+        //Legger til mutert vehiclesequence i individet
+        this.solution.addVehicleSequenceAtIndex(mutationVehicleIndex, vehicleSequence);
     }
 
 }
