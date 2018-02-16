@@ -65,7 +65,6 @@ public class Population {
         for (int i = 0; i < input.getSizeOfPopulation() / 4; i++){
             p1 = getParent(tournamentParticipants);
             p2 = getParent(tournamentParticipants);
-            System.out.println("Parent 1: " + p1 + " and Parent 2: " + p2);
 
             //Utfør crossover
             //Utfør elitisme
@@ -86,7 +85,6 @@ public class Population {
             if (!usedIndices.contains(index)) {
                 tournamentIndividuals.add(individuals.get(index));
                 usedIndices.add(index);
-                System.out.println(tournamentIndividuals);
             }
         }
 
