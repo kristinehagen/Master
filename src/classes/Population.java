@@ -57,7 +57,7 @@ public class Population {
     }
 
 
-    public void createNewGeneration(Input input, int tournamentParticipants, double crossoverProbability) {
+    public void createNewGeneration(Input input, int tournamentParticipants, double crossoverProbability, double intraMutationProbability) {
         ArrayList<Individual> offsprings = new ArrayList<>();
         Individual p1, p2, o1, o2;
         Random randomGenerator = new Random();
@@ -75,8 +75,16 @@ public class Population {
                 o1 = new Individual(p1);
                 o2 = new Individual(p2);
             }
-            //Utfør elitisme
-            //Utfør mutasjon
+
+            //Utfør intra-mutasjon med en gitt sannsynlighet
+            if (randomGenerator.nextFloat() < intraMutationProbability) {
+                o1.doIntraMutation(input);
+            }
+            if (randomGenerator.nextFloat() < intraMutationProbability) {
+                o2.doIntraMutation(input);
+            }
+
+            //Utfør ellitisme
 
             offsprings.add(o1);
             offsprings.add(o2);
