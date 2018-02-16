@@ -27,7 +27,7 @@ public class Input {
 
     private int tournamentParticipants = 2;
     private double crossoverProbability = 0.8;
-    private double intraMutationProbability = 0.5;
+    private double intraMutationProbability = 0.7;
 
 
     //Constructor
@@ -62,7 +62,7 @@ public class Input {
     }
 
     public int getNumberOfVehicles() {
-        return numberOfVehicles;
+        return vehicles.size();
     }
 
     public int getNumberOfStations(){
@@ -90,6 +90,10 @@ public class Input {
 
     public ArrayList<Integer> getStationIdList() {
         return stationIdList;
+    }
+
+    public Integer getStationIdList(int index) {
+        return stationIdList.get(index);
     }
 
     public int getMaxNumberOfGenerations() {

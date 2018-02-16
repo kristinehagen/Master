@@ -69,14 +69,17 @@ public class Individual {
 
     public void doIntraMutation(Input input) {
         //Trekker random bil som skal muteres
-        int mutationVehicleIndex = ThreadLocalRandom.current().nextInt(0, this.solution.getNumberOfVehiclesForSolution());
-        ArrayList<Station> vehicleSequence;
-        vehicleSequence = this.solution.getVehicleSequence(mutationVehicleIndex);
+        int mutationVehicleIndex = ThreadLocalRandom.current().nextInt(0, input.getNumberOfVehicles());
+        ArrayList<Station> vehicleSequence = new ArrayList<>(this.solution.getVehicleSequence(mutationVehicleIndex));
         //Trekker stasjon som skal byttes ut og stasjon som skal settes inn
         int mutationStationIndexOld = ThreadLocalRandom.current().nextInt(0, vehicleSequence.size());
         int mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, input.getStationIdList().size());
+        //Så lenge ny stasjon allerede er i vehicle sequence
+        while (vehicleSequence.contains(input.getStation(input.getStationIdList(mutationStationIndexNew)))) {
+            mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, input.getStationIdList().size());
+        }
         //Muterer vehiclesequence
-        vehicleSequence.set(mutationStationIndexOld, input.getStation(mutationStationIndexNew));
+        vehicleSequence.set(mutationStationIndexOld, input.getStation(input.getStationIdList(mutationStationIndexNew)));
         //Legger til mutert vehiclesequence i individet
         this.solution.addVehicleSequenceAtIndex(mutationVehicleIndex, vehicleSequence);
     }
