@@ -27,17 +27,7 @@ public class Input {
 
     private int tournamentParticipants = 2;
     private double crossoverProbability = 0.8;
-
-    public int getTournamentParticipants() {
-        return tournamentParticipants;
-    }
-
-    public double getCrossoverProbability() {
-        return crossoverProbability;
-    }
-
-
-
+    private double intraMutationProbability = 0.5;
 
 
     //Constructor
@@ -49,8 +39,19 @@ public class Input {
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile, stations);
     }
 
-
     //Getters and setters
+
+    public double getIntraMutationProbability() {
+        return intraMutationProbability;
+    }
+
+    public int getTournamentParticipants() {
+        return tournamentParticipants;
+    }
+
+    public double getCrossoverProbability() {
+        return crossoverProbability;
+    }
 
     public int getSizeOfPopulation() {
         return sizeOfPopulation;
@@ -62,6 +63,13 @@ public class Input {
 
     public int getNumberOfVehicles() {
         return numberOfVehicles;
+    }
+
+    public int getNumberOfStations(){
+        return stations.size();
+    }
+    public Station getStation(int stationID){
+        return this.stations.get(stationID);
     }
 
     public HashMap<Integer, Vehicle> getVehicles() {

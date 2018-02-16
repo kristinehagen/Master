@@ -34,13 +34,14 @@ public class GA {
         int count = 0;
         int tournamentParticipants = input.getTournamentParticipants();
         double crossoverProbability = input.getCrossoverProbability();
+        double intraMutationProbability = input.getIntraMutationProbability();
 
         Individual generationBestIndividual = population.getBestIndividual();
         Individual globalBestIndividual = population.getBestIndividual();
 
         while (count < maxNumberOfGenerations) {
 
-            population.createNewGeneration(input, tournamentParticipants, crossoverProbability);
+            population.createNewGeneration(input, tournamentParticipants, crossoverProbability, intraMutationProbability);
             System.out.println("One generation created");
             generationBestIndividual = population.getBestIndividual();
 
