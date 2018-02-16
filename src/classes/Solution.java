@@ -21,10 +21,15 @@ public class Solution {
         this.solution = solution;
     }
 
+    public int getNumberOfVehiclesForSolution(){
+        return this.solution.size();
+    }
+
     public void addVehicleSequence(ArrayList<Station> vehicleSequence){
         this.solution.add(vehicleSequence);
     }
 
-
-
+    public void addVehicleSequenceAtIndex(int index, ArrayList<Station> vehicleSequence){
+        this.solution.add(index, vehicleSequence);
+    }
 }
