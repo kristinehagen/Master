@@ -12,7 +12,7 @@ public class Input {
 
     private int maxNumberOfGenerations = 400;
     private int numberOfVehicles = 5;
-    private ArrayList<Vehicle> vehicles = new ArrayList<>();
+    //private ArrayList<Vehicle> vehicles = new ArrayList<>();
     private int maxVisitsForEachVehicle = 3;
     private int sizeOfPopulation = 20;
 
@@ -24,6 +24,18 @@ public class Input {
     private ArrayList<Integer> stationIdList;
     private HashMap<Integer, Station> stations;
     private HashMap<Integer, Vehicle> vehicles;
+
+    private int tournamentParticipants = 2;
+    private double crossoverProbability = 0.8;
+
+    public int getTournamentParticipants() {
+        return tournamentParticipants;
+    }
+
+    public double getCrossoverProbability() {
+        return crossoverProbability;
+    }
+
 
 
 
