@@ -12,8 +12,6 @@ public class Input {
     private int maxNumberOfGenerations = 400;
     private int maxVisitsForEachVehicle = 5;
 
-
-
     private int sizeOfPopulation = 100;
     private int numberOfVehicles = 5;
     private ArrayList<Vehicle> vehicles = new ArrayList<>();
