@@ -1,5 +1,6 @@
 package classes;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -56,19 +57,29 @@ public class Population {
     }
 
 
-    public void createNewGeneration(Input input, int tournamentParticipants) {
+    public void createNewGeneration(Input input, int tournamentParticipants, double crossoverProbability) {
+        ArrayList<Individual> offsprings = new ArrayList<>();
+        Individual p1, p2, o1, o2;
+        Random randomGenerator = new Random();
 
-        //Selection - Binary Tournament
-        Individual p1, p2;
-
-        //Plukker ut totalt 50% parents og utfører crossover, elitisme, mutasjon på hver av parene
-        for (int i = 0; i < input.getSizeOfPopulation() / 4; i++){
+        //Selection - Binary tournament
+        for (int i = 0; i < input.getSizeOfPopulation() / 4; i++){ //Totalt 50% foreldre
             p1 = getParent(tournamentParticipants);
             p2 = getParent(tournamentParticipants);
 
-            //Utfør crossover
+            //Utfør crossover med en gitt sannsynlighet
+            if (randomGenerator.nextFloat() < crossoverProbability)    {
+                o1 = performCrossover(input, p1, p2); //Totalt 50% barn
+                o2 = performCrossover(input, p1, p2);
+            } else {
+                o1 = new Individual(p1);
+                o2 = new Individual(p2);
+            }
             //Utfør elitisme
             //Utfør mutasjon
+
+            offsprings.add(o1);
+            offsprings.add(o2);
         }
     }
 
@@ -96,6 +107,25 @@ public class Population {
                 parent = tournamentIndividuals.get(randomGenerator.nextInt(tournamentParticipants));
         }
         return parent;
+    }
+
+
+    public Individual performCrossover (Input input, Individual p1, Individual p2) {
+        Solution offspring = new Solution();
+
+        //Lager offspring
+        for (int i = 0; i < input.getMaxVisitsForEachVehicle(); i++){
+            Double randomNumber = ThreadLocalRandom.current().nextDouble(1);
+            if (randomNumber < 0.5) {
+                //50% sannsynlighet for å velge bil 1 fra parent 1
+                offspring.addVehicleSequence(p1.getSolution().getVehicleSequence(i));
+            } else {
+                //50% sannsynlighet for å velge bil 1 fra parent 2
+                offspring.addVehicleSequence(p2.getSolution().getVehicleSequence(i));
+            }
+        }  
+        Individual newOffspring = new Individual(offspring);
+        return newOffspring;
     }
 
     //Velger den beste individual fra en liste med individuals
