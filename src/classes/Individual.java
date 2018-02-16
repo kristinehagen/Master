@@ -2,6 +2,8 @@ package classes;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.HashMap;
 
 public class Individual {
@@ -14,6 +16,11 @@ public class Individual {
     public Individual(Solution solution) {
         this.fitness = calculateFitness(solution);
         this.solution = solution;
+    }
+
+    public Individual(Individual individual){
+        this.fitness = individual.getFitness();
+        this.solution = individual.getSolution();
     }
 
     //Print
@@ -44,10 +51,9 @@ public class Individual {
     }
 
     public double getFitness() {
-
-        //Returnerer fitnessen til individet
-        return 0.0;
-
+        //Midlertidig fitnessfunksjon som trekker random verdi mellom 0 og 100
+        int randomFitnessGenerator = ThreadLocalRandom.current().nextInt(0, 100);
+        return randomFitnessGenerator;
     }
 
     public Solution getSolution() {
@@ -71,6 +77,5 @@ public class Individual {
     private double calculateFitness(Solution solution) {
         return 0;
     }
-
 
 }

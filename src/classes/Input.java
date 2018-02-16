@@ -11,6 +11,8 @@ import java.util.HashMap;
 public class Input {
 
     private int maxNumberOfGenerations = 400;
+    private int numberOfVehicles = 5;
+    private ArrayList<Vehicle> vehicles = new ArrayList<>();
     private int maxVisitsForEachVehicle = 3;
     private int sizeOfPopulation = 20;
 
@@ -46,6 +48,9 @@ public class Input {
         return maxVisitsForEachVehicle;
     }
 
+    public int getNumberOfVehicles() {
+        return numberOfVehicles;
+    }
 
     public HashMap<Integer, Vehicle> getVehicles() {
         return vehicles;

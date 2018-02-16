@@ -1,6 +1,7 @@
 package classes;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Population {
@@ -15,6 +16,7 @@ public class Population {
 
     }
 
+    //Her lages den initielle populasjonen
     private ArrayList<Individual> initializePopulation(Input input) {
         double bestFitness = 10000;
 
@@ -54,12 +56,64 @@ public class Population {
     }
 
 
-    public void createNewGeneration() {
-        //Plukk ut hva som skal parres
-        //ørfrø crossover
-        //Utfør elitisme
-        //Utfør mutasjon
+    public void createNewGeneration(Input input, int tournamentParticipants) {
 
+        //Selection - Binary Tournament
+        Individual p1, p2;
+
+        //Plukker ut totalt 50% parents og utfører crossover, elitisme, mutasjon på hver av parene
+        for (int i = 0; i < input.getSizeOfPopulation() / 4; i++){
+            p1 = getParent(tournamentParticipants);
+            p2 = getParent(tournamentParticipants);
+            System.out.println("Parent 1: " + p1 + " and Parent 2: " + p2);
+
+            //Utfør crossover
+            //Utfør elitisme
+            //Utfør mutasjon
+        }
+    }
+
+    public Individual getParent(int tournamentParticipants){
+        Individual parent;
+        ArrayList<Individual> tournamentIndividuals = new ArrayList<>();
+        ArrayList<Integer> usedIndices = new ArrayList<>();
+        Random randomGenerator = new Random();
+        int index;
+
+        //Velger ut tournamentParticipants
+        while (usedIndices.size() < tournamentParticipants) {
+            index = randomGenerator.nextInt(individuals.size());
+            if (!usedIndices.contains(index)) {
+                tournamentIndividuals.add(individuals.get(index));
+                usedIndices.add(index);
+                System.out.println(tournamentIndividuals);
+            }
+        }
+
+        //Velger ut den beste av tournamentParticipants med en gitt sannsynlighet (0.8)
+        if (randomGenerator.nextFloat() < 0.8) {
+                parent = this.getBestIndividual(tournamentIndividuals);
+        } else {
+                //0.2 sannsynlighet for at man velger random mellom tournamentParticipants
+                parent = tournamentIndividuals.get(randomGenerator.nextInt(tournamentParticipants));
+        }
+        return parent;
+    }
+
+    //Velger den beste individual fra en liste med individuals
+    public Individual getBestIndividual(ArrayList<Individual> individuals) {
+        Individual bestIndividual = null;
+        double fitness;
+        double bestFitness = 100000;      //Veldig høy verdi slik at første individ blir beste individ
+        for (Individual individual : individuals) {
+            fitness = individual.getFitness();
+            //Minimeringsproblem
+            if (fitness < bestFitness) {
+                bestFitness = fitness;
+                bestIndividual = individual;
+            }
+        }
+        return bestIndividual;
     }
 
 

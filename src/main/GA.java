@@ -32,13 +32,14 @@ public class GA {
 
         int maxNumberOfGenerations = input.getMaxNumberOfGenerations();
         int count = 0;
+        int tournamentParticipants = 2;
 
         Individual generationBestIndividual = population.getBestIndividual();
         Individual globalBestIndividual = population.getBestIndividual();
 
         while (count < maxNumberOfGenerations) {
 
-            population.createNewGeneration();
+            population.createNewGeneration(input, tournamentParticipants);
             System.out.println("One generation created");
             generationBestIndividual = population.getBestIndividual();
 
