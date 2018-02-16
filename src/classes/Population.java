@@ -63,7 +63,7 @@ public class Population {
         Random randomGenerator = new Random();
 
         //Selection - Binary tournament
-        for (int i = 0; i < input.getSizeOfPopulation() / 4; i++){ //Totalt 50% foreldre
+        for (int i = 0; i < input.getSizeOfPopulation() / 2; i++){ //Totalt 100% foreldre
             p1 = getParent(tournamentParticipants);
             p2 = getParent(tournamentParticipants);
 
