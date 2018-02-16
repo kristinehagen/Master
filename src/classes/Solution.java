@@ -10,6 +10,13 @@ public class Solution {
         return solution;
     }
 
+    //Henter ut vehicleSequence for en bestemt bil
+    public ArrayList<Station> getVehicleSequence(int index) {
+        ArrayList<Station> vehicleSequence;
+        vehicleSequence = this.solution.get(index);
+        return vehicleSequence;
+    }
+
     public void setSolution(ArrayList<ArrayList<Station>> solution) {
         this.solution = solution;
     }
@@ -17,6 +24,7 @@ public class Solution {
     public void addVehicleSequence(ArrayList<Station> vehicleSequence){
         this.solution.add(vehicleSequence);
     }
+
 
 
 }

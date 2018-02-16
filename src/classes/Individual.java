@@ -38,12 +38,6 @@ public class Individual {
         }
     }
 
-
-
-
-
-
-
     //Getters and setters
 
     public void setFitness(double fitness) {
@@ -57,15 +51,14 @@ public class Individual {
     }
 
     public Solution getSolution() {
-        return solution;
-    }
 
+        return this.solution;
+    }
 
     public void setSolution(Solution solution) {
 
         this.solution = solution;
     }
-
 
     public boolean getFeasibility() {
 
