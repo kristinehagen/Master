@@ -114,13 +114,13 @@ public class Population {
         Solution offspring = new Solution();
 
         //Lager offspring
-        for (int i = 0; i < input.getMaxVisitsForEachVehicle(); i++){
+        for (int i = 0; i < input.getNumberOfVehicles(); i++){
             Double randomNumber = ThreadLocalRandom.current().nextDouble(1);
             if (randomNumber < 0.5) {
-                //50% sannsynlighet for å velge bil 1 fra parent 1
+                //50% sannsynlighet for å velge bil i fra parent 1
                 offspring.addVehicleSequence(p1.getSolution().getVehicleSequence(i));
             } else {
-                //50% sannsynlighet for å velge bil 1 fra parent 2
+                //50% sannsynlighet for å velge bil i fra parent 2
                 offspring.addVehicleSequence(p2.getSolution().getVehicleSequence(i));
             }
         }  
