@@ -40,7 +40,6 @@ public class Population {
                     stationVisitsForVehicle.add(possibleStationVisits.get(pickStationIndex));
                     possibleStationVisits.remove(pickStationIndex);
                 }
-
                 newSolution.addVehicleSequence(stationVisitsForVehicle);
 
             }
@@ -52,7 +51,6 @@ public class Population {
                 bestPopulationIndividual = individual;
             }
         }
-
         return individuals;
     }
 

@@ -37,6 +37,10 @@ public class Vehicle {
         return clusterIdList;
     }
 
+    public Station getClusterIdList(int index) {
+        return clusterIdList.get(index);
+    }
+
     public int getId() {
         return id;
     }

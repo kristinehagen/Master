@@ -38,6 +38,24 @@ public class Individual {
         }
     }
 
+    public void doIntraMutation(Input input) {
+        //Trekker random bil som skal muteres
+        int mutationVehicleIndex = ThreadLocalRandom.current().nextInt(0, input.getNumberOfVehicles());
+        Vehicle vehicle = input.getVehicle(mutationVehicleIndex + 1);
+        ArrayList<Station> vehicleSequence = new ArrayList<>(this.solution.getVehicleSequence(mutationVehicleIndex));
+        //Trekker stasjon som skal byttes ut og stasjon i cluster som skal settes inn
+        int mutationStationIndexOld = ThreadLocalRandom.current().nextInt(0, vehicleSequence.size());
+        int mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, vehicle.getClusterIdList().size());
+        //Så lenge ny stasjon allerede er i vehicle sequence
+        while (vehicleSequence.contains(vehicle.getClusterIdList(mutationStationIndexNew))) {
+            mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, vehicle.getClusterIdList().size());
+        }
+        //Muterer vehiclesequence
+        vehicleSequence.set(mutationStationIndexOld, vehicle.getClusterIdList(mutationStationIndexNew));
+        //Legger til mutert vehiclesequence i individet
+        this.solution.addVehicleSequenceAtIndex(mutationVehicleIndex, vehicleSequence);
+    }
+
     //Getters and setters
 
     public void setFitness(double fitness) {
@@ -67,21 +85,5 @@ public class Individual {
         return 0;
     }
 
-    public void doIntraMutation(Input input) {
-        //Trekker random bil som skal muteres
-        int mutationVehicleIndex = ThreadLocalRandom.current().nextInt(0, input.getNumberOfVehicles());
-        ArrayList<Station> vehicleSequence = new ArrayList<>(this.solution.getVehicleSequence(mutationVehicleIndex));
-        //Trekker stasjon som skal byttes ut og stasjon som skal settes inn
-        int mutationStationIndexOld = ThreadLocalRandom.current().nextInt(0, vehicleSequence.size());
-        int mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, input.getStationIdList().size());
-        //Så lenge ny stasjon allerede er i vehicle sequence
-        while (vehicleSequence.contains(input.getStation(input.getStationIdList(mutationStationIndexNew)))) {
-            mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, input.getStationIdList().size());
-        }
-        //Muterer vehiclesequence
-        vehicleSequence.set(mutationStationIndexOld, input.getStation(input.getStationIdList(mutationStationIndexNew)));
-        //Legger til mutert vehiclesequence i individet
-        this.solution.addVehicleSequenceAtIndex(mutationVehicleIndex, vehicleSequence);
-    }
 
 }

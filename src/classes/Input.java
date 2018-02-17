@@ -12,7 +12,6 @@ public class Input {
 
     private int maxNumberOfGenerations = 400;
     private int numberOfVehicles = 5;
-    //private ArrayList<Vehicle> vehicles = new ArrayList<>();
     private int maxVisitsForEachVehicle = 3;
     private int sizeOfPopulation = 20;
 
@@ -27,7 +26,7 @@ public class Input {
 
     private int tournamentParticipants = 2;
     private double crossoverProbability = 0.8;
-    private double intraMutationProbability = 0.7;
+    private double intraMutationProbability = 1;
 
 
     //Constructor
@@ -68,12 +67,13 @@ public class Input {
     public int getNumberOfStations(){
         return stations.size();
     }
-    public Station getStation(int stationID){
-        return this.stations.get(stationID);
-    }
 
     public HashMap<Integer, Vehicle> getVehicles() {
         return vehicles;
+    }
+
+    public Vehicle getVehicle(int vehicleID) {
+        return this.vehicles.get(vehicleID);
     }
 
     public String getDemandFile() {
@@ -90,10 +90,6 @@ public class Input {
 
     public ArrayList<Integer> getStationIdList() {
         return stationIdList;
-    }
-
-    public Integer getStationIdList(int index) {
-        return stationIdList.get(index);
     }
 
     public int getMaxNumberOfGenerations() {
