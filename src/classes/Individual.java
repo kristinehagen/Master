@@ -1,19 +1,16 @@
 package classes;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.HashMap;
 
 public class Individual {
 
     private double fitness;
-    private Solution solution = new Solution();
-
+    private ArrayList<ArrayList<Station>> solution = new ArrayList<>();
 
     //Constructor
-    public Individual(Solution solution) {
+    public Individual(ArrayList<ArrayList<Station>> solution) {
         this.fitness = calculateFitness(solution);
         this.solution = solution;
     }
@@ -29,10 +26,10 @@ public class Individual {
         for (Vehicle vehicle: vehicles.values()) {
             vehicleId.add(vehicle.getId());
         }
-        for (int i = 0; i < this.solution.getSolution().size(); i++) {
+        for (int i = 0; i < this.solution.size(); i++) {
             System.out.print("Vehicle " + vehicleId.get(i) + ": ");
-            for (int j = 0; j < this.solution.getSolution().get(i).size(); j++) {
-                System.out.print(this.solution.getSolution().get(i).get(j).getId() + " ");
+            for (int j = 0; j < this.solution.get(i).size(); j++) {
+                System.out.print(this.solution.get(i).get(j).getId() + " ");
             }
             System.out.println();
         }
@@ -42,21 +39,39 @@ public class Individual {
         //Trekker random bil som skal muteres
         int mutationVehicleIndex = ThreadLocalRandom.current().nextInt(0, input.getNumberOfVehicles());
         Vehicle vehicle = input.getVehicle(mutationVehicleIndex + 1);
-        ArrayList<Station> vehicleSequence = new ArrayList<>(this.solution.getVehicleSequence(mutationVehicleIndex));
+        ArrayList<Station> vehicleSequence = new ArrayList<>(this.solution.get(mutationVehicleIndex));
         //Trekker stasjon som skal byttes ut og stasjon i cluster som skal settes inn
         int mutationStationIndexOld = ThreadLocalRandom.current().nextInt(0, vehicleSequence.size());
-        int mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, vehicle.getClusterIdList().size());
+        int mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, vehicle.getClusterStationList().size());
         //Så lenge ny stasjon allerede er i vehicle sequence
         while (vehicleSequence.contains(vehicle.getClusterIdList(mutationStationIndexNew))) {
-            mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, vehicle.getClusterIdList().size());
+            mutationStationIndexNew = ThreadLocalRandom.current().nextInt(0, vehicle.getClusterStationList().size());
         }
         //Muterer vehiclesequence
         vehicleSequence.set(mutationStationIndexOld, vehicle.getClusterIdList(mutationStationIndexNew));
         //Legger til mutert vehiclesequence i individet
-        this.solution.addVehicleSequenceAtIndex(mutationVehicleIndex, vehicleSequence);
+        this.solution.add(mutationVehicleIndex, vehicleSequence);
+    }
+
+    //Henter ut vehicleSequence for en bestemt bil
+    public ArrayList<Station> getVehicleSequence(int index) {
+        return this.solution.get(index);
+    }
+
+    public void addVehicleSequenceAtIndex(int index, ArrayList<Station> vehicleSequence){
+        this.solution.set(index, vehicleSequence);
     }
 
     //Getters and setters
+
+    public ArrayList<ArrayList<Station>> getSolution() {
+        return solution;
+    }
+
+    public void setSolution(ArrayList<ArrayList<Station>> solution) {
+        this.solution = solution;
+    }
+
 
     public void setFitness(double fitness) {
         this.fitness = fitness;
@@ -68,20 +83,12 @@ public class Individual {
         return randomFitnessGenerator;
     }
 
-    public Solution getSolution() {
-        return this.solution;
-    }
-
-    public void setSolution(Solution solution) {
-        this.solution = solution;
-    }
-
     public boolean getFeasibility() {
         //returnerer true hvis feasible, false ellers
         return true;
     }
 
-    private double calculateFitness(Solution solution) {
+    private double calculateFitness(ArrayList<ArrayList<Station>> solution) {
         return 0;
     }
 
