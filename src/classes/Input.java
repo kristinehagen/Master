@@ -1,5 +1,6 @@
 package classes;
 
+import functions.ReadCoordinates;
 import functions.ReadDemandAndNumberOfBikes;
 import functions.ReadStationInitialState;
 import functions.ReadVehicleInput;
@@ -33,7 +34,7 @@ public class Input {
     public Input() throws FileNotFoundException {
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
-        //Mangler å lese inn latitude/longitude og distanser
+        ReadCoordinates.lookUpCoordinates(stations, stationIdList);
 
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile, stations);
     }
