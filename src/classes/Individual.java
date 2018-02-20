@@ -54,9 +54,7 @@ public class Individual {
     }
 
     //Henter ut vehicleSequence for en bestemt bil
-    public ArrayList<Station> getVehicleSequence(int index) {
-        return this.solution.get(index);
-    }
+    public ArrayList<Station> getVehicleSequence(int index) { return this.solution.get(index); }
 
     public void addVehicleSequenceAtIndex(int index, ArrayList<Station> vehicleSequence){
         this.solution.set(index, vehicleSequence);
@@ -64,18 +62,12 @@ public class Individual {
 
     //Getters and setters
 
-    public ArrayList<ArrayList<Station>> getSolution() {
-        return solution;
-    }
+    public ArrayList<ArrayList<Station>> getSolution() { return solution; }
 
-    public void setSolution(ArrayList<ArrayList<Station>> solution) {
-        this.solution = solution;
-    }
+    public void setSolution(ArrayList<ArrayList<Station>> solution) { this.solution = solution; }
 
 
-    public void setFitness(double fitness) {
-        this.fitness = fitness;
-    }
+    public void setFitness(double fitness) { this.fitness = fitness; }
 
     public double getFitness() {
         //Midlertidig fitnessfunksjon som trekker random verdi mellom 0 og 100
