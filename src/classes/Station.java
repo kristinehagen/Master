@@ -31,6 +31,10 @@ public class Station {
         this.initialLoad = numberOfBikes;
     }
 
+    public Station(int id){
+        this.id = id;
+    }
+
     //Number of bikes
     public double getLoad() {
         return currentLoad;
