@@ -1,6 +1,5 @@
 package classes;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,24 +22,29 @@ public class Population {
 
         ArrayList<Individual> individuals = new ArrayList<>();
 
-        //Lag hvert individ i populasjonen
-        for (int i = 0; i < input.getSizeOfPopulation(); i++){
+        //Create each individual in the population
+        for (int individualCount = 0; individualCount < input.getSizeOfPopulation(); individualCount++){
 
-            Solution newSolution = new Solution();
+            ArrayList<ArrayList<Station>> newSolution = new ArrayList<>();
 
-            //Lag hver bilrute for individet
+            //Create route for each vehicle
             for (Vehicle vehicle : input.getVehicles().values()){
-                int numberOfVisitsForVehicle = ThreadLocalRandom.current().nextInt(1, input.getMaxVisitsForEachVehicle() + 1);
-                ArrayList<Station> possibleStationVisits = new ArrayList<>(vehicle.getClusterIdList());
+                int numberOfVisitsForVehicle = ThreadLocalRandom.current().nextInt(input.getMinVisitsForEachVehicle(), input.getMaxVisitsForEachVehicle() + 1);
+                ArrayList<Station> possibleStationVisits = new ArrayList<>(vehicle.getClusterStationList());
                 ArrayList<Station> stationVisitsForVehicle = new ArrayList<>();
 
-                //Lag rute for bil j individ i
-                for (int k = 0; k < numberOfVisitsForVehicle; k++){
+                //First station visit (pre-defined)
+                Station firstStationVisit = input.getStations().get(vehicle.getNextStationInitial());
+                stationVisitsForVehicle.add(firstStationVisit);
+                possibleStationVisits.remove(firstStationVisit);
+
+                //Second ++ station visit
+                for (int stationVisit = 1; stationVisit < numberOfVisitsForVehicle; stationVisit++){
                     int pickStationIndex = ThreadLocalRandom.current().nextInt(0, possibleStationVisits.size());
                     stationVisitsForVehicle.add(possibleStationVisits.get(pickStationIndex));
                     possibleStationVisits.remove(pickStationIndex);
                 }
-                newSolution.addVehicleSequence(stationVisitsForVehicle);
+                newSolution.add(stationVisitsForVehicle);
 
             }
             Individual individual = new Individual(newSolution);
@@ -117,17 +121,17 @@ public class Population {
 
 
     public Individual performCrossover (Input input, Individual p1, Individual p2) {
-        Solution offspring = new Solution();
+        ArrayList<ArrayList<Station>> offspring = new ArrayList<>();
 
         //Lager offspring
         for (int i = 0; i < input.getNumberOfVehicles(); i++){
             Double randomNumber = ThreadLocalRandom.current().nextDouble(1);
             if (randomNumber < 0.5) {
                 //50% sannsynlighet for å velge bil i fra parent 1
-                offspring.addVehicleSequence(p1.getSolution().getVehicleSequence(i));
+                offspring.add(p1.getSolution().get(i));
             } else {
                 //50% sannsynlighet for å velge bil i fra parent 2
-                offspring.addVehicleSequence(p2.getSolution().getVehicleSequence(i));
+                offspring.add(p2.getSolution().get(i));
             }
         }  
         Individual newOffspring = new Individual(offspring);
@@ -137,13 +141,11 @@ public class Population {
     //Velger den beste individual fra en liste med individuals
     public Individual getBestIndividual(ArrayList<Individual> individuals) {
         Individual bestIndividual = null;
-        double fitness;
-        double bestFitness = 100000;      //Veldig høy verdi slik at første individ blir beste individ
+        double bestFitness = 10000000;      //Veldig høy verdi slik at første individ blir beste individ
         for (Individual individual : individuals) {
-            fitness = individual.getFitness();
             //Minimeringsproblem
-            if (fitness < bestFitness) {
-                bestFitness = fitness;
+            if (individual.getFitness() < bestFitness) {
+                bestFitness = individual.getFitness();
                 bestIndividual = individual;
             }
         }

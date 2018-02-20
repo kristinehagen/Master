@@ -12,9 +12,9 @@ import java.util.HashMap;
 public class Input {
 
     private int maxNumberOfGenerations = 400;
-    private int numberOfVehicles = 5;
-    private int maxVisitsForEachVehicle = 3;
     private int sizeOfPopulation = 20;
+    private int maxVisitsForEachVehicle = 3;
+    private int minVisitsForEachVehicle = 2;
 
     private String filename = "filename.txt";
     private String demandFile = "demand.txt";
@@ -40,6 +40,14 @@ public class Input {
     }
 
     //Getters and setters
+
+    public int getMinVisitsForEachVehicle() {
+        return minVisitsForEachVehicle;
+    }
+
+    public void setMinVisitsForEachVehicle(int minVisitsForEachVehicle) {
+        this.minVisitsForEachVehicle = minVisitsForEachVehicle;
+    }
 
     public double getIntraMutationProbability() {
         return intraMutationProbability;

@@ -1,26 +1,23 @@
 package main;
 
-import classes.GraphViewer;
-import classes.Individual;
-import classes.Input;
-import classes.Population;
+import classes.*;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GA {
 
     static Population population;
     static GraphViewer graphViewer;
     static Individual bestGlobalSolution;
+    static HashMap<Integer, Station> stations;
 
     private static void init(Input input) {
 
-        //Her leses all informasjon inn. (info om distanse, kunder, depot ol)
-        //depot, customers, distansematrise og liknende blir satt
-        // Se Aksel
-
         population = new Population(input);
         System.out.println("Initial population created");
+        stations = input.getStations();
         graphViewer = new GraphViewer();
 
         bestGlobalSolution = population.getBestIndividual();
@@ -35,6 +32,9 @@ public class GA {
 
         Individual generationBestIndividual = population.getBestIndividual();
         Individual globalBestIndividual = population.getBestIndividual();
+
+
+        graphViewer.displayDrawing(population.getBestIndividual(),true, input);
 
         while (count < maxNumberOfGenerations) {
 
