@@ -13,7 +13,7 @@ public class GA {
     static GraphViewer graphViewer;
     static Individual bestGlobalSolution;
 
-    private static void init(String filename, Input input) {
+    private static void init(Input input) {
 
         //Her leses all informasjon inn. (info om distanse, kunder, depot ol)
         //depot, customers, distansematrise og liknende blir satt
@@ -32,16 +32,13 @@ public class GA {
 
         int maxNumberOfGenerations = input.getMaxNumberOfGenerations();
         int count = 0;
-        int tournamentParticipants = input.getTournamentParticipants();
-        double crossoverProbability = input.getCrossoverProbability();
-        double intraMutationProbability = input.getIntraMutationProbability();
 
         Individual generationBestIndividual = population.getBestIndividual();
         Individual globalBestIndividual = population.getBestIndividual();
 
         while (count < maxNumberOfGenerations) {
 
-            population.createNewGeneration(input, tournamentParticipants, crossoverProbability, intraMutationProbability);
+            population.createNewGeneration(input);
             System.out.println("One generation created");
             generationBestIndividual = population.getBestIndividual();
 
@@ -61,8 +58,7 @@ public class GA {
 
     public static void main(String[] args) throws FileNotFoundException {
         Input input = new Input();
-        String filename = input.getFilename();
-        init(filename, input);
+        init(input);
         run(input);
 
         System.out.println("algoritm successfully terminated");

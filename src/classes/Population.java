@@ -55,18 +55,18 @@ public class Population {
     }
 
 
-    public void createNewGeneration(Input input, int tournamentParticipants, double crossoverProbability, double intraMutationProbability) {
+    public void createNewGeneration(Input input) {
         ArrayList<Individual> offsprings = new ArrayList<>();
         Individual p1, p2, o1, o2;
         Random randomGenerator = new Random();
 
         //Selection - Binary tournament
         for (int i = 0; i < input.getSizeOfPopulation() / 2; i++){ //Totalt 100% foreldre
-            p1 = getParent(tournamentParticipants);
-            p2 = getParent(tournamentParticipants);
+            p1 = getParent(input.getTournamentParticipants());
+            p2 = getParent(input.getTournamentParticipants());
 
             //Utfør crossover med en gitt sannsynlighet
-            if (randomGenerator.nextFloat() < crossoverProbability)    {
+            if (randomGenerator.nextFloat() < input.getCrossoverProbability())    {
                 o1 = performCrossover(input, p1, p2); //Totalt 50% barn
                 o2 = performCrossover(input, p1, p2);
             } else {
@@ -75,10 +75,10 @@ public class Population {
             }
 
             //Utfør intra-mutasjon med en gitt sannsynlighet
-            if (randomGenerator.nextFloat() < intraMutationProbability) {
+            if (randomGenerator.nextFloat() < input.getIntraMutationProbability()) {
                 o1.doIntraMutation(input);
             }
-            if (randomGenerator.nextFloat() < intraMutationProbability) {
+            if (randomGenerator.nextFloat() < input.getIntraMutationProbability()) {
                 o2.doIntraMutation(input);
             }
 
