@@ -32,14 +32,8 @@ public class GraphViewer {
             node.addAttribute("x", station.getLatitude());
             node.addAttribute("y", station.getLongitude());
             node.addAttribute("layout.frozen");
-
-            //Color
             node.addAttribute("ui.style", "fill-color: black;");
-
-            //Create label
-            SpriteManager sman = new SpriteManager(graph);
-            Sprite s = sman.addSprite("Sprite" + station.getId());
-            s.attachToNode("Station" + station.getId());
+            node.addAttribute("ui.label", station.getId());
 
         }
 
@@ -62,11 +56,11 @@ public class GraphViewer {
                     continue;
                 }
 
-                //Edge from station
+                //From station
                 Station fromStationNode = solution.get(vehicle).get(station);
                 Node nodeFromStation = graph.getNode("Station" + fromStationNode.getId());
 
-                //Edge to station
+                //To station
                 Station toStationNode = solution.get(vehicle).get(station+1);
                 Node nodeToStation = graph.getNode("Station" + toStationNode.getId());
 
