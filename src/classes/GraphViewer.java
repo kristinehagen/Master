@@ -51,7 +51,7 @@ public class GraphViewer {
 
         ArrayList<ArrayList<Station>> solution = individual.getSolution();
         for (int vehicle = 0; vehicle < solution.size(); vehicle++) {
-            color = randomColor();
+            color = getColor(vehicle);
             for (int station = 0; station < solution.get(vehicle).size()-1; station++) {
                 //For each pair of nodes within each vehicle sequence
 
@@ -86,13 +86,38 @@ public class GraphViewer {
         }
     }
 
-    public String randomColor() {
+    public String getColor(int vehicleId) {
         String color = "#";
-        Random randomGenerator = new Random();
-        String[] numbers = {"1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"};
-        for (int i = 0; i < 6; i++) {
-            color += numbers[randomGenerator.nextInt(numbers.length)];
+        switch(vehicleId) {
+            case(0):
+                color += "fd0000";
+                break;
+            case(1):
+                color += "00de00";
+                break;
+            case(2):
+                color += "0000fd";
+                break;
+            case(3):
+                color += "fdfd00";
+                break;
+            case(4):
+                color += "fd00fd";
+                break;
+            case(5):
+                color += "00fdfd";
+                break;
+            case(6):
+                color += "fd8f00";
+                break;
+            default:
+                Random randomGenerator = new Random();
+                String[] numbers = {"1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"};
+                for (int i = 0; i < 6; i++) {
+                    color += numbers[randomGenerator.nextInt(numbers.length)];
+                }
         }
+
         return color;
     }
 }
