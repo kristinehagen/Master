@@ -8,6 +8,7 @@ import main.GA;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.omg.CORBA.MARSHAL;
 import org.graphstream.ui.spriteManager.SpriteManager;
@@ -36,18 +37,21 @@ public class GraphViewer {
             node.addAttribute("ui.style", "fill-color: black;");
             node.addAttribute("ui.label", station.getId());
 
+            /*
+            if (station.getId() == 35) {
+                SpriteManager sman = new SpriteManager(graph);
+                Sprite s = sman.addSprite("S1");
+                s.attachToNode("Station35");
+                s.setPosition(StyleConstants.Units.PX, 12, 12, 0);
+            }
+            */
+        }
+        
+
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            graph.getNode("Station" + vehicle.getNextStationInitial()).addAttribute("ui.style", "fill-color: red;");
         }
 
-        /*
-        for (Vehicle vehicle : input.getVehicles().values()) {
-            Node node = graph.addNode("Vehicle" + vehicle.getId());
-            Station initialStation = input.getStations().get(vehicle.getNextStationInitial());
-            node.addAttribute("x", initialStation.getLatitude());
-            node.addAttribute("y", initialStation.getLongitude());
-            node.addAttribute("layout.frozen");
-            node.addAttribute("ui.style", "fill-color: red;");
-        }
-        */
 
         ArrayList<ArrayList<Station>> solution = individual.getSolution();
         for (int vehicle = 0; vehicle < solution.size(); vehicle++) {
