@@ -38,7 +38,7 @@ public class Individual {
     public void doIntraMutation(Input input) {
         //Trekker random bil som skal muteres
         int mutationVehicleIndex = ThreadLocalRandom.current().nextInt(0, input.getNumberOfVehicles());
-        Vehicle vehicle = input.getVehicle(mutationVehicleIndex + 1);
+        Vehicle vehicle = input.getVehicle(mutationVehicleIndex);
         ArrayList<Station> vehicleSequence = new ArrayList<>(this.solution.get(mutationVehicleIndex));
         //Trekker stasjon som skal byttes ut og stasjon i cluster som skal settes inn
         int mutationStationIndexOld = ThreadLocalRandom.current().nextInt(0, vehicleSequence.size());
