@@ -17,12 +17,13 @@ public class GraphViewer {
     Graph graph;
 
     public GraphViewer() {
-        this.graph = new SingleGraph("Graph 1");
+        this.graph = new MultiGraph("Graph 1");
     }
 
 
 
     private void drawCustomers(Graph graph, Individual individual, Input input) {
+        //System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         ArrayList<Station> tour;
         String color;
         Edge edge;
@@ -37,6 +38,7 @@ public class GraphViewer {
 
         }
 
+        /*
         for (Vehicle vehicle : input.getVehicles().values()) {
             Node node = graph.addNode("Vehicle" + vehicle.getId());
             Station initialStation = input.getStations().get(vehicle.getNextStationInitial());
@@ -45,6 +47,7 @@ public class GraphViewer {
             node.addAttribute("layout.frozen");
             node.addAttribute("ui.style", "fill-color: red;");
         }
+        */
 
         ArrayList<ArrayList<Station>> solution = individual.getSolution();
         for (int vehicle = 0; vehicle < solution.size(); vehicle++) {
