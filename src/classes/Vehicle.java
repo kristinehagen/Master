@@ -2,6 +2,7 @@ package classes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class Vehicle {
 
@@ -14,20 +15,70 @@ public class Vehicle {
     private int load;
     private int initialLoad;
     private ArrayList<Station> clusterStationList = new ArrayList<>();
+    private ArrayList<ArrayList<Station>> initializedRoutes;
 
-    public Vehicle(int id, HashMap<Integer, Station> stations) {
+    public Vehicle(int id) {
         this.id = id;
-        createCluster(stations);
     }
 
     //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
-    public void createCluster(HashMap<Integer, Station> stations){
+    public void createCluster(Input input){
+        HashMap<Integer, Station> stations = input.getStations();
         ArrayList<Station> stationsList = new ArrayList<>();
         for (Station station : stations.values()) {
             stationsList.add(station);
         }
         this.clusterStationList = stationsList;
     }
+
+
+    //Initialiserer ruter for bilen
+    public void createRoutes(Input input) {
+        createCluster(input);
+
+        //En liste med alle ruter som ikke er ferdig laget enda
+        ArrayList<ArrayList<Station>> routesUnderConstruction = new ArrayList<>();
+
+        //Lager en rute som kun går til første stasjon.
+        // Legger så denne ruta inn i routesUnderConstruction slik at den kan utvikle seg
+        Station firstStation = input.getStations().get(this.nextStationInitial);
+        ArrayList<Station> firstRouteUnderConstruction = new ArrayList<>();
+        firstRouteUnderConstruction.add(firstStation);
+        routesUnderConstruction.add(firstRouteUnderConstruction);
+
+        double hour = input.getCurrentHour();
+
+        //Deler alle stasjoner i clusteret inn i positive og negative stasjoner
+        ArrayList<Station> possibleStationsForNextStationVisit = this.clusterStationList;
+        ArrayList<Station> positiveStations = filterStations(possibleStationsForNextStationVisit, true, hour);
+        ArrayList<Station> negativeStations = filterStations(possibleStationsForNextStationVisit, false, hour);
+
+        //Second station visit
+        if (initialLoad <= input.getMinLoad() && firstStation.getNetDemand(hour) <= 0) {
+            //Kan kun besøke positive stasjoner
+        } else if(initialLoad >= input.getMaxLoad() && firstStation.getNetDemand(hour) >= 0) {
+            //Kan kun besøke negative stasjoner
+        } else {
+            //Besøker både positive og negative stasjoner
+        }
+
+    }
+
+    private ArrayList<Station> filterStations(ArrayList<Station> stationList, boolean returnPositive, double hour) {
+        ArrayList<Station> stationListFiltered = new ArrayList<>();
+        for (Station station:stationList) {
+            if (returnPositive & station.getNetDemand(hour)>=0) {
+                stationListFiltered.add(station);
+            } else if (!returnPositive & station.getNetDemand(hour)<=hour) {
+                stationListFiltered.add(station);
+            }
+        }
+        return stationListFiltered;
+    }
+
+
+
+
 
 
 
@@ -110,4 +161,11 @@ public class Vehicle {
     }
 
 
+    public ArrayList<ArrayList<Station>> getInitializedRoutes() {
+        return initializedRoutes;
+    }
+
+    public void setInitializedRoutes(ArrayList<ArrayList<Station>> initializedRoutes) {
+        this.initializedRoutes = initializedRoutes;
+    }
 }

@@ -92,6 +92,11 @@ public class Station {
         this.bikeWantedStd.put(hour, bikeReturnedStd);
     }
 
+    //Getter net demand
+    public double getNetDemand(double hour) {
+        return (this.bikeReturnedMedian.get(hour) - this.bikeWantedMedian.get(hour));
+    }
+
     //OptimalState
     public double getOptimalState(double hour) {
         return optimalState.get(hour);
