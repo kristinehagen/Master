@@ -3,6 +3,7 @@ package main;
 import classes.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,7 +57,7 @@ public class GA {
 
 
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         Input input = new Input();
         init(input);
         run(input);

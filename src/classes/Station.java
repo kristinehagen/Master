@@ -106,8 +106,8 @@ public class Station {
         return drivingTime.get(stationId);
     }
 
-    public void addDistanceToStationHashmap(int stationid, double drivingTime) {
-        this.drivingTime.put(stationid, drivingTime);
+    public void addDistanceToStationHashmap(int destinationStationid, double drivingTime) {
+        this.drivingTime.put(destinationStationid, drivingTime);
     }
 
     //Nr of slots

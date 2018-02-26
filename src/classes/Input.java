@@ -1,11 +1,9 @@
 package classes;
 
-import functions.ReadCoordinates;
-import functions.ReadDemandAndNumberOfBikes;
-import functions.ReadStationInitialState;
-import functions.ReadVehicleInput;
+import functions.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -31,12 +29,12 @@ public class Input {
 
 
     //Constructor
-    public Input() throws FileNotFoundException {
+    public Input() throws IOException {
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
         ReadCoordinates.lookUpCoordinates(stations, stationIdList);
-
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile, stations);
+        ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
     }
 
     //Getters and setters

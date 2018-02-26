@@ -21,6 +21,9 @@ public class DrivingTimeMatrix {
    static String initialFile = "stationCoordinates.txt";
    static ArrayList<Station> stations = new ArrayList<>();
 
+    public DrivingTimeMatrix() throws FileNotFoundException {
+    }
+
 
     public static void main(String[] args) throws IOException, org.json.JSONException {
 
@@ -49,7 +52,6 @@ public class DrivingTimeMatrix {
         //Oppretter nytt Excell-ark
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Driving Times");
-        int numberOfQueries24h = 0;
         int numberOfQueries10sek = 0;
 
         //Start fra input
@@ -61,16 +63,13 @@ public class DrivingTimeMatrix {
             headerRow.createCell(rowNumber).setCellValue(origin.getId()); //print horisontal stasjonsID
             int cellNumber = 1;
             for (Station destination: stations) {
-                if(origin.getId() != destination.getId()) {
-                    if (numberOfQueries24h < 2499) {
-                        if (numberOfQueries10sek < 10) {
-                            int drivingTimeSek = getDrivingTimeBetweenCoordinates(origin, destination);
-                            numberOfQueries24h++;
-                            numberOfQueries10sek++;
-                            double drivingTimeMin = ((double) drivingTimeSek)/60;
-                            //Start å skriv riktig sted, ikke overskrive
-                            row.createCell(cellNumber).setCellValue(drivingTimeMin);
-                            cellNumber++;
+                if (origin.getId() != destination.getId()) {
+                    if (numberOfQueries10sek < 99) {
+                        int drivingTimeSek = getDrivingTimeBetweenCoordinates(origin, destination);
+                        numberOfQueries10sek++;
+                        double drivingTimeMin = ((double) drivingTimeSek)/60;
+                        row.createCell(cellNumber).setCellValue(drivingTimeMin);
+                        cellNumber++;
                         } else { //Vent i 10 sek
                             try {
                                 System.out.println("Execution sleeps for 10 seconds");
@@ -81,27 +80,19 @@ public class DrivingTimeMatrix {
                             }
                             numberOfQueries10sek = 0;
                         }
-                    } else { //Vent i 24timer
-                        try {
-                            System.out.println("Execution sleeps for 24 hours");
-                            Thread.currentThread().sleep((60*60*24)*1000);
-                        }
-                        catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        numberOfQueries24h = 0;
-                    }
                 } else {
                     row.createCell(cellNumber).setCellValue(0);
                     cellNumber++;
                 }
+                }
             }
             rowNumber++;
-        }
+
         FileOutputStream fileOut = new FileOutputStream("DrivingTimeMatrix.xlsx");
         workbook.write(fileOut);
         fileOut.close();
     }
+
 
     private static int getDrivingTimeBetweenCoordinates(Station origin, Station destination) throws IOException, JSONException, org.json.JSONException {
         double originLongitude = origin.getLongitude();
