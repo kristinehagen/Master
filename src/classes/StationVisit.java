@@ -5,7 +5,7 @@ public class StationVisit {
     private Station station;
     private double loadingQuantity;
     private double visitTime;
-
+    private double loadAfterVisit;
 
 
     //GETTERS AND SETTERS
@@ -32,5 +32,13 @@ public class StationVisit {
 
     public void setStation(Station station) {
         this.station = station;
+    }
+
+    public double getLoadAfterVisit(){
+        return loadAfterVisit;
+    }
+
+    public void setLoadAfterVisit(double loadAfterVisit) {
+        this.loadAfterVisit = loadAfterVisit;
     }
 }
