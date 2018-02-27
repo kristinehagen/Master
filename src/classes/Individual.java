@@ -1,5 +1,8 @@
 package classes;
 
+import com.google.ortools.algorithms.KnapsackSolver;
+import functions.CalculateFitness;
+
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.HashMap;
@@ -83,6 +86,8 @@ public class Individual {
     private double calculateFitness(ArrayList<ArrayList<Station>> solution) {
         return 0;
     }
+
+
 
 
 }
