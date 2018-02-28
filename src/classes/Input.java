@@ -14,7 +14,7 @@ public class Input {
     private int sizeOfPopulation = 20;
     private int maxVisitsForEachVehicle = 3;
     private int minVisitsForEachVehicle = 2;
-    private double timeHorizon = 30;
+    private double timeHorizon = 15;
 
     private double handlingTime = 0.25;
     private double parkingTime = 2;
@@ -53,7 +53,7 @@ public class Input {
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
         ReadCoordinates.lookUpCoordinates(stations, stationIdList);
-        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile, stations);
+        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
         ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
     }
 

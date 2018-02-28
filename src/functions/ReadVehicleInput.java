@@ -32,6 +32,8 @@ public class ReadVehicleInput {
                 int load = element.nextInt();
                 vehicle.setLoad(load);
                 vehicle.setInitialLoad(load);
+                int capacity = element.nextInt();
+                vehicle.setCapacity(capacity);
 
                 vehicles.put(id, vehicle);
             }

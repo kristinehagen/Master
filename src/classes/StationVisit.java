@@ -3,7 +3,7 @@ package classes;
 public class StationVisit {
 
     private Station station;
-    private double loadingQuantity = 0;
+    private double loadingQuantity;
     private double visitTime;
     private double loadAfterVisit;
 
