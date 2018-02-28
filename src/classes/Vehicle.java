@@ -321,8 +321,8 @@ public class Vehicle {
         for (Station station: stationList) {
             double timeLastVisit = 0;
 
-            double timeToViolation = calculateTimeToViolationIfNoVisit(firstRouteUnderConstruction, station, input);
-            double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(firstRouteUnderConstruction, station, input);
+            double timeToViolation = calculateTimeToViolationIfNoVisit(routeUnderConstruction, station, input);
+            double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
             double violationRate = station.getNetDemand(input.getCurrentHour());
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());
 
