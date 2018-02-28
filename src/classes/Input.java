@@ -9,10 +9,34 @@ import java.util.HashMap;
 
 public class Input {
 
+    private int currentHour = 8;
     private int maxNumberOfGenerations = 400;
     private int sizeOfPopulation = 20;
     private int maxVisitsForEachVehicle = 3;
     private int minVisitsForEachVehicle = 2;
+    private double timeHorizon = 30;
+
+    private double handlingTime = 0.25;
+    private double parkingTime = 2;
+
+    //Score
+    private double weightTimeToViolation = 0.25;
+    private double weightViolationRate = 0.25;
+    private double weightDrivingTime = 0.25;
+    private double weightOptimalState = 0.25;
+
+    //Brancing
+    private int nrStationBranching = 3;                 //Create n new routes for each branching
+    private double maxTimeForOneBranch = 40;            //minutes
+
+
+    //Vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
+    private int minLoad = 8;
+    private int maxLoad = 15;
+
+    private int tournamentParticipants = 2;
+    private double crossoverProbability = 0.8;
+    private double intraMutationProbability = 1;
 
     private String filename = "filename.txt";
     private String demandFile = "demand.txt";
@@ -22,10 +46,6 @@ public class Input {
     private ArrayList<Integer> stationIdList;
     private HashMap<Integer, Station> stations;
     private HashMap<Integer, Vehicle> vehicles;
-
-    private int tournamentParticipants = 2;
-    private double crossoverProbability = 0.8;
-    private double intraMutationProbability = 1;
 
 
     //Constructor
@@ -116,4 +136,99 @@ public class Input {
     }
 
 
+    public int getNrStationBranching() {
+        return nrStationBranching;
+    }
+
+    public void setNrStationBranching(int nrStationBranching) {
+        this.nrStationBranching = nrStationBranching;
+    }
+
+    public double getWeightOptimalState() {
+        return weightOptimalState;
+    }
+
+    public void setWeightOptimalState(double weightOptimalState) {
+        this.weightOptimalState = weightOptimalState;
+    }
+
+    public double getWeightDrivingTime() {
+        return weightDrivingTime;
+    }
+
+    public void setWeightDrivingTime(double weightDrivingTime) {
+        this.weightDrivingTime = weightDrivingTime;
+    }
+
+    public double getWeightViolationRate() {
+        return weightViolationRate;
+    }
+
+    public void setWeightViolationRate(double weightViolationRate) {
+        this.weightViolationRate = weightViolationRate;
+    }
+
+    public double getWeightTimeToViolation() {
+        return weightTimeToViolation;
+    }
+
+    public void setWeightTimeToViolation(double weightTimeToViolation) {
+        this.weightTimeToViolation = weightTimeToViolation;
+    }
+
+    public int getMaxLoad() {
+        return maxLoad;
+    }
+
+    public void setMaxLoad(int maxLoad) {
+        this.maxLoad = maxLoad;
+    }
+
+    public int getMinLoad() {
+        return minLoad;
+    }
+
+    public void setMinLoad(int minLoad) {
+        this.minLoad = minLoad;
+    }
+
+    public double getMaxTimeForOneBranch() {
+        return maxTimeForOneBranch;
+    }
+
+    public void setMaxTimeForOneBranch(double maxTimeForOneBranch) {
+        this.maxTimeForOneBranch = maxTimeForOneBranch;
+    }
+
+    public int getCurrentHour() {
+        return currentHour;
+    }
+
+    public void setCurrentHour(int currentHour) {
+        this.currentHour = currentHour;
+    }
+
+    public double getTimeHorizon() {
+        return timeHorizon;
+    }
+
+    public void setTimeHorizon(double timeHorizon) {
+        this.timeHorizon = timeHorizon;
+    }
+
+    public double getHandlingTime() {
+        return handlingTime;
+    }
+
+    public void setHandlingTime(double handlingTime) {
+        this.handlingTime = handlingTime;
+    }
+
+    public double getParkingTime() {
+        return parkingTime;
+    }
+
+    public void setParkingTime(double parkingTime) {
+        this.parkingTime = parkingTime;
+    }
 }

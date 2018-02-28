@@ -48,6 +48,7 @@ public class Station {
         this.currentLoad = currentLoad + bikes;
     }
 
+
     //Id
     public int getId() {
         return id;
@@ -90,6 +91,11 @@ public class Station {
 
     public void setBikeWantedStd(double hour, double bikeReturnedStd) {
         this.bikeWantedStd.put(hour, bikeReturnedStd);
+    }
+
+    //Getter net demand
+    public double getNetDemand(double hour) {
+        return (this.bikeReturnedMedian.get(hour) - this.bikeWantedMedian.get(hour));
     }
 
     //OptimalState
