@@ -52,121 +52,236 @@ public class Vehicle {
         ArrayList<StationVisit> firstRouteUnderConstruction = new ArrayList<>();
         StationVisit firstStationVisit = new StationVisit();
         firstStationVisit.setStation(firstStation);
+        firstStationVisit.setVisitTime(this.timeToNextStationInitial);
         firstRouteUnderConstruction.add(firstStationVisit);
         routesUnderConstruction.add(firstRouteUnderConstruction);
 
 
         //Deler alle stasjoner inn i positive og negative stasjoner
         ArrayList<Station> possibleStationsForNextStationVisit = this.clusterStationList;
-        ArrayList<Station> positiveStations = filterStations(possibleStationsForNextStationVisit, true, hour);
-        ArrayList<Station> negativeStations = filterStations(possibleStationsForNextStationVisit, false, hour);
+
 
 
         //SECOND STATION VISIT
 
-        if (initialLoad <= input.getMinLoad() && firstStation.getNetDemand(hour) <= 0) {
+        //Check if route needs to be expanded
+        boolean routeNeedsToBeExpanded = checkIfTimeLimitIsReached(firstRouteUnderConstruction, input);
 
-            //Can only visit station with positive demand
-            ArrayList<ArrayList<StationVisit>> newRoutes = chooseStations(positiveStations, firstRouteUnderConstruction, input);
-            if (newRoutes != null) {
-                routesUnderConstruction.addAll(newRoutes);
-            }
+        if (routeNeedsToBeExpanded) {
 
-        } else if(initialLoad >= input.getMaxLoad() && firstStation.getNetDemand(hour) >= 0) {
-
-            //Can only visit station with negative demand
-            ArrayList<ArrayList<StationVisit>> newRoutes = chooseStations(negativeStations, firstRouteUnderConstruction, input);
-            if (newRoutes != null) {
-                routesUnderConstruction.addAll(newRoutes);
-            }
-
-        } else {
-
-            //Visits stations with both negative and positive demand
-            ArrayList<ArrayList<StationVisit>> newRoutesPositive = chooseStations(positiveStations, firstRouteUnderConstruction, input);
-            if (newRoutesPositive != null) {
-                routesUnderConstruction.addAll(newRoutesPositive);
-            }
-            ArrayList<ArrayList<StationVisit>> newRoutesNegative = chooseStations(negativeStations, firstRouteUnderConstruction, input);
-            if (newRoutesNegative != null) {
-                routesUnderConstruction.addAll(newRoutesNegative);
-            }
-
+            ArrayList<ArrayList<StationVisit>> newRoutes = performBranchingSecondStation(firstRouteUnderConstruction, possibleStationsForNextStationVisit, input);
+            routesUnderConstruction.addAll(newRoutes);
         }
+
+        routesUnderConstruction.remove(firstRouteUnderConstruction);
 
         //Removes the route containing only the first station visit
         routesUnderConstruction.remove(firstRouteUnderConstruction);
 
 
+
+
         //STATION VISIT AFTER SECOND STATION
-        while (routesUnderConstruction.size()>0) {
+        while (routesUnderConstruction.size() > 0) {
 
             //Expand all routes under construction if necessary
             for (ArrayList<StationVisit> routeUnderConstruction : routesUnderConstruction) {
 
                 //Check if route needs to be expanded
-                boolean routeNeedsToBeExpanded = checkIfTimeLimitIsReached(routeUnderConstruction);
+                routeNeedsToBeExpanded = checkIfTimeLimitIsReached(routeUnderConstruction, input);
 
                 if (routeNeedsToBeExpanded) {
 
-                    //Expand route
-
-                    int numberOfStationsInRoute = routeUnderConstruction.size();
-
-                    boolean lastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-1).getStation().getNetDemand(hour) >= 0;
-                    boolean secondLastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-2).getStation().getNetDemand(hour) >= 0;
-
-                    //Last two stations have positive demand
-                    if (lastStationIsPositive & secondLastStationIsPositive) {
-                        //Can only visit station with negative demand
-                        ArrayList<ArrayList<StationVisit>> newRoutes = chooseStations(negativeStations, firstRouteUnderConstruction, input);
-                        if (newRoutes != null) {
-                            routesUnderConstruction.addAll(newRoutes);
-                        }
-
-                    //Last two stations have negative demand
-                    } else if (!lastStationIsPositive & !secondLastStationIsPositive) {
-
-                        //Can only visit station with positive demand
-                        ArrayList<ArrayList<StationVisit>> newRoutes = chooseStations(positiveStations, firstRouteUnderConstruction, input);
-                        if (newRoutes != null) {
-                            routesUnderConstruction.addAll(newRoutes);
-                        }
-
-                    } else {
-
-                        //Visits stations with both negative and positive demand
-                        ArrayList<ArrayList<StationVisit>> newRoutesPositive = chooseStations(positiveStations, firstRouteUnderConstruction, input);
-                        if (newRoutesPositive != null) {
-                            routesUnderConstruction.addAll(newRoutesPositive);
-                        }
-                        ArrayList<ArrayList<StationVisit>> newRoutesNegative = chooseStations(negativeStations, firstRouteUnderConstruction, input);
-                        if (newRoutesNegative != null) {
-                            routesUnderConstruction.addAll(newRoutesNegative);
-                        }
-
-                    }
-
+                    ArrayList<ArrayList<StationVisit>> newRoutes = performBranching(routeUnderConstruction, possibleStationsForNextStationVisit, input);
+                    routesUnderConstruction.addAll(newRoutes);
                 }
 
-
                 routesUnderConstruction.remove(routeUnderConstruction);
+
+
             }
 
         }
+    }
+
+    private ArrayList<ArrayList<StationVisit>> performBranchingSecondStation(ArrayList<StationVisit> firstRouteUnderConstruction, ArrayList<Station> possibleStationsForNextStationVisit, Input input) {
+
+        ArrayList<Station> negativeStations = filterStations(possibleStationsForNextStationVisit, false, input.getCurrentHour());
+        ArrayList<Station> positiveStations = filterStations(possibleStationsForNextStationVisit, true, input.getCurrentHour());
+        ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
+
+        boolean firstStationHasPositiveDemand = firstRouteUnderConstruction.get(0).getStation().getNetDemand(input.getCurrentHour()) > 0;
+
+        if (initialLoad <= input.getMinLoad() && !firstStationHasPositiveDemand) {
+
+            //Assumes vehicle load = 0
+            //Can only visit station with positive demand
+            newRoutes.addAll(chooseStations(positiveStations, firstRouteUnderConstruction, input));
+
+        } else if (initialLoad >= input.getMaxLoad() && firstStationHasPositiveDemand) {
+
+            //Assumes vehicle load = full
+            //Can only visit station with negative demand
+            newRoutes.addAll(chooseStations(negativeStations, firstRouteUnderConstruction, input));
+
+        } else {
+
+            //Visits stations with both negative and positive demand
+            newRoutes.addAll(chooseStations(positiveStations, firstRouteUnderConstruction, input));
+            newRoutes.addAll(chooseStations(negativeStations, firstRouteUnderConstruction, input));
+
+        }
+
+        return newRoutes;
+    }
+
+    private ArrayList<ArrayList<StationVisit>> performBranching(ArrayList<StationVisit> routeUnderConstruction, ArrayList<Station> possibleStationsForNextStationVisit, Input input) {
+
+        ArrayList<Station> negativeStations = filterStations(possibleStationsForNextStationVisit, false, input.getCurrentHour());
+        ArrayList<Station> positiveStations = filterStations(possibleStationsForNextStationVisit, true, input.getCurrentHour());
+
+        int numberOfStationsInRoute = routeUnderConstruction.size();
+
+        boolean lastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-1).getStation().getNetDemand(input.getCurrentHour()) >= 0;
+        boolean secondLastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-2).getStation().getNetDemand(input.getCurrentHour()) >= 0;
+        ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
+
+        //Last two stations have positive demand
+        if (lastStationIsPositive & secondLastStationIsPositive) {
+            //Can only visit station with negative demand
+            newRoutes.addAll(chooseStations(negativeStations, routeUnderConstruction, input));
+
+        //Last two stations have negative demand
+        } else if (!lastStationIsPositive & !secondLastStationIsPositive) {
+
+            //Can only visit station with positive demand
+            newRoutes.addAll(chooseStations(positiveStations, routeUnderConstruction, input));
+
+        } else {
+
+            //Visits stations with both negative and positive demand
+            newRoutes.addAll(chooseStations(positiveStations, routeUnderConstruction, input));
+            newRoutes.addAll(chooseStations(negativeStations, routeUnderConstruction, input));
+
+        }
+        return newRoutes;
 
     }
 
-    //IKKE FERDIG!!
-    private boolean checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction) {
-        return false;
+
+    private boolean checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction, Input input) {
+
+        double timeHorizon = input.getTimeHorizon();
+        double hour = input.getCurrentHour();
+
+        int numberOfStationVisitsInRoute = routeUnderConstruction.size();
+
+        for (int i = 0; i < numberOfStationVisitsInRoute; i++) {
+
+            //Set load
+
+            //If stationLoad is not already determined
+            if (routeUnderConstruction.get(i).getLoadingQuantity() == 0) {
+
+
+                boolean currentStationHasPositiveDemand = (routeUnderConstruction.get(i).getStation().getNetDemand(hour) >= 0);
+
+                //If current station is not the last station in the route
+                if (i < numberOfStationVisitsInRoute - 1) {
+
+                    boolean nextStationHasPositiveDemand = (routeUnderConstruction.get(i + 1).getStation().getNetDemand(hour) >= 0);
+
+                    //If both positive, load -11 + -12
+                    if (currentStationHasPositiveDemand && nextStationHasPositiveDemand) {
+                        routeUnderConstruction.get(i).setLoadingQuantity(-11);
+                        routeUnderConstruction.get(i + 1).setLoadingQuantity(-12);
+                    }
+
+                    //If both negative, load 11 + 12
+                    if (!currentStationHasPositiveDemand && !nextStationHasPositiveDemand) {
+                        routeUnderConstruction.get(i).setLoadingQuantity(11);
+                        routeUnderConstruction.get(i + 1).setLoadingQuantity(12);
+                    }
+
+                    //if next station positive and current station negative, load 23
+                    if (!currentStationHasPositiveDemand & nextStationHasPositiveDemand) {
+                        routeUnderConstruction.get(i).setLoadingQuantity(23);
+                    }
+
+                    //if next station negative and current station positive, load -23
+                    if (currentStationHasPositiveDemand & !nextStationHasPositiveDemand) {
+                        routeUnderConstruction.get(i).setLoadingQuantity(-23);
+                    }
+
+
+                }
+
+                //If current station is last station in route
+                if (currentStationHasPositiveDemand) {
+                    routeUnderConstruction.get(i).setLoadingQuantity(-23);
+                } else {
+                    routeUnderConstruction.get(i).setLoadingQuantity(23);
+                }
+
+            }
+
+
+
+            //Set time for stationVisit
+
+            //set time for first station visit
+            if (i == 0) {
+                routeUnderConstruction.get(0).setVisitTime(timeToNextStation);
+            } else {
+
+                //set time for remaining station visits
+                double visitTimeLastStation = routeUnderConstruction.get(i-1).getVisitTime();
+                double absoluteLoadAtLastStation = Math.abs(routeUnderConstruction.get(i-1).getLoadingQuantity());
+                double drivingTimeFromLastStation = routeUnderConstruction.get(i-1).getStation().getDrivingTimeToStation(routeUnderConstruction.get(i).getStation().getId());
+
+                routeUnderConstruction.get(i).setVisitTime(visitTimeLastStation+absoluteLoadAtLastStation*input.getHandlingTime()+input.getParkingTime()+ drivingTimeFromLastStation);
+
+            }
+
+
+            //Set updated load at station
+
+            double lastVisitTime = 0;
+            double stationLoadAfterLastVisit = routeUnderConstruction.get(i).getStation().getLoad();
+
+            //Check if station is already visited
+            for (int j = 0; j<i ; j++) {
+                if (routeUnderConstruction.get(j).getStation().getId() == routeUnderConstruction.get(i).getStation().getId()) {
+                    lastVisitTime = routeUnderConstruction.get(j).getVisitTime();
+                    stationLoadAfterLastVisit = routeUnderConstruction.get(j).getLoadAfterVisit();
+                }
+            }
+
+            double customersArrivingSinceLastVisit = routeUnderConstruction.get(i).getStation().getNetDemand(hour)*(routeUnderConstruction.get(i).getVisitTime()-lastVisitTime);
+            double loadAfterVisit = stationLoadAfterLastVisit + customersArrivingSinceLastVisit;
+
+            if (loadAfterVisit > routeUnderConstruction.get(i).getStation().getCapacity()) {
+                loadAfterVisit = routeUnderConstruction.get(i).getStation().getCapacity();
+            } else if (loadAfterVisit < 0 ) {
+                loadAfterVisit = 0;
+            }
+
+            routeUnderConstruction.get(i).setLoadAfterVisit(loadAfterVisit);
+
+        }
+
+        //Return true if more stations should be added to the route.
+
+        return (routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime() < timeHorizon);
+
     }
 
-    private ArrayList<ArrayList<StationVisit>> chooseStations(ArrayList<Station> stationList, ArrayList<StationVisit> routeUnderConstruction, Input input) {
-        if (stationList.size() > 0) {
+    private ArrayList<ArrayList<StationVisit>> chooseStations(ArrayList<Station> possibleStationsForNextStationVisit, ArrayList<StationVisit> routeUnderConstruction, Input input) {
+
+        if (possibleStationsForNextStationVisit.size() > 0) {
 
             //This hashmap saves station ID as key, and its respective score as value.
-            HashMap<Integer, Double> stationScores = calculateScore(stationList, routeUnderConstruction, input);
+            HashMap<Integer, Double> stationScores = calculateScore(possibleStationsForNextStationVisit, routeUnderConstruction, input);
 
             //This ArrayList contains new routes created
             ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
@@ -176,8 +291,7 @@ public class Vehicle {
 
                 if (stationScores.size() > 0) {
 
-                    Station stationWithHigestScore = stationList.get(findStationWithHighestScore(stationScores));
-                    stationScores.remove(stationWithHigestScore.getId());
+                    Station stationWithHigestScore = possibleStationsForNextStationVisit.get(findStationWithHighestScore(stationScores));
 
                     ArrayList<StationVisit> newRoute= new ArrayList<>(routeUnderConstruction);
                     StationVisit newStationVisit = new StationVisit();
@@ -185,6 +299,7 @@ public class Vehicle {
                     newRoute.add(newStationVisit);
 
                     newRoutes.add(newRoute);
+                    stationScores.remove(stationWithHigestScore.getId());
                 }
             }
 
@@ -201,7 +316,7 @@ public class Vehicle {
     }
 
     //FERDIG
-    private HashMap<Integer,Double> calculateScore(ArrayList<Station> stationList, ArrayList<StationVisit> firstRouteUnderConstruction, Input input) {
+    private HashMap<Integer,Double> calculateScore(ArrayList<Station> stationList, ArrayList<StationVisit> routeUnderConstruction, Input input) {
         HashMap<Integer, Double> stationScores = new HashMap<>();
         for (Station station: stationList) {
             double timeLastVisit = 0;
@@ -209,7 +324,7 @@ public class Vehicle {
             double timeToViolation = calculateTimeToViolationIfNoVisit(station, timeLastVisit);
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(station, timeLastVisit);
             double violationRate = station.getNetDemand(input.getCurrentHour());
-            double drivingTime = firstRouteUnderConstruction.get(0).getStation().getDrivingTimeToStation(station.getId());
+            double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());
 
             //Calculate total score
             double score = input.getWeightTimeToViolation()*timeToViolation

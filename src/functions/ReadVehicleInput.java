@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class ReadVehicleInput {
 
-    public static HashMap<Integer, Vehicle> readVehicleInput(String vehicleInitialFile, HashMap<Integer, Station> stations) throws FileNotFoundException {
+    public static HashMap<Integer, Vehicle> readVehicleInput(String vehicleInitialFile) throws FileNotFoundException {
 
         HashMap<Integer, Vehicle> vehicles = new HashMap<>();
 
@@ -22,7 +22,7 @@ public class ReadVehicleInput {
             Scanner element = new Scanner(line);
             if (element.hasNextInt()) {
                 int id = element.nextInt();
-                Vehicle vehicle = new Vehicle(id, stations);
+                Vehicle vehicle = new Vehicle(id);
                 int nextStationInitial = element.nextInt();
                 vehicle.setNextStation(nextStationInitial);
                 vehicle.setNextStationInitial(nextStationInitial);

@@ -16,6 +16,10 @@ public class Input {
     private int sizeOfPopulation = 20;
     private int maxVisitsForEachVehicle = 3;
     private int minVisitsForEachVehicle = 2;
+    private double timeHorizon = 30;
+
+    private double handlingTime = 0.25;
+    private double parkingTime = 2;
 
     //Score
     private double weightTimeToViolation = 0.25;
@@ -53,7 +57,7 @@ public class Input {
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
         ReadCoordinates.lookUpCoordinates(stations, stationIdList);
 
-        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile, stations);
+        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
     }
 
     //Getters and setters
@@ -205,5 +209,29 @@ public class Input {
 
     public void setCurrentHour(int currentHour) {
         this.currentHour = currentHour;
+    }
+
+    public double getTimeHorizon() {
+        return timeHorizon;
+    }
+
+    public void setTimeHorizon(double timeHorizon) {
+        this.timeHorizon = timeHorizon;
+    }
+
+    public double getHandlingTime() {
+        return handlingTime;
+    }
+
+    public void setHandlingTime(double handlingTime) {
+        this.handlingTime = handlingTime;
+    }
+
+    public double getParkingTime() {
+        return parkingTime;
+    }
+
+    public void setParkingTime(double parkingTime) {
+        this.parkingTime = parkingTime;
     }
 }

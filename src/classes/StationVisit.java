@@ -3,8 +3,9 @@ package classes;
 public class StationVisit {
 
     private Station station;
-    private double loadingQuantity;
+    private double loadingQuantity = 0;
     private double visitTime;
+    private double loadAfterVisit;
 
 
 
@@ -32,5 +33,13 @@ public class StationVisit {
 
     public void setStation(Station station) {
         this.station = station;
+    }
+
+    public double getLoadAfterVisit() {
+        return loadAfterVisit;
+    }
+
+    public void setLoadAfterVisit(double loadAfterVisit) {
+        this.loadAfterVisit = loadAfterVisit;
     }
 }
