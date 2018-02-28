@@ -48,6 +48,7 @@ public class Station {
         this.currentLoad = currentLoad + bikes;
     }
 
+
     //Id
     public int getId() {
         return id;

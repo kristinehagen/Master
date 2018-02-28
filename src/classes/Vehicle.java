@@ -321,8 +321,8 @@ public class Vehicle {
         for (Station station: stationList) {
             double timeLastVisit = 0;
 
-            double timeToViolation = calculateTimeToViolationIfNoVisit(station, timeLastVisit);
-            double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(station, timeLastVisit);
+            double timeToViolation = calculateTimeToViolationIfNoVisit(firstRouteUnderConstruction, station, input);
+            double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(firstRouteUnderConstruction, station, input);
             double violationRate = station.getNetDemand(input.getCurrentHour());
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());
 
@@ -337,14 +337,57 @@ public class Vehicle {
         return stationScores;
     }
 
-    //IKKE FERDIG!
-    private double calculateDiffFromOptimalStateIfNoVisit(Station station, double timeLastVisit) {
-        return 0;
+    private double calculateDiffFromOptimalStateIfNoVisit(ArrayList<StationVisit> stationVisits, Station stationToCheck, Input input) {
+        double diffFromOptimalState = 0.0;
+        double loadAtTimeHorizon;
+        double lastVisitTime;
+        double updatedLoad;
+        double hour = input.getCurrentHour();
+        double timeHorizon = input.getTimeHorizon();
+
+        for (StationVisit stationVisit: stationVisits) {
+            if (stationVisit.getStation().getId() == stationToCheck.getId()) {
+                lastVisitTime = stationVisit.getVisitTime();
+                updatedLoad = stationVisit.getLoadAfterVisit();
+                loadAtTimeHorizon = stationToCheck.getNetDemand(hour)*(timeHorizon-lastVisitTime) + updatedLoad;
+                if (loadAtTimeHorizon > stationToCheck.getCapacity()){
+                    loadAtTimeHorizon = stationToCheck.getCapacity();
+                } else if (loadAtTimeHorizon < 0) {
+                    loadAtTimeHorizon = 0;
+                }
+                diffFromOptimalState = java.lang.Math.abs(stationToCheck.getOptimalState(hour)-loadAtTimeHorizon);
+            } else {
+                loadAtTimeHorizon = stationToCheck.getNetDemand(hour)*timeHorizon + stationToCheck.getInitialLoad();
+                diffFromOptimalState = java.lang.Math.abs(stationToCheck.getOptimalState(hour)-loadAtTimeHorizon);
+            }
+        }
+        return diffFromOptimalState;
     }
 
-    //IKKE FERDIG!
-    private double calculateTimeToViolationIfNoVisit(Station station, double timeLastVisit) {
-        return 0;
+    private double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> stationVisits, Station stationToCheck, Input input) {
+        double lastVisitTime = 0.0;
+        double timeToViolation = 0.0;
+        double updatedLoad;
+        double hour = input.getCurrentHour();
+
+        for (StationVisit stationVisit: stationVisits) {
+            if (stationVisit.getStation().getId() == stationToCheck.getId()) {
+                lastVisitTime = stationVisit.getVisitTime();
+                updatedLoad = stationVisit.getLoadAfterVisit();
+                if (stationToCheck.getNetDemand(hour) > 0) {
+                    timeToViolation = (stationToCheck.getCapacity() - updatedLoad) / stationToCheck.getNetDemand(hour);
+                } else {
+                    timeToViolation = updatedLoad / stationToCheck.getNetDemand(hour);
+                }
+            } else {
+                if (stationToCheck.getNetDemand(hour) > 0) {
+                    timeToViolation = (stationToCheck.getCapacity() - stationToCheck.getLoad()) / stationToCheck.getNetDemand(hour);
+                } else {
+                    timeToViolation = stationToCheck.getLoad() / stationToCheck.getNetDemand(hour);
+                }
+            }
+        }
+        return lastVisitTime + timeToViolation;
     }
 
 
