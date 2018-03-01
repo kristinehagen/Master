@@ -33,6 +33,8 @@ public class Station {
 
     public Station(int id){
         this.id = id;
+        this.bikeReturnedMedian = new HashMap<>();
+        this.bikeWantedMedian = new HashMap<>();
     }
 
     //Number of bikes

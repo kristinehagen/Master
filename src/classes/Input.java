@@ -46,6 +46,7 @@ public class Input {
     private ArrayList<Integer> stationIdList;
     private HashMap<Integer, Station> stations;
     private HashMap<Integer, Vehicle> vehicles;
+    private ArrayList<Station> stationListWithDemand;
 
 
     //Constructor
@@ -55,6 +56,10 @@ public class Input {
         ReadCoordinates.lookUpCoordinates(stations, stationIdList);
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
         ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
+    }
+
+    public Input(double hour) throws FileNotFoundException {
+        this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
     }
 
     //Getters and setters
@@ -230,5 +235,13 @@ public class Input {
 
     public void setParkingTime(double parkingTime) {
         this.parkingTime = parkingTime;
+    }
+
+    public ArrayList<Station> getStationListWithDemand() {
+        return stationListWithDemand;
+    }
+
+    public void setStationListWithDemand(ArrayList<Station> stationListWithDemand) {
+        this.stationListWithDemand = stationListWithDemand;
     }
 }

@@ -72,4 +72,50 @@ public class ReadDemandAndNumberOfBikes {
         in.close();
         return stationToNumberOfBikesMap;
     }
+
+
+    public static ArrayList<Station> readDemandInformationForGeneratingInstances(String demandFile, double hour) throws FileNotFoundException {
+        ArrayList<Station> stations = new ArrayList<>();
+
+        //Read demand.txt file
+        File inputFile = new File(demandFile);
+        Scanner in = new Scanner(inputFile);
+        int previousValueRead = 0;
+        Station station = new Station(-1, -1);
+
+        while (in.hasNextLine()){
+            String line = in.nextLine();
+            Scanner element = new Scanner(line).useDelimiter("\\s*;\\s*");
+            if (element.hasNextInt()) {
+                int stationId = element.nextInt();
+
+                if (previousValueRead != stationId) {
+
+                    previousValueRead = stationId;
+                    station = new Station(stationId);
+                    stations.add(station);
+                }
+
+                element.next();
+                station.setCapacity((int) Double.parseDouble(element.next()));
+                double hourInThisLine = element.nextDouble();
+
+                // Only interested if correct hour
+                if (hourInThisLine == hour) {
+
+                    //Set demand
+                    station.setBikeWantedMedian(hour, Double.parseDouble(element.next()));
+                    element.next();
+                    station.setBikeReturnedMedian(hour, Double.parseDouble(element.next()));
+                    element.next();
+
+                }
+            }
+            element.close();
+        }
+        in.close();
+        return stations;
+
+    }
+
 }
