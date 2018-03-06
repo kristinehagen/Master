@@ -80,7 +80,7 @@ public class CreateTestInstance {
                 testInstance.put(station, randomNumber.nextInt(station.getCapacity() + 1));
             }
         } else {
-            for (int i = 0; i < picksFromHigh; i++) {
+            for (int i = 0; i < picksFromLow; i++) {
                 Station station = lowCongestion.get(randomNumber.nextInt(lowCongestion.size()));
                 testInstance.put(station, randomNumber.nextInt(station.getCapacity()+1));
                 lowCongestion.remove(station);
@@ -93,7 +93,7 @@ public class CreateTestInstance {
                 testInstance.put(station, randomNumber.nextInt(station.getCapacity() + 1));
             }
         } else {
-            for (int i = 0; i < picksFromHigh; i++) {
+            for (int i = 0; i < picksFromLow; i++) {
                 Station station = lowStarvation.get(randomNumber.nextInt(lowStarvation.size()));
                 testInstance.put(station, randomNumber.nextInt(station.getCapacity()+1));
                 lowStarvation.remove(station);
