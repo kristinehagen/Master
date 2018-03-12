@@ -28,6 +28,7 @@ public class ColumnGeneration {
 
         int counter = 0;
 
+        //Print initiated routes
         for (Vehicle vehicle: input.getVehicles().values()) {
             for (ArrayList<StationVisit> route : vehicle.getInitializedRoutes()) {
 

@@ -124,13 +124,13 @@ public class Vehicle {
 
         boolean firstStationHasPositiveDemand = firstRouteUnderConstruction.get(0).getStation().getNetDemand(input.getCurrentHour()) > 0;
 
-        if (initialLoad <= input.getMinLoad() && !firstStationHasPositiveDemand) {
+        if (load <= input.getMinLoad() && !firstStationHasPositiveDemand) {
 
             //Assumes vehicle load = 0
             //Can only visit station with positive demand
             newRoutes.addAll(chooseStations(positiveStations, firstRouteUnderConstruction, input));
 
-        } else if (initialLoad >= input.getMaxLoad() && firstStationHasPositiveDemand) {
+        } else if (load >= input.getMaxLoad() && firstStationHasPositiveDemand) {
 
             //Assumes vehicle load = full
             //Can only visit station with negative demand

@@ -1,4 +1,4 @@
-package main;
+/*package main;
 
 import classes.Input;
 import classes.Station;
@@ -25,7 +25,7 @@ public class DrivingTimeMatrix {
     }
 
 
-    public static void main(String[] args) throws IOException, org.json.JSONException {
+    public static void main(String[] args) throws IOException, org.json.JSONException, JSONException {
 
         lookUpCoordinates();
         getDrivingTimes();
@@ -135,4 +135,4 @@ public class DrivingTimeMatrix {
     }
 
 
-}
+}*/
