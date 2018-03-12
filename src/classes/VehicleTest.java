@@ -2,6 +2,8 @@ package classes;
 
 import org.junit.Assert;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,12 +11,42 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class VehicleTest {
+
     @org.junit.jupiter.api.Test
     void createCluster() {
     }
 
+
     @org.junit.jupiter.api.Test
-    void createRoutes() {
+    void createRoutes() throws IOException {
+
+        Vehicle vehicle = new Vehicle(1);
+
+        //CalculateTimeToViolationIfNoVisit
+
+        Input input = new Input();
+        input.setCurrentHour(8);
+        ArrayList<StationVisit> routeUnderConstruction = new ArrayList<>();
+        StationVisit stationVisit = new StationVisit();
+
+        //Station already added
+        Station stationAlreadyInRoute = new Station(1);
+        stationVisit.setStation(stationAlreadyInRoute);
+
+        //Station to check
+        Station stationToCheck = new Station(2);
+        stationToCheck.setBikeReturnedMedian(8, 40);
+        stationToCheck.setBikeWantedMedian(8, 20);
+        stationToCheck.setCapacity(20);
+        stationToCheck.setInitialLoad(15);
+
+        routeUnderConstruction.add(stationVisit);
+
+        double actual = vehicle.calculateTimeToViolationIfNoVisit(routeUnderConstruction, stationToCheck, input);
+        System.out.println(actual);
+        double expected = 15;
+
+        Assert.assertEquals(expected, actual, 0.00);
     }
 
     @org.junit.jupiter.api.Test
