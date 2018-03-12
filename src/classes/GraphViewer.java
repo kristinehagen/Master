@@ -34,6 +34,7 @@ public class GraphViewer {
         Edge edge;
         String color;
 
+        //STATIONS
         for (Station station : input.getStations().values()) {
             Node node = graph.addNode("Station" + station.getId());
             node.addAttribute("x", station.getLatitude());
@@ -49,13 +50,15 @@ public class GraphViewer {
             }
         }
 
+
+        //EGDE
         for (Vehicle vehicle : input.getVehicles().values()) {
             graph.getNode("Station" + vehicle.getNextStationInitial()).addAttribute("ui.style", "fill-color: red;");
 
 
             for (ArrayList<StationVisit> route: vehicle.getInitializedRoutes()) {
 
-                color = getColor(99);
+                color = getColor(99); //99 = random color
 
                 for (int stationVisit = 0; stationVisit < route.size()-1; stationVisit++) {
 
@@ -72,7 +75,7 @@ public class GraphViewer {
                     Node nodeToStation = graph.getNode("Station" + toStationNode.getId());
 
                     //Edge ID
-                    String edgeId = "V" + vehicle.getId() + "S" + fromStationNode.getId() + "R" + vehicle.getInitializedRoutes().indexOf(route);
+                    String edgeId = "V" + vehicle.getId() + "S" + fromStationNode.getId() + "R" + vehicle.getInitializedRoutes().indexOf(route) + "SV" + stationVisit;
 
                     //Add edge
                     edge = graph.addEdge(edgeId, nodeFromStation, nodeToStation, true);
