@@ -1,17 +1,10 @@
 package classes;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.GA;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
-import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
-import org.graphstream.ui.spriteManager.Sprite;
-import org.omg.CORBA.MARSHAL;
-import org.graphstream.ui.spriteManager.SpriteManager;
 
 public class GraphViewer {
 
@@ -43,7 +36,7 @@ public class GraphViewer {
             node.addAttribute("ui.label", station.getId());
 
             //Color (positive station = black, negative station = grey)
-            if (station.getNetDemand(input.getCurrentHour()) >= 0) {
+            if (station.getNetDemand(input.getCurrentMinute()) >= 0) {
                 node.addAttribute("ui.style", "fill-color: black;");
             } else {
                 node.addAttribute("ui.style", "fill-color: grey;");

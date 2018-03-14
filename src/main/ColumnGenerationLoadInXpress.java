@@ -36,6 +36,9 @@ public class ColumnGenerationLoadInXpress {
         GraphViewer graphViewer = new GraphViewer();
         graphViewer.displayInitiatedRoutes(input, true);
 
+        //Write time dependent input
+        WriteXpressFiles.printTimeDependentInput(input);
+
 
         //Print initiated routes
         int counter = 1;
@@ -53,39 +56,6 @@ public class ColumnGenerationLoadInXpress {
             }
         }
 
-
-        //Print route to file (to be read by Xpress)
-        ArrayList<ArrayList<Integer>> intRepList = new ArrayList<>();
-
-        String filename = "intRep.txt";
-        PrintWriter writer = new PrintWriter(filename, "UTF-8");
-
-        for (Vehicle vehicle : input.getVehicles().values()) {
-            for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
-                for (int stationVisit = 0; stationVisit < vehicle.getInitializedRoutes().get(route).size(); stationVisit++) {
-                    ArrayList<Integer> oneLine = new ArrayList<>();
-                    //From station
-                    oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit).getStation().getId());
-
-                    //To station (or artificial station)
-                    if (stationVisit == vehicle.getInitializedRoutes().get(route).size()-1) {
-                        oneLine.add(0);
-                    } else {
-                        oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit+1).getStation().getId());
-                    }
-
-                    //Vehicle
-                    oneLine.add(vehicle.getId());
-
-                    //Route
-                    oneLine.add(route+1);
-
-                    //Add to total list
-                    writer.println("( " + oneLine.get(0) + " " + oneLine.get(1) + " " + oneLine.get(2) + " " + oneLine.get(3) + " ) 1");
-                }
-            }
-        }
-        writer.close();
     }
 
 

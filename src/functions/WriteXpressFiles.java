@@ -3,54 +3,63 @@ package functions;
 import classes.Input;
 import classes.Station;
 import classes.Vehicle;
-import functions.TimeConverter;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class WriteXpressFiles {
 
-    /*public static void printTimeDependentInput (Input input) throws FileNotFoundException, UnsupportedEncodingException {
-        String filename = timeDependentInputFile;
+    public static void printTimeDependentInput (Input input) throws FileNotFoundException, UnsupportedEncodingException {
+        String filename = input.getTimedependentInoutFile();
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
         //weightViolation
         writer.print("weightViolation : ");
-        writer.println(weightVoilation);
+        writer.println(input.getWeightViolation());
 
         //weightDeviation
         writer.print("weightDeviation : ");
-        writer.println(weightDeviation);
+        writer.println(input.getWeightDeviation());
 
         //weightReward
         writer.print("weightReward : ");
-        writer.println(weightReward);
+        writer.println(input.getWeightReward());
 
         //weightDeviation
         writer.print("weightDeviationReward : ");
-        writer.println(weightDeviationReward);
+        writer.println(input.getWeightDeviationReward());
 
         //weightReward
         writer.print("weightDrivingTimePenalty : ");
-        writer.println(weightDrivingTimePenalty);
+        writer.println(input.getWeightDrivingTimePenalty());
         writer.println();
 
         //lengthOfPlanningHorizon
         writer.print("lengthOfPlanningHorizon : ");
-        writer.println(lengthOfPlanningHorizon);
+        writer.println(input.getTimeHorizon());
 
-        //MmxVisit
+        //MaxVisit
         writer.print("maxVisits : ");
-        writer.println(maxVisits);
+        writer.println(input.getMaxVisit());
+        writer.println();
+
+        //maxRoute
+        writer.print("maxRoute : ");
+        int maxRoute = 0;
+        for(Vehicle vehicle : input.getVehicles().values()) {
+            if (vehicle.getInitializedRoutes().size() > maxRoute) {
+                maxRoute = vehicle.getInitializedRoutes().size();
+            }
+        }
+        writer.println(maxRoute);
         writer.println();
 
         //vehicleInitialStation
         writer.println("vehicleInitialStation : [");
-        for (Vehicle vehicle : vehicles.values()) {
+        for (Vehicle vehicle : input.getVehicles().values()) {
             writer.println(vehicle.getNextStation());
         }
         writer.println("]");
@@ -58,7 +67,7 @@ public class WriteXpressFiles {
         //vehicleRemainingTimeToInitialStation
         writer.println();
         writer.println("vehicleRemainingTimeToInitialStation : [");
-        for (Vehicle vehicle : vehicles.values()) {
+        for (Vehicle vehicle : input.getVehicles().values()) {
             writer.println(vehicle.getTimeToNextStation());
         }
         writer.println("]");
@@ -66,7 +75,7 @@ public class WriteXpressFiles {
         //vehicleInitialLoad
         writer.println();
         writer.println("vehicleInitialLoad : [");
-        for (Vehicle vehicle : vehicles.values()) {
+        for (Vehicle vehicle : input.getVehicles().values()) {
             writer.println(vehicle.getLoad());
         }
         writer.println("]");
@@ -74,7 +83,7 @@ public class WriteXpressFiles {
         //stationsInitialLoad
         writer.println();
         writer.println("stationsInitialLoad : [");
-        for (Station station : stations.values()) {
+        for (Station station : input.getStations().values()) {
             writer.println(station.getLoad());
         }
         writer.println("0");
@@ -83,8 +92,8 @@ public class WriteXpressFiles {
         //optimalState
         writer.println();
         writer.println("optimalState : [");
-        for (Station station : stations.values()) {
-            writer.println(station.getOptimalState(TimeConverter.convertSecondsToHourRounded(currentTime*60)));
+        for (Station station : input.getStations().values()) {
+            writer.println(station.getOptimalState(TimeConverter.convertSecondsToHourRounded(input.getCurrentMinute()*60)));
         }
         writer.println("0");
         writer.println("]");
@@ -92,9 +101,9 @@ public class WriteXpressFiles {
         //stationDemand - net demand per minute
         writer.println();
         writer.println("stationDemand : [");
-        for (Station station : stations.values()) {
-            double bikeWanted = station.getBikeWantedMedian(TimeConverter.convertSecondsToHourRounded(currentTime*60));
-            double bikeReturned = station.getBikeReturnedMedian(TimeConverter.convertSecondsToHourRounded(currentTime*60));
+        for (Station station : input.getStations().values()) {
+            double bikeWanted = station.getBikeWantedMedian(TimeConverter.convertSecondsToHourRounded(input.getCurrentMinute()*60));
+            double bikeReturned = station.getBikeReturnedMedian(TimeConverter.convertSecondsToHourRounded(input.getCurrentMinute()*60));
             writer.println((bikeReturned-bikeWanted)/60);
         }
         writer.println("0");
@@ -103,9 +112,9 @@ public class WriteXpressFiles {
         //StarvationStations - station with negative net demand
         writer.println();
         writer.println("StarvationStations : [");
-        for (Station station : stations.values()) {
-            double bikeWanted = station.getBikeWantedMedian(TimeConverter.convertSecondsToHourRounded(currentTime*60));
-            double bikeReturned = station.getBikeReturnedMedian(TimeConverter.convertSecondsToHourRounded(currentTime*60));
+        for (Station station : input.getStations().values()) {
+            double bikeWanted = station.getBikeWantedMedian(TimeConverter.convertSecondsToHourRounded(input.getCurrentMinute()*60));
+            double bikeReturned = station.getBikeReturnedMedian(TimeConverter.convertSecondsToHourRounded(input.getCurrentMinute()*60));
             if (bikeReturned-bikeWanted <= 0 ) {
                 writer.println(station.getId());
             }
@@ -115,44 +124,53 @@ public class WriteXpressFiles {
         //CongestionStations - station with positive net demand
         writer.println();
         writer.println("CongestionStations : [");
-        for (Station station : stations.values()) {
-            double bikeWanted = station.getBikeWantedMedian(TimeConverter.convertSecondsToHourRounded(currentTime*60));
-            double bikeReturned = station.getBikeReturnedMedian(TimeConverter.convertSecondsToHourRounded(currentTime*60));
+        for (Station station : input.getStations().values()) {
+            double bikeWanted = station.getBikeWantedMedian(TimeConverter.convertSecondsToHourRounded(input.getCurrentMinute()*60));
+            double bikeReturned = station.getBikeReturnedMedian(TimeConverter.convertSecondsToHourRounded(input.getCurrentMinute()*60));
             if (bikeReturned-bikeWanted >= 0 ) {
                 writer.println(station.getId());
             }
         }
-
         writer.println("]");
+        writer.println("intRep : [");
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
+                for (int stationVisit = 0; stationVisit < vehicle.getInitializedRoutes().get(route).size(); stationVisit++) {
+                    ArrayList<Integer> oneLine = new ArrayList<>();
+                    //From station
+                    oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit).getStation().getId());
 
-        /*
-        //drivingTime
-        writer.println();
-        writer.println("drivingTime : [");
-        for (Station origin : stations.values()) {
-            for (Station destination : stations.values()) {
-                if (origin.getId() == destination.getId()) {
-                    writer.print("0 ");
-                } else {
-                    writer.print(origin.getDrivingTimeToStation(destination.getId()) + "  ");
+                    //To station (or artificial station)
+                    if (stationVisit == vehicle.getInitializedRoutes().get(route).size()-1) {
+                        oneLine.add(0);
+                    } else {
+                        oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit+1).getStation().getId());
+                    }
+
+                    //Vehicle
+                    oneLine.add(vehicle.getId());
+
+                    //Route
+                    oneLine.add(route+1);
+
+                    //Add to total list
+                    writer.println("( " + oneLine.get(0) + " " + oneLine.get(1) + " " + oneLine.get(2) + " " + oneLine.get(3) + " ) 1");
                 }
             }
-            writer.println("0");
         }
-        for (Station station:stations.values()) {
-            writer.print("0 ");
-        }
-        writer.println("0");
-        writer.println("]");
 
+        //Interior representation routes
+        writer.println();
 
         writer.close();
-    }*/
+    }
+
+
 
 
     public static void printFixedInput (Input input)
             throws FileNotFoundException, UnsupportedEncodingException {
-        String filename = "fixedInput.txt";
+        String filename = input.getFixedInputFile();
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
         writer.println("artificialStation: 0");
