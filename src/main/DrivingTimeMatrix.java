@@ -1,4 +1,4 @@
-/*package main;
+package main;
 
 import classes.Input;
 import classes.Station;
@@ -65,33 +65,40 @@ public class DrivingTimeMatrix {
             for (Station destination: stations) {
                 if (origin.getId() != destination.getId()) {
                     if (numberOfQueries10sek < 99) {
-                        int drivingTimeSek = getDrivingTimeBetweenCoordinates(origin, destination);
-                        numberOfQueries10sek++;
-                        double drivingTimeMin = ((double) drivingTimeSek)/60;
-                        row.createCell(cellNumber).setCellValue(drivingTimeMin);
-                        cellNumber++;
-                        } else { //Vent i 10 sek
-                            try {
-                                System.out.println("Execution sleeps for 10 seconds");
-                                Thread.currentThread().sleep(10*1000);
-                            }
-                            catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        try {
+                            System.out.println("Execution sleeps for 10 seconds");
+                            Thread.currentThread().sleep(10*1000);
                             numberOfQueries10sek = 0;
+
                         }
+                        catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    int drivingTimeSek = getDrivingTimeBetweenCoordinates(origin, destination);
+                    numberOfQueries10sek++;
+                    double drivingTimeMin = ((double) drivingTimeSek)/60;
+                    row.createCell(cellNumber).setCellValue(drivingTimeMin);
+                    cellNumber++;
+
                 } else {
                     row.createCell(cellNumber).setCellValue(0);
                     cellNumber++;
                 }
-                }
             }
             rowNumber++;
+        }
 
         FileOutputStream fileOut = new FileOutputStream("DrivingTimeMatrix.xlsx");
         workbook.write(fileOut);
         fileOut.close();
     }
+
+
+
+
+
 
 
     private static int getDrivingTimeBetweenCoordinates(Station origin, Station destination) throws IOException, JSONException, org.json.JSONException {
@@ -135,4 +142,4 @@ public class DrivingTimeMatrix {
     }
 
 
-}*/
+}
