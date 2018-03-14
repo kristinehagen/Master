@@ -27,9 +27,9 @@ public class CreateTestInstance {
         for (Station station: allStations) {
             if (station.getNetDemand(startHour) >= 15) { //Legger til stasjon i highCongestion
                 highCongestion.add(station);
-            } else if(station.getNetDemand(startHour) > 3 && station.getNetDemand(startHour) < 15){ //Legger til stasjon i low congestion
+            } else if(station.getNetDemand(startHour) > 0 && station.getNetDemand(startHour) < 15){ //Legger til stasjon i low congestion
                 lowCongestion.add(station);
-            } else if(station.getNetDemand(startHour) > -15 && station.getNetDemand(startHour) < -3) { //Legger til stasjon i highStarvation
+            } else if(station.getNetDemand(startHour) > -15 && station.getNetDemand(startHour) < 0) { //Legger til stasjon i highStarvation
                 lowStarvation.add(station);
             } else if(station.getNetDemand(startHour) <= -15) { //Legger til stasjon i lowStarvation
                 highStarvation.add(station);

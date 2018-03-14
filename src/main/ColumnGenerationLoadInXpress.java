@@ -1,6 +1,7 @@
 package main;
 
 import classes.*;
+import functions.WriteXpressFiles;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,8 +18,8 @@ public class ColumnGenerationLoadInXpress {
 
     //Constructor
     public  ColumnGenerationLoadInXpress(Input input) throws FileNotFoundException, UnsupportedEncodingException {
+        WriteXpressFiles.printFixedInput(input);
         init(input);
-        run(input);
     }
 
 
@@ -87,10 +88,7 @@ public class ColumnGenerationLoadInXpress {
         writer.close();
     }
 
-    private static void run(Input input) {
 
-
-    }
 
 
 

@@ -24,7 +24,7 @@ public class Vehicle {
     }
 
     //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
-    public void createCluster(Input input){
+    private void createCluster(Input input){
         HashMap<Integer, Station> stations = input.getStations();
         ArrayList<Station> stationsList = new ArrayList<>();
         for (Station station : stations.values()) {
@@ -251,7 +251,7 @@ public class Vehicle {
                 double absoluteLoadAtLastStation = Math.abs(routeUnderConstruction.get(i-1).getLoadingQuantity());
                 double drivingTimeFromLastStation = routeUnderConstruction.get(i-1).getStation().getDrivingTimeToStation(routeUnderConstruction.get(i).getStation().getId());
 
-                routeUnderConstruction.get(i).setVisitTime(visitTimeLastStation+absoluteLoadAtLastStation*input.getHandlingTime()+input.getParkingTime()+ drivingTimeFromLastStation);
+                routeUnderConstruction.get(i).setVisitTime(visitTimeLastStation+absoluteLoadAtLastStation*input.getVehicleHandlingTime()+input.getVehicleParkingTime()+ drivingTimeFromLastStation);
 
             }
 
@@ -284,7 +284,7 @@ public class Vehicle {
 
         //Return true if more stations should be added to the route.
 
-        return (routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime() < timeHorizon);
+        return (routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime() < timeHorizon+5);
 
     }
 

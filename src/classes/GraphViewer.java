@@ -37,8 +37,8 @@ public class GraphViewer {
         //STATIONS
         for (Station station : input.getStations().values()) {
             Node node = graph.addNode("Station" + station.getId());
-            node.addAttribute("x", station.getLatitude());
-            node.addAttribute("y", station.getLongitude());
+            node.addAttribute("y", station.getLatitude());
+            node.addAttribute("x", station.getLongitude());
             node.addAttribute("layout.frozen");
             node.addAttribute("ui.label", station.getId());
 

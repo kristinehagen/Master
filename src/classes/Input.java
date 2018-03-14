@@ -27,6 +27,8 @@ public class Input {
     private double weightDrivingTime = -0.1;
     private double weightOptimalState = 0.25;
 
+    //Xpress
+
 
 
 
@@ -41,8 +43,8 @@ public class Input {
 
 
     //------------Constants----------------
-    private double handlingTime = 0.25;
-    private double parkingTime = 2;
+    private double vehicleHandlingTime = 0.25;
+    private double vehicleParkingTime = 2;
     private String demandFile = "demand.txt";
     private String initialStationFile = "stationInitial.txt";
     private String vehicleInitialFile = "vehicleInitial.txt";
@@ -200,22 +202,6 @@ public class Input {
         this.timeHorizon = timeHorizon;
     }
 
-    public double getHandlingTime() {
-        return handlingTime;
-    }
-
-    public void setHandlingTime(double handlingTime) {
-        this.handlingTime = handlingTime;
-    }
-
-    public double getParkingTime() {
-        return parkingTime;
-    }
-
-    public void setParkingTime(double parkingTime) {
-        this.parkingTime = parkingTime;
-    }
-
     public ArrayList<Station> getStationListWithDemand() {
         return stationListWithDemand;
     }
@@ -230,5 +216,21 @@ public class Input {
 
     public void setSolutionMethod(SolutionMethod solutionMethod) {
         this.solutionMethod = solutionMethod;
+    }
+
+    public double getVehicleHandlingTime() {
+        return vehicleHandlingTime;
+    }
+
+    public void setVehicleHandlingTime(double vehicleHandlingTime) {
+        this.vehicleHandlingTime = vehicleHandlingTime;
+    }
+
+    public double getVehicleParkingTime() {
+        return vehicleParkingTime;
+    }
+
+    public void setVehicleParkingTime(double vehicleParkingTime) {
+        this.vehicleParkingTime = vehicleParkingTime;
     }
 }
