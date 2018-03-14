@@ -10,38 +10,46 @@ import java.util.HashMap;
 public class Input {
 
     private int currentHour = 8;
-    private int maxNumberOfGenerations = 400;
-    private int sizeOfPopulation = 20;
-    private int maxVisitsForEachVehicle = 3;
-    private int minVisitsForEachVehicle = 2;
-    private double timeHorizon = 15;
-
-    private double handlingTime = 0.25;
-    private double parkingTime = 2;
-
-    //Score
-    private double weightTimeToViolation = 0.25;
-    private double weightViolationRate = 0.25;
-    private double weightDrivingTime = 0.25;
-    private double weightOptimalState = 0.25;
-
-    //Brancing
-    private int nrStationBranching = 3;                 //Create n new routes for each branching
-    private double maxTimeForOneBranch = 40;            //minutes
+    private double timeHorizon = 20;
+    private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInXpress;
 
 
-    //Vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
-    private int minLoad = 8;
+    //--------INITIALIZATION--------------
+    private int nrStationBranching = 1;             //Create n new routes IN each branching
+    private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 
+
+    //----------COLUMN GENERATION-----------
+    //Score
+    private double weightTimeToViolation = -0.2;
+    private double weightViolationRate = 0.25;
+    private double weightDrivingTime = -0.1;
+    private double weightOptimalState = 0.25;
+
+
+
+
+    //--------GENETIC ALGORITHM------------
+    private int maxNumberOfGenerations = 400;
+    private int sizeOfPopulation = 20;
     private int tournamentParticipants = 2;
     private double crossoverProbability = 0.8;
     private double intraMutationProbability = 1;
 
-    private String filename = "filename.txt";
+
+
+
+    //------------Constants----------------
+    private double handlingTime = 0.25;
+    private double parkingTime = 2;
     private String demandFile = "demand.txt";
     private String initialStationFile = "stationInitial.txt";
     private String vehicleInitialFile = "vehicleInitial.txt";
+
+
+
+
 
     private ArrayList<Integer> stationIdList;
     private HashMap<Integer, Station> stations;
@@ -64,14 +72,6 @@ public class Input {
 
     //Getters and setters
 
-    public int getMinVisitsForEachVehicle() {
-        return minVisitsForEachVehicle;
-    }
-
-    public void setMinVisitsForEachVehicle(int minVisitsForEachVehicle) {
-        this.minVisitsForEachVehicle = minVisitsForEachVehicle;
-    }
-
     public double getIntraMutationProbability() {
         return intraMutationProbability;
     }
@@ -86,10 +86,6 @@ public class Input {
 
     public int getSizeOfPopulation() {
         return sizeOfPopulation;
-    }
-
-    public int getMaxVisitsForEachVehicle() {
-        return maxVisitsForEachVehicle;
     }
 
     public int getNumberOfVehicles() {
@@ -131,15 +127,6 @@ public class Input {
     public void setMaxNumberOfGenerations(int maxNumberOfGenerations) {
         this.maxNumberOfGenerations = maxNumberOfGenerations;
     }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
 
     public int getNrStationBranching() {
         return nrStationBranching;
@@ -197,14 +184,6 @@ public class Input {
         this.minLoad = minLoad;
     }
 
-    public double getMaxTimeForOneBranch() {
-        return maxTimeForOneBranch;
-    }
-
-    public void setMaxTimeForOneBranch(double maxTimeForOneBranch) {
-        this.maxTimeForOneBranch = maxTimeForOneBranch;
-    }
-
     public int getCurrentHour() {
         return currentHour;
     }
@@ -243,5 +222,13 @@ public class Input {
 
     public void setStationListWithDemand(ArrayList<Station> stationListWithDemand) {
         this.stationListWithDemand = stationListWithDemand;
+    }
+
+    public SolutionMethod getSolutionMethod() {
+        return solutionMethod;
+    }
+
+    public void setSolutionMethod(SolutionMethod solutionMethod) {
+        this.solutionMethod = solutionMethod;
     }
 }
