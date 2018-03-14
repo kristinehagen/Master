@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class VehicleTest {
 
     @org.junit.jupiter.api.Test
@@ -25,7 +23,7 @@ class VehicleTest {
         //CalculateTimeToViolationIfNoVisit
 
         Input input = new Input();
-        input.setCurrentHour(8);
+        input.setCurrentMinute(8);
         ArrayList<StationVisit> routeUnderConstruction = new ArrayList<>();
         StationVisit stationVisit = new StationVisit();
 

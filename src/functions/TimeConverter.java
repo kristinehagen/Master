@@ -12,6 +12,10 @@ public class TimeConverter {
         return floor(seconds/60/60);
     }
 
+    public static double convertMinutesToHourRounded(double seconds){
+        return floor(seconds/60);
+    }
+
     public static double convertSecondsToHour(double seconds){
         return seconds/60/60;
     }

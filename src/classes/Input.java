@@ -9,7 +9,8 @@ import java.util.HashMap;
 
 public class Input {
 
-    private int currentHour = 8;
+    private double currentMinute = 8*60;              //Minutes
+    private double simulationStopTime = 10 *60;
     private double timeHorizon = 20;
     private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInXpress;
 
@@ -20,6 +21,8 @@ public class Input {
     private int maxLoad = 15;
 
 
+
+
     //----------COLUMN GENERATION-----------
     //Score
     private double weightTimeToViolation = -0.2;
@@ -27,7 +30,17 @@ public class Input {
     private double weightDrivingTime = -0.1;
     private double weightOptimalState = 0.25;
 
+    //Xpress objective function
+    private double weightViolation = 0.6;
+    private double weightDeviation = 0.3;
+    private double weightReward = 0.1;
+    private double weightDeviationReward  = 0.6;
+    private double weightDrivingTimePenalty = 0.4;
+
     //Xpress
+    private String timedependentInoutFile = "timeDependentInputFile.txt";
+    private String fixedInputFile = "fixedInputFile.txt";
+    private int maxVisit = 2;
 
 
 
@@ -186,12 +199,12 @@ public class Input {
         this.minLoad = minLoad;
     }
 
-    public int getCurrentHour() {
-        return currentHour;
+    public double getCurrentMinute() {
+        return currentMinute;
     }
 
-    public void setCurrentHour(int currentHour) {
-        this.currentHour = currentHour;
+    public void setCurrentMinute(double currentMinute) {
+        this.currentMinute = currentMinute;
     }
 
     public double getTimeHorizon() {
@@ -232,5 +245,69 @@ public class Input {
 
     public void setVehicleParkingTime(double vehicleParkingTime) {
         this.vehicleParkingTime = vehicleParkingTime;
+    }
+
+    public String getTimedependentInoutFile() {
+        return timedependentInoutFile;
+    }
+
+    public void setTimedependentInoutFile(String timedependentInoutFile) {
+        this.timedependentInoutFile = timedependentInoutFile;
+    }
+
+    public String getFixedInputFile() {
+        return fixedInputFile;
+    }
+
+    public void setFixedInputFile(String fixedInputFile) {
+        this.fixedInputFile = fixedInputFile;
+    }
+
+    public double getWeightViolation() {
+        return weightViolation;
+    }
+
+    public void setWeightViolation(double weightViolation) {
+        this.weightViolation = weightViolation;
+    }
+
+    public double getWeightDeviation() {
+        return weightDeviation;
+    }
+
+    public void setWeightDeviation(double weightDeviation) {
+        this.weightDeviation = weightDeviation;
+    }
+
+    public double getWeightReward() {
+        return weightReward;
+    }
+
+    public void setWeightReward(double weightReward) {
+        this.weightReward = weightReward;
+    }
+
+    public double getWeightDeviationReward() {
+        return weightDeviationReward;
+    }
+
+    public void setWeightDeviationReward(double weightDeviationReward) {
+        this.weightDeviationReward = weightDeviationReward;
+    }
+
+    public double getWeightDrivingTimePenalty() {
+        return weightDrivingTimePenalty;
+    }
+
+    public void setWeightDrivingTimePenalty(double weightDrivingTimePenalty) {
+        this.weightDrivingTimePenalty = weightDrivingTimePenalty;
+    }
+
+    public int getMaxVisit() {
+        return maxVisit;
+    }
+
+    public void setMaxVisit(int maxVisit) {
+        this.maxVisit = maxVisit;
     }
 }
