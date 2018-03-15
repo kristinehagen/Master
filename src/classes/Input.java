@@ -99,6 +99,11 @@ public class Input {
         ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
     }
 
+
+    public Input(double hour) throws FileNotFoundException {
+        this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
+    }
+
     private String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
         switch (nrOfVehicles) {
             case 1:
@@ -129,9 +134,7 @@ public class Input {
         }
     }
 
-    public Input(double hour) throws FileNotFoundException {
-        this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
-    }
+
 
     //Getters and setters
 
