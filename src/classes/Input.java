@@ -11,9 +11,9 @@ public class Input {
 
     private double currentMinute = 8*60;              //Minutes
     private double simulationStopTime = 10 *60;
-    private double timeHorizon = 18;
+    private double timeHorizon = 20;
     private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInXpress;
-    private int testInstance = 1;
+    private int testInstance = 3;
     private int nrOfVehicles = 2;
 
 
@@ -44,9 +44,10 @@ public class Input {
 
     //------------Xpress--------------------
     private String xpressFileColumnGenerationLoadInXpress = "columnGeneration";
+    private String xpressFileOptimalLevel = "optimalLevel";
     private String timedependentInoutFile = "timeDependentInput.txt";
     private String fixedInputFile = "fixedInput.txt";
-    private int maxVisit = 1;
+    private int maxVisit = 2;
 
 
 
@@ -63,7 +64,7 @@ public class Input {
 
 
     //--------OPTIMAL LEVEL IN XPRESS-----------
-    private String xpressFileOptimalLevel = "optimalLevel";
+
 
 
 
@@ -129,6 +130,8 @@ public class Input {
                 return "stationInitialInstance3.txt";
             case 4:
                 return "stationInitialInstance4.txt";
+            case 5:
+                return "stationInitialInstance5.txt";
             default:
                 throw new IllegalArgumentException("Ugyldig testinstanse");
         }
