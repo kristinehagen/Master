@@ -123,7 +123,7 @@ public class Vehicle {
         ArrayList<Station> positiveStations = filterStations(possibleStationsForNextStationVisit, true, input.getCurrentMinute());
         ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
 
-        boolean firstStationHasPositiveDemand = firstRouteUnderConstruction.get(0).getStation().getNetDemand(input.getCurrentMinute()) > 0;
+        boolean firstStationHasPositiveDemand = firstRouteUnderConstruction.get(0).getStation().getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())) > 0;
 
         if (load <= input.getMinLoad() && !firstStationHasPositiveDemand) {
 
@@ -155,8 +155,9 @@ public class Vehicle {
 
         int numberOfStationsInRoute = routeUnderConstruction.size();
 
-        boolean lastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-1).getStation().getNetDemand(input.getCurrentMinute()) >= 0;
-        boolean secondLastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-2).getStation().getNetDemand(input.getCurrentMinute()) >= 0;
+        double currentHourRounded = TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute());
+        boolean lastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-1).getStation().getNetDemand(currentHourRounded) >= 0;
+        boolean secondLastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-2).getStation().getNetDemand(currentHourRounded) >= 0;
         ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
 
         //Last two stations have positive demand
@@ -294,6 +295,12 @@ public class Vehicle {
 
         if (possibleStationsForNextStationVisit.size() > 0) {
 
+            Station lastStationVisited = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation();
+            boolean lastStationVisitedIsInPossibleStationsForNextStationVisit = possibleStationsForNextStationVisit.contains(lastStationVisited);
+            if (lastStationVisitedIsInPossibleStationsForNextStationVisit) {
+                possibleStationsForNextStationVisit.remove(lastStationVisited);
+            }
+
             //This hashmap saves station ID as key, and its respective score as value.
             HashMap<Integer, Double> stationScores = calculateScore(possibleStationsForNextStationVisit, routeUnderConstruction, input);
 
@@ -338,8 +345,8 @@ public class Vehicle {
             //TESTED
             double timeToViolation = calculateTimeToViolationIfNoVisit(routeUnderConstruction, station, input);
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
-            double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
-            double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());
+            double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;                            //Each minute
+            double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());         //In minutes
 
             //Calculate total score
             double score = input.getWeightTimeToViolation()*timeToViolation
@@ -353,12 +360,12 @@ public class Vehicle {
     }
 
     private double calculateDiffFromOptimalStateIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
-        double diffFromOptimalState;
         double loadAtTimeHorizon;
         double lastVisitTime = 0.0;
         double load = stationToCheck.getLoad();
         double currentMinute = input.getCurrentMinute();
         double timeHorizon = input.getTimeHorizon();
+        double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
 
         //Check if station has been visited before
         for (StationVisit stationVisit: routeUnderConstruction) {
@@ -371,7 +378,7 @@ public class Vehicle {
             }
         }
 
-        loadAtTimeHorizon = stationToCheck.getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute))/60*(timeHorizon-lastVisitTime) + load;
+        loadAtTimeHorizon = stationToCheck.getNetDemand(currentHourRounded)/60*(timeHorizon-lastVisitTime) + load;
 
         if (loadAtTimeHorizon > stationToCheck.getCapacity()){
             loadAtTimeHorizon = stationToCheck.getCapacity();
@@ -379,7 +386,7 @@ public class Vehicle {
             loadAtTimeHorizon = 0;
         }
 
-        diffFromOptimalState = java.lang.Math.abs(stationToCheck.getOptimalState(TimeConverter.convertMinutesToHourRounded(currentMinute))-loadAtTimeHorizon);
+        double diffFromOptimalState = java.lang.Math.abs(stationToCheck.getOptimalState(TimeConverter.convertMinutesToHourRounded(currentMinute))-loadAtTimeHorizon);
 
         return diffFromOptimalState;
     }

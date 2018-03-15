@@ -114,7 +114,7 @@ public class CreateTestInstance {
     }
 
     private static void writeTextFile() throws IOException {
-        PrintWriter writer = new PrintWriter("stationInitial.txt", "UTF-8");
+        PrintWriter writer = new PrintWriter("stationInitialInstance1.txt", "UTF-8");
         for (Station station: testInstance.keySet()) {
             writer.write(station.getId() + ", " + testInstance.get(station));
             writer.println();

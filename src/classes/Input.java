@@ -11,12 +11,14 @@ public class Input {
 
     private double currentMinute = 8*60;              //Minutes
     private double simulationStopTime = 10 *60;
-    private double timeHorizon = 20;
+    private double timeHorizon = 18;
     private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInXpress;
+    private int testInstance = 1;
+    private int nrOfVehicles = 2;
 
 
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 1;             //Create n new routes IN each branching
+    private int nrStationBranching = 6;             //Create n new routes IN each branching
     private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 
@@ -26,7 +28,7 @@ public class Input {
     //----------COLUMN GENERATION-----------
     //Score
     private double weightTimeToViolation = -0.2;
-    private double weightViolationRate = 0.25;
+    private double weightViolationRate = 8;
     private double weightDrivingTime = -0.1;
     private double weightOptimalState = 0.25;
 
@@ -37,10 +39,14 @@ public class Input {
     private double weightDeviationReward  = 0.6;
     private double weightDrivingTimePenalty = 0.4;
 
-    //Xpress
-    private String timedependentInoutFile = "timeDependentInputFile.txt";
-    private String fixedInputFile = "fixedInputFile.txt";
-    private int maxVisit = 2;
+
+
+
+    //------------Xpress--------------------
+    private String xpressFileColumnGenerationLoadInXpress = "columnGeneration";
+    private String timedependentInoutFile = "timeDependentInput.txt";
+    private String fixedInputFile = "fixedInput.txt";
+    private int maxVisit = 1;
 
 
 
@@ -55,12 +61,19 @@ public class Input {
 
 
 
+
+    //--------OPTIMAL LEVEL IN XPRESS-----------
+    private String xpressFileOptimalLevel = "optimalLevel";
+
+
+
+
+
     //------------Constants----------------
     private double vehicleHandlingTime = 0.25;
     private double vehicleParkingTime = 2;
     private String demandFile = "demand.txt";
-    private String initialStationFile = "stationInitial.txt";
-    private String vehicleInitialFile = "vehicleInitial.txt";
+
 
 
 
@@ -74,11 +87,46 @@ public class Input {
 
     //Constructor
     public Input() throws IOException {
+
+        //Station file
+        String initialStationFile = getStationFile(this.testInstance);
+        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
+
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
         ReadCoordinates.lookUpCoordinates(stations, stationIdList);
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
         ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
+    }
+
+    private String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
+        switch (nrOfVehicles) {
+            case 1:
+                return "vehicleInitial1.txt";
+            case 2:
+                return "vehicleInitial2.txt";
+            case 3:
+                return "vehicleInitial3.txt";
+            case 4:
+                return "vehicleInitial4.txt";
+            default:
+                throw new IllegalArgumentException("Ugyldig antall vehicles");
+        }
+    }
+
+    private String getStationFile(int testInstance) throws IllegalArgumentException {
+        switch (testInstance) {
+            case 1:
+                return "stationInitialInstance1.txt";
+            case 2:
+                return "stationInitialInstance2.txt";
+            case 3:
+                return "stationInitialInstance3.txt";
+            case 4:
+                return "stationInitialInstance4.txt";
+            default:
+                throw new IllegalArgumentException("Ugyldig testinstanse");
+        }
     }
 
     public Input(double hour) throws FileNotFoundException {
@@ -121,10 +169,6 @@ public class Input {
 
     public String getDemandFile() {
         return demandFile;
-    }
-
-    public String getInitialStationFile() {
-        return initialStationFile;
     }
 
     public HashMap<Integer, Station> getStations() {
@@ -309,5 +353,21 @@ public class Input {
 
     public void setMaxVisit(int maxVisit) {
         this.maxVisit = maxVisit;
+    }
+
+    public String getXpressFileColumnGenerationLoadInXpress() {
+        return xpressFileColumnGenerationLoadInXpress;
+    }
+
+    public void setXpressFileColumnGenerationLoadInXpress(String xpressFileColumnGenerationLoadInXpress) {
+        this.xpressFileColumnGenerationLoadInXpress = xpressFileColumnGenerationLoadInXpress;
+    }
+
+    public String getXpressFileOptimalLevel() {
+        return xpressFileOptimalLevel;
+    }
+
+    public void setXpressFileOptimalLevel(String xpressFileOptimalLevel) {
+        this.xpressFileOptimalLevel = xpressFileOptimalLevel;
     }
 }

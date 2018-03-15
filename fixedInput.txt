@@ -1,4 +1,5 @@
 artificialStation: 0
+visitInterval: 8
 
 Stations : [
 35

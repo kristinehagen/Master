@@ -1,8 +1,9 @@
-package functions;
+package xpress;
 
 import classes.Input;
 import classes.Station;
 import classes.Vehicle;
+import functions.TimeConverter;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 public class WriteXpressFiles {
 
-    public static void printTimeDependentInput (Input input) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void printTimeDependentInput (Input input, boolean includeInteriorRepresentation) throws FileNotFoundException, UnsupportedEncodingException {
         String filename = input.getTimedependentInoutFile();
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
@@ -132,35 +133,41 @@ public class WriteXpressFiles {
             }
         }
         writer.println("]");
-        writer.println("intRep : [");
-        for (Vehicle vehicle : input.getVehicles().values()) {
-            for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
-                for (int stationVisit = 0; stationVisit < vehicle.getInitializedRoutes().get(route).size(); stationVisit++) {
-                    ArrayList<Integer> oneLine = new ArrayList<>();
-                    //From station
-                    oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit).getStation().getId());
 
-                    //To station (or artificial station)
-                    if (stationVisit == vehicle.getInitializedRoutes().get(route).size()-1) {
-                        oneLine.add(0);
-                    } else {
-                        oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit+1).getStation().getId());
-                    }
-
-                    //Vehicle
-                    oneLine.add(vehicle.getId());
-
-                    //Route
-                    oneLine.add(route+1);
-
-                    //Add to total list
-                    writer.println("( " + oneLine.get(0) + " " + oneLine.get(1) + " " + oneLine.get(2) + " " + oneLine.get(3) + " ) 1");
-                }
-            }
-        }
 
         //Interior representation routes
-        writer.println();
+
+        if (includeInteriorRepresentation) {
+            writer.println();
+            writer.println("intRep : [");
+            for (Vehicle vehicle : input.getVehicles().values()) {
+                for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
+                    for (int stationVisit = 0; stationVisit < vehicle.getInitializedRoutes().get(route).size(); stationVisit++) {
+                        ArrayList<Integer> oneLine = new ArrayList<>();
+                        //From station
+                        oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit).getStation().getId());
+
+                        //To station (or artificial station)
+                        if (stationVisit == vehicle.getInitializedRoutes().get(route).size()-1) {
+                            oneLine.add(0);
+                        } else {
+                            oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit+1).getStation().getId());
+                        }
+
+                        //Vehicle
+                        oneLine.add(vehicle.getId());
+
+                        //Route
+                        oneLine.add(route+1);
+
+                        //Add to total list
+                        writer.println("( " + oneLine.get(0) + " " + oneLine.get(1) + " " + oneLine.get(2) + " " + oneLine.get(3) + " ) 1");
+                    }
+                    writer.println();
+                }
+            }
+            writer.println("]");
+        }
 
         writer.close();
     }
@@ -174,6 +181,7 @@ public class WriteXpressFiles {
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
         writer.println("artificialStation: 0");
+        writer.println("visitInterval: 8");
 
         //Station IDs
         writer.println();

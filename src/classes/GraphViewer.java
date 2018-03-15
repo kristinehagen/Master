@@ -3,6 +3,7 @@ package classes;
 import java.util.ArrayList;
 import java.util.Random;
 
+import functions.TimeConverter;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
@@ -36,7 +37,7 @@ public class GraphViewer {
             node.addAttribute("ui.label", station.getId());
 
             //Color (positive station = black, negative station = grey)
-            if (station.getNetDemand(input.getCurrentMinute()) >= 0) {
+            if (station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())) >= 0) {
                 node.addAttribute("ui.style", "fill-color: black;");
             } else {
                 node.addAttribute("ui.style", "fill-color: grey;");

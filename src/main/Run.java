@@ -1,6 +1,7 @@
 package main;
 
 import classes.*;
+import com.dashoptimization.XPRMCompileException;
 
 import java.io.IOException;
 
@@ -8,13 +9,12 @@ import java.io.IOException;
 public class Run {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, XPRMCompileException {
         Input input = new Input();
         SolutionMethod solutionMethod = input.getSolutionMethod();
 
         switch (solutionMethod) {
             case ColumnGenerationLoadInXpress:
-                //Print fixedInputFile
                 ColumnGenerationLoadInXpress columnGenerationLoadInXpress = new ColumnGenerationLoadInXpress(input);
                 break;
             case ColumnGenerationLoadInHeuristic:
@@ -24,11 +24,11 @@ public class Run {
                 //Run genetic algorithm
                 break;
             case Xpress:
-                //Run Xpress
+                OptimalInXpress optimalInXpress = new OptimalInXpress(input);
                 break;
         }
 
-        System.out.println("algoritm successfully terminated");
+        System.out.println("algorithm successfully terminated");
     }
 
 }

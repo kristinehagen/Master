@@ -1,30 +1,32 @@
 package main;
 
 import classes.*;
-import functions.WriteXpressFiles;
+import com.dashoptimization.XPRMCompileException;
+import xpress.RunXpress;
+import xpress.WriteXpressFiles;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ColumnGenerationLoadInXpress {
 
-    private Population population;
-    private Individual bestGlobalSolution;
-    private HashMap<Integer, Station> stations;
-
     //Constructor
-    public  ColumnGenerationLoadInXpress(Input input) throws FileNotFoundException, UnsupportedEncodingException {
+    public  ColumnGenerationLoadInXpress(Input input) throws IOException, XPRMCompileException {
         WriteXpressFiles.printFixedInput(input);
-        init(input);
+        initiateRoutes(input);
+        WriteXpressFiles.printTimeDependentInput(input, true);
+        //RunXpress.runXpress(input.getXpressFileColumnGenerationLoadInXpress());
     }
 
 
 
-    private static void init(Input input) throws FileNotFoundException, UnsupportedEncodingException {
+
+
+
+    private static void initiateRoutes(Input input) throws FileNotFoundException, UnsupportedEncodingException {
 
         //Initialize routes for each vehicle
         for (Vehicle vehicle: input.getVehicles().values()) {
@@ -33,13 +35,12 @@ public class ColumnGenerationLoadInXpress {
 
         System.out.println("Initial routes created");
 
+        /*
         GraphViewer graphViewer = new GraphViewer();
         graphViewer.displayInitiatedRoutes(input, true);
+        */
 
-        //Write time dependent input
-        WriteXpressFiles.printTimeDependentInput(input);
-
-
+        /*
         //Print initiated routes
         int counter = 1;
         for (Vehicle vehicle: input.getVehicles().values()) {
@@ -55,6 +56,7 @@ public class ColumnGenerationLoadInXpress {
                 System.out.println(", total time: " + route.get(route.size()-1).getVisitTime());
             }
         }
+        */
 
     }
 
