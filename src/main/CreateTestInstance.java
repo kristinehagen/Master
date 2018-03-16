@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.Math.round;
+import static java.lang.StrictMath.floor;
 
 public class CreateTestInstance {
 
@@ -17,8 +18,9 @@ public class CreateTestInstance {
     static ArrayList<Station> lowStarvation = new ArrayList<>();
     static ArrayList<Station> allStations;
     static double startHour = 8.0;
-    static int instanceSize = 30;
+    static int instanceSize = 158;
     static HashMap<Station, Integer> testInstance = new HashMap<>();
+    static String filename = "stationInitialInstance6.txt";
 
     private static void divideStations(Input input) throws FileNotFoundException {
         allStations = input.getStationListWithDemand();
@@ -27,9 +29,9 @@ public class CreateTestInstance {
         for (Station station: allStations) {
             if (station.getNetDemand(startHour) >= 15) { //Legger til stasjon i highCongestion
                 highCongestion.add(station);
-            } else if(station.getNetDemand(startHour) > 3 && station.getNetDemand(startHour) < 15){ //Legger til stasjon i low congestion
+            } else if(station.getNetDemand(startHour) >= 0 && station.getNetDemand(startHour) < 15){ //Legger til stasjon i low congestion
                 lowCongestion.add(station);
-            } else if(station.getNetDemand(startHour) > -15 && station.getNetDemand(startHour) < -3) { //Legger til stasjon i highStarvation
+            } else if(station.getNetDemand(startHour) > -15 && station.getNetDemand(startHour) < 0) { //Legger til stasjon i highStarvation
                 lowStarvation.add(station);
             } else if(station.getNetDemand(startHour) <= -15) { //Legger til stasjon i lowStarvation
                 highStarvation.add(station);
@@ -39,11 +41,14 @@ public class CreateTestInstance {
 
     private  static void pickTestInstance() {
         //60% picks from high, 40% picks from low
-        int picksFromHigh = (int) round(instanceSize * 0.30);
-        int picksFromLow = (int) round(instanceSize * 0.20);
+        int picksFromHigh = (int) floor(instanceSize * 0.30);
+        int picksFromLow = (int) floor(instanceSize * 0.20);
+
+        /*
         if (picksFromHigh*2 + picksFromLow*2 != instanceSize) {
             picksFromHigh = picksFromHigh + (instanceSize - (picksFromHigh+picksFromLow));
         }
+        */
 
         Random randomNumber = new Random();
         //testInstance = new HashMap<>();
@@ -113,8 +118,8 @@ public class CreateTestInstance {
         }
     }
 
-    private static void writeTextFile() throws IOException {
-        PrintWriter writer = new PrintWriter("stationInitial.txt", "UTF-8");
+    private static void writeTextFile(String filename) throws IOException {
+        PrintWriter writer = new PrintWriter(filename, "UTF-8");
         for (Station station: testInstance.keySet()) {
             writer.write(station.getId() + ", " + testInstance.get(station));
             writer.println();
@@ -128,7 +133,7 @@ public class CreateTestInstance {
         Input input = new Input(startHour);
         divideStations(input);
         pickTestInstance();
-        writeTextFile();
+        writeTextFile(filename);
         System.out.println("Test instance successfully created.");
     }
 

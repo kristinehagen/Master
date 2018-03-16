@@ -28,7 +28,7 @@ public class Population {
             ArrayList<ArrayList<Station>> newSolution = new ArrayList<>();
 
             //Create route for each vehicle
-            for (Vehicle vehicle : input.getVehicles().values()){
+            /*for (Vehicle vehicle : input.getVehicles().values()){
                 int numberOfVisitsForVehicle = ThreadLocalRandom.current().nextInt(input.getMinVisitsForEachVehicle(), input.getMaxVisitsForEachVehicle() + 1);
                 ArrayList<Station> possibleStationVisits = new ArrayList<>(vehicle.getClusterStationList());
                 ArrayList<Station> stationVisitsForVehicle = new ArrayList<>();
@@ -54,6 +54,7 @@ public class Population {
                 bestFitness = individual.getFitness();
                 bestPopulationIndividual = individual;
             }
+            */
         }
         return individuals;
     }

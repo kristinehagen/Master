@@ -14,7 +14,7 @@ public class ReadVehicleInput {
 
         HashMap<Integer, Vehicle> vehicles = new HashMap<>();
 
-        //Read vehicleInitial.txt file
+        //Read vehicleInitial2.txt file
         File inputFile = new File(vehicleInitialFile);
         Scanner in = new Scanner(inputFile);
         while (in.hasNextLine()){
