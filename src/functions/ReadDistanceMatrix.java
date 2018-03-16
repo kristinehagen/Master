@@ -24,23 +24,43 @@ public class ReadDistanceMatrix {
         Sheet datatypeSheet = workbook.getSheetAt(0);
         Row headerRow = datatypeSheet.getRow(0);
 
+        /*
         for (Integer origin: stationIDlist){
             for (Row row: datatypeSheet) {
                 Double value = row.getCell(0).getNumericCellValue();
                 int firstCell =  Integer.valueOf(value.intValue());
+                System.out.println(firstCell);
                 if (firstCell == origin){
                     for (Integer destination: stationIDlist){
                         for (Cell cell: row) {
-                        if (headerRow.getCell(cell.getColumnIndex()).getNumericCellValue() == destination) {
-                            stations.get(origin).addDistanceToStationHashmap(destination, cell.getNumericCellValue());
-                            break;
-                        }
+                            if (headerRow.getCell(cell.getColumnIndex()).getNumericCellValue() == destination) {
+                                stations.get(origin).addDistanceToStationHashmap(destination, cell.getNumericCellValue());
+                                break;
+                            }
                         }
                     }
                     break;
                 }
             }
         }
-        }
-    }
+        */
 
+        for (Row row: datatypeSheet) {
+
+            Double valueOrigin = row.getCell(0).getNumericCellValue();
+            int originId =  Integer.valueOf(valueOrigin.intValue());
+            if (stationIDlist.contains(originId)) {
+
+                for (Cell cell: row) {
+                    Double valueDestination = headerRow.getCell(cell.getColumnIndex()).getNumericCellValue();
+                    int destinationId = Integer.valueOf(valueDestination.intValue());
+                    if (stationIDlist.contains(destinationId)) {
+                        stations.get(originId).addDistanceToStationHashmap(destinationId, cell.getNumericCellValue());
+                    }
+                }
+            }
+        }
+
+
+    }
+}
