@@ -188,68 +188,22 @@ public class Vehicle {
         double timeHorizon = input.getTimeHorizon();
         double currentMinute = input.getCurrentMinute();
         double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
+        int vehicleLoad = load;
 
         int numberOfStationVisitsInRoute = routeUnderConstruction.size();
 
         for (int i = 0; i < numberOfStationVisitsInRoute; i++) {
 
-            //Set load
-
-            //If stationLoad is not already determined
-            if (routeUnderConstruction.get(i).getLoadingQuantity() == 0) {
 
 
-                boolean currentStationHasPositiveDemand = (routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded) >= 0);
+            //------Set time for stationVisit---------
 
-                //If current station is not the last station in the route
-                if (i < numberOfStationVisitsInRoute - 1) {
-
-                    boolean nextStationHasPositiveDemand = (routeUnderConstruction.get(i + 1).getStation().getNetDemand(currentHourRounded) >= 0);
-
-                    //If both positive, load -11 + -12
-                    if (currentStationHasPositiveDemand && nextStationHasPositiveDemand) {
-                        routeUnderConstruction.get(i).setLoadingQuantity(-11);
-                        routeUnderConstruction.get(i + 1).setLoadingQuantity(-12);
-                    }
-
-                    //If both negative, load 11 + 12
-                    if (!currentStationHasPositiveDemand && !nextStationHasPositiveDemand) {
-                        routeUnderConstruction.get(i).setLoadingQuantity(11);
-                        routeUnderConstruction.get(i + 1).setLoadingQuantity(12);
-                    }
-
-                    //if next station positive and current station negative, load 23
-                    if (!currentStationHasPositiveDemand & nextStationHasPositiveDemand) {
-                        routeUnderConstruction.get(i).setLoadingQuantity(23);
-                    }
-
-                    //if next station negative and current station positive, load -23
-                    if (currentStationHasPositiveDemand & !nextStationHasPositiveDemand) {
-                        routeUnderConstruction.get(i).setLoadingQuantity(-23);
-                    }
-
-
-                }
-
-                //If current station is last station in route
-                if (currentStationHasPositiveDemand) {
-                    routeUnderConstruction.get(i).setLoadingQuantity(-23);
-                } else {
-                    routeUnderConstruction.get(i).setLoadingQuantity(23);
-                }
-
-            }
-
-
-
-            //Set time for stationVisit
-
-            //set time for first station visit
+                //first station visit
             if (i == 0) {
                 routeUnderConstruction.get(0).setVisitTime(timeToNextStation);
             } else {
 
-                //set time for remaining station visits
+                //remaining station visits
                 double visitTimeLastStation = routeUnderConstruction.get(i-1).getVisitTime();
                 double absoluteLoadAtLastStation = Math.abs(routeUnderConstruction.get(i-1).getLoadingQuantity());
                 double drivingTimeFromLastStation = routeUnderConstruction.get(i-1).getStation().getDrivingTimeToStation(routeUnderConstruction.get(i).getStation().getId());
@@ -259,12 +213,15 @@ public class Vehicle {
             }
 
 
-            //Set updated load at station
+
+
+            //-------Find current load at current station----------
+
 
             double lastVisitTime = 0;
             double stationLoadAfterLastVisit = routeUnderConstruction.get(i).getStation().getLoad();
 
-            //Check if station is already visited
+            //Check if station is already visited in this route
             for (int j = 0; j<i ; j++) {
                 if (routeUnderConstruction.get(j).getStation().getId() == routeUnderConstruction.get(i).getStation().getId()) {
                     lastVisitTime = routeUnderConstruction.get(j).getVisitTime();
@@ -272,18 +229,126 @@ public class Vehicle {
                 }
             }
 
-            double customersArrivingSinceLastVisit = routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded)/60*(routeUnderConstruction.get(i).getVisitTime()-lastVisitTime);
-            double loadAfterVisit = stationLoadAfterLastVisit + customersArrivingSinceLastVisit + routeUnderConstruction.get(i).getLoadingQuantity();
+            double netDemandPerMinute = routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded)/60;
+            double customersArrivingSinceLastVisit = netDemandPerMinute*(routeUnderConstruction.get(i).getVisitTime()-lastVisitTime);
+            double loadRightBeforeVisit = stationLoadAfterLastVisit + customersArrivingSinceLastVisit;
 
-            if (loadAfterVisit > routeUnderConstruction.get(i).getStation().getCapacity()) {
-                loadAfterVisit = routeUnderConstruction.get(i).getStation().getCapacity();
-            } else if (loadAfterVisit < 0 ) {
-                loadAfterVisit = 0;
+            if (loadRightBeforeVisit > routeUnderConstruction.get(i).getStation().getCapacity()) {
+                loadRightBeforeVisit = routeUnderConstruction.get(i).getStation().getCapacity();
+            } else if (loadRightBeforeVisit < 0 ) {
+                loadRightBeforeVisit = 0;
             }
 
-            routeUnderConstruction.get(i).setLoadAfterVisit(loadAfterVisit);
+
+
+
+
+            //---------Set load------------
+            boolean currentStationHasPositiveDemand = (routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded) >= 0);
+            double maxLoad = 23;
+            double actualLoad = 0;
+
+            //If current station is not the last station in the route
+            if (i < numberOfStationVisitsInRoute - 1) {
+
+                boolean nextStationHasPositiveDemand = (routeUnderConstruction.get(i + 1).getStation().getNetDemand(currentHourRounded) >= 0);
+
+                //If both positive, load at this station maximum -capacity/2
+                if (currentStationHasPositiveDemand && nextStationHasPositiveDemand) {
+                    maxLoad = 12;
+                    if (loadRightBeforeVisit < maxLoad) {
+                        maxLoad = loadRightBeforeVisit;
+                    }
+                    double freeSpacesInVehicle = capacity-vehicleLoad;
+                    if (freeSpacesInVehicle < maxLoad) {
+                        maxLoad = freeSpacesInVehicle;
+                    }
+                    actualLoad = -maxLoad;
+                    routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
+                    vehicleLoad += maxLoad;
+                }
+
+                //If both negative, load at this station maximum capacity/2
+                if (!currentStationHasPositiveDemand && !nextStationHasPositiveDemand) {
+                    maxLoad = 12;
+                    double freeLocksAtStation = routeUnderConstruction.get(i).getStation().getCapacity()-routeUnderConstruction.get(i).getStation().getLoad();
+                    if (freeLocksAtStation < maxLoad) {
+                        maxLoad = freeLocksAtStation;
+                    }
+                    if (vehicleLoad < maxLoad) {
+                        maxLoad = vehicleLoad;
+                    }
+                    actualLoad = maxLoad;
+                    routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
+                    vehicleLoad -= maxLoad;
+                }
+
+                //if next station positive and current station negative, load maximum capacity
+                if (!currentStationHasPositiveDemand & nextStationHasPositiveDemand) {
+                    double freeLocksAtStation = routeUnderConstruction.get(i).getStation().getCapacity()-routeUnderConstruction.get(i).getStation().getLoad();
+                    if (freeLocksAtStation < maxLoad) {
+                        maxLoad = freeLocksAtStation;
+                    }
+                    if (vehicleLoad < maxLoad) {
+                        maxLoad = vehicleLoad;
+                    }
+                    actualLoad=maxLoad;
+                    routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
+                    vehicleLoad -= maxLoad;
+                }
+
+                //if next station negative and current station positive, load maximum -capacity
+                if (currentStationHasPositiveDemand & !nextStationHasPositiveDemand) {
+                    if (loadRightBeforeVisit < maxLoad) {
+                        maxLoad = loadRightBeforeVisit;
+                    }
+                    double freeSpacesInVehicle = capacity-vehicleLoad;
+                    if (freeSpacesInVehicle < maxLoad) {
+                        maxLoad = freeSpacesInVehicle;
+                    }
+                    actualLoad = -maxLoad;
+                    routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
+                    vehicleLoad += maxLoad;
+                }
+
+            } else {
+                //If current station is last station in route
+
+                if (currentStationHasPositiveDemand) {
+                    if (loadRightBeforeVisit < maxLoad) {
+                        maxLoad = loadRightBeforeVisit;
+                    }
+                    double freeSpacesInVehicle = capacity-vehicleLoad;
+                    if (freeSpacesInVehicle < maxLoad) {
+                        maxLoad = freeSpacesInVehicle;
+                    }
+                    actualLoad = -maxLoad;
+                    routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
+                    vehicleLoad += maxLoad;
+                } else {
+                    double freeLocksAtStation = routeUnderConstruction.get(i).getStation().getCapacity()-routeUnderConstruction.get(i).getStation().getLoad();
+                    if (freeLocksAtStation < maxLoad) {
+                        maxLoad = freeLocksAtStation;
+                    }
+                    if (vehicleLoad < maxLoad) {
+                        maxLoad = vehicleLoad;
+                    }
+                    actualLoad = maxLoad;
+                    routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
+                    vehicleLoad -= maxLoad;
+                }
+            }
+
+
+
+            //------Set updated load at station-----------
+
+            routeUnderConstruction.get(i).setLoadAfterVisit(loadRightBeforeVisit+actualLoad);
 
         }
+
+
+
 
         //Return true if more stations should be added to the route.
 
@@ -336,6 +401,14 @@ public class Vehicle {
                     Station stationWithHigestScore = input.getStations().get(idForStationWithHighestScore);
 
                     ArrayList<StationVisit> newRoute= new ArrayList<>(routeUnderConstruction);
+
+                    //Set all values in previous stations visits to 0
+                    for (StationVisit stationVisit : routeUnderConstruction) {
+                        stationVisit.setLoadingQuantity(0);
+                        stationVisit.setVisitTime(0);
+                        stationVisit.setLoadAfterVisit(0);
+                    }
+
                     StationVisit newStationVisit = new StationVisit();
                     newStationVisit.setStation(stationWithHigestScore);
                     newRoute.add(newStationVisit);
