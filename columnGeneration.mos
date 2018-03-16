@@ -367,7 +367,7 @@ forall (vv in Vehicles) do
 		 timePenalty(vv) >= remainingTimeToFinalStation(vv);
 end-do
 
-!Restrictions saying that last visit can olny be to positive station if vehicle load is below visitInterval is removed. 
+!Restrictions saying that last visit can olny be to positive station if vehicle load is below visitInterval 
 !Same for opposite restriction
 
 
@@ -383,6 +383,8 @@ forall (vv in Vehicles) do
 		 timePenalty(vv) >= remainingTimeToFinalStation(vv);
 end-do
 
+!Restrictions saying that last visit can olny be to positive station if vehicle load is below visitInterval 
+!Same for opposite restriction
 forall(ii in StarvationStations, mm in Visits, vv in Vehicles) do
 	lowVisit(ii,mm,vv) :=
 		flow(ii,mm,artificialStation,1,vv) <= (1-sigmaLow(vv)) + (1-delta(ii,mm));

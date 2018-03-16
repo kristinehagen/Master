@@ -18,8 +18,9 @@ public class CreateTestInstance {
     static ArrayList<Station> lowStarvation = new ArrayList<>();
     static ArrayList<Station> allStations;
     static double startHour = 8.0;
-    static int instanceSize = 160;
+    static int instanceSize = 158;
     static HashMap<Station, Integer> testInstance = new HashMap<>();
+    static String filename = "stationInitialInstance6.txt";
 
     private static void divideStations(Input input) throws FileNotFoundException {
         allStations = input.getStationListWithDemand();
@@ -117,8 +118,8 @@ public class CreateTestInstance {
         }
     }
 
-    private static void writeTextFile() throws IOException {
-        PrintWriter writer = new PrintWriter("stationInitialInstance5.txt", "UTF-8");
+    private static void writeTextFile(String filename) throws IOException {
+        PrintWriter writer = new PrintWriter(filename, "UTF-8");
         for (Station station: testInstance.keySet()) {
             writer.write(station.getId() + ", " + testInstance.get(station));
             writer.println();
@@ -132,7 +133,7 @@ public class CreateTestInstance {
         Input input = new Input(startHour);
         divideStations(input);
         pickTestInstance();
-        writeTextFile();
+        writeTextFile(filename);
         System.out.println("Test instance successfully created.");
     }
 
