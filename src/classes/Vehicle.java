@@ -35,8 +35,7 @@ public class Vehicle {
         this.clusterStationList = stationsList;
     }
 
-
-    //Initialiserer ruter for bilen
+    //Rammeverket for initialisering av ruter
     public void createRoutes(Input input) {
         createCluster(input);
 
@@ -76,7 +75,6 @@ public class Vehicle {
 
             //Route is completed
             this.initializedRoutes.add(firstRouteUnderConstruction);
-
         }
 
         routesUnderConstruction.remove(firstRouteUnderConstruction);
@@ -117,6 +115,7 @@ public class Vehicle {
 
     }
 
+    //Performs the branching on second stations visit. Finds the restrictions enforced on next branching, then asks chooseStation to actually create new routes
     private ArrayList<ArrayList<StationVisit>> performBranchingSecondStation(ArrayList<StationVisit> firstRouteUnderConstruction, ArrayList<Station> possibleStationsForNextStationVisit, Input input) {
 
         ArrayList<Station> negativeStations = filterStations(possibleStationsForNextStationVisit, false, input.getCurrentMinute());
@@ -148,6 +147,7 @@ public class Vehicle {
         return newRoutes;
     }
 
+    //Performs the branching on all stations visits after second station visit. Finds the restrictions enforced on next branching, then asks chooseStation to actually create new routes
     private ArrayList<ArrayList<StationVisit>> performBranching(ArrayList<StationVisit> routeUnderConstruction, ArrayList<Station> possibleStationsForNextStationVisit, Input input) {
 
         ArrayList<Station> negativeStations = filterStations(possibleStationsForNextStationVisit, false, input.getCurrentMinute());
@@ -182,7 +182,7 @@ public class Vehicle {
 
     }
 
-
+    //Checks if time limit is reaches. Determines time and load to calculate total time
     private boolean checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction, Input input) {
 
         double timeHorizon = input.getTimeHorizon();
@@ -291,20 +291,40 @@ public class Vehicle {
 
     }
 
+    //Gets routes under construction and possible stations to visit, and returns new routes
     private ArrayList<ArrayList<StationVisit>> chooseStations(ArrayList<Station> possibleStationsForNextStationVisit, ArrayList<StationVisit> routeUnderConstruction, Input input) {
 
         if (possibleStationsForNextStationVisit.size() > 0) {
 
+            //Remove last visited station from possibleStationsToVisit
             Station lastStationVisited = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation();
             boolean lastStationVisitedIsInPossibleStationsForNextStationVisit = possibleStationsForNextStationVisit.contains(lastStationVisited);
             if (lastStationVisitedIsInPossibleStationsForNextStationVisit) {
                 possibleStationsForNextStationVisit.remove(lastStationVisited);
             }
 
+            //Do not create routes that are infesiable with respect to M
+            for (StationVisit stationVisit1 : routeUnderConstruction) {
+                int stationId = stationVisit1.getStation().getId();
+
+                int numberOfTimesInRoute = 0;
+
+                //Check how many times stationId is in route
+                for (StationVisit stationVisit2 : routeUnderConstruction) {
+                    if (stationVisit2.getStation().getId() == stationId) {
+                        numberOfTimesInRoute ++;
+                    }
+                }
+
+                if (numberOfTimesInRoute >= input.getMaxVisit()) {
+                    possibleStationsForNextStationVisit.remove(stationVisit1);
+                }
+
+            }
+
             //This hashmap saves station ID as key, and its respective score as value.
             HashMap<Integer, Double> stationScores = calculateScore(possibleStationsForNextStationVisit, routeUnderConstruction, input);
 
-            //This ArrayList contains new routes created
             ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
 
             //Branching and expands the input route to nrStationBranching new routes
@@ -332,12 +352,12 @@ public class Vehicle {
         }
     }
 
-    //FERDIG
+    //Returns station with highest score
     private int findStationWithHighestScore(HashMap<Integer, Double> stationScores) {
         return (Collections.max(stationScores.entrySet(), Map.Entry.comparingByValue()).getKey());
     }
 
-    //FERDIG
+    //Calculate score of a list of stations. Returns a hashmap with station id and score
     private HashMap<Integer,Double> calculateScore(ArrayList<Station> stationList, ArrayList<StationVisit> routeUnderConstruction, Input input) {
         HashMap<Integer, Double> stationScores = new HashMap<>();
         for (Station station: stationList) {
@@ -359,6 +379,7 @@ public class Vehicle {
         return stationScores;
     }
 
+    //Calculates difference between optimal level and inventory at horizon if no more visits. Returns the diff
     private double calculateDiffFromOptimalStateIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
         double loadAtTimeHorizon;
         double lastVisitTime = 0.0;
@@ -391,7 +412,7 @@ public class Vehicle {
         return diffFromOptimalState;
     }
 
-    //TESTED :D
+    //Calculates time to violation if no more visits. Returns time. 0 if violation now
     public double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
         double lastVisitTime = 0.0;
         double timeToViolation = 0.0;
@@ -417,7 +438,7 @@ public class Vehicle {
         return lastVisitTime + timeToViolation;
     }
 
-
+    //Returns a list with either positive or negative stations.
     private ArrayList<Station> filterStations(ArrayList<Station> stationList, boolean returnPositive, double currentMinute) {
         ArrayList<Station> stationListFiltered = new ArrayList<>();
         double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
