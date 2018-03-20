@@ -207,15 +207,16 @@ public class Vehicle {
                 double visitTimeLastStation = routeUnderConstruction.get(i-1).getVisitTime();
                 double absoluteLoadAtLastStation = Math.abs(routeUnderConstruction.get(i-1).getLoadingQuantity());
                 double drivingTimeFromLastStation = routeUnderConstruction.get(i-1).getStation().getDrivingTimeToStation(routeUnderConstruction.get(i).getStation().getId());
+                double visitTime = visitTimeLastStation+absoluteLoadAtLastStation*input.getVehicleHandlingTime()+input.getVehicleParkingTime()+ drivingTimeFromLastStation;
 
-                routeUnderConstruction.get(i).setVisitTime(visitTimeLastStation+absoluteLoadAtLastStation*input.getVehicleHandlingTime()+input.getVehicleParkingTime()+ drivingTimeFromLastStation);
+                routeUnderConstruction.get(i).setVisitTime(visitTime);
 
             }
 
 
 
 
-            //-------Find current load at current station----------
+            //-------Find current load at station i, right before visit----------
 
 
             double lastVisitTime = 0;
@@ -244,98 +245,82 @@ public class Vehicle {
 
 
             //---------Set load------------
-            boolean currentStationHasPositiveDemand = (routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded) >= 0);
-            double maxLoad = 23;
-            double actualLoad = 0;
+            boolean currentStationisPickUpStation = routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded) >= 0;
+            double maxLoad;
+            double actualLoad;
 
             //If current station is not the last station in the route
             if (i < numberOfStationVisitsInRoute - 1) {
 
-                boolean nextStationHasPositiveDemand = (routeUnderConstruction.get(i + 1).getStation().getNetDemand(currentHourRounded) >= 0);
+                boolean nextStationisPickUpStation = routeUnderConstruction.get(i + 1).getStation().getNetDemand(currentHourRounded) >= 0;
 
-                //If both positive, load at this station maximum -capacity/2
-                if (currentStationHasPositiveDemand && nextStationHasPositiveDemand) {
-                    maxLoad = 12;
-                    if (loadRightBeforeVisit < maxLoad) {
-                        maxLoad = loadRightBeforeVisit;
-                    }
-                    double freeSpacesInVehicle = capacity-vehicleLoad;
-                    if (freeSpacesInVehicle < maxLoad) {
-                        maxLoad = freeSpacesInVehicle;
-                    }
-                    actualLoad = -maxLoad;
+                //If both pick up stations, load at this station maximum -capacity/2
+                if (currentStationisPickUpStation && nextStationisPickUpStation) {
+                    maxLoad = Math.round((capacity-vehicleLoad)/2);
+                    maxLoad = loadRestrictedByBikesAtStation(maxLoad, loadRightBeforeVisit);
+                    maxLoad = loadRestrictedByFreeSpacesInVehicle(maxLoad, vehicleLoad, capacity);
+
+                    actualLoad = -Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
-                    vehicleLoad += maxLoad;
+                    vehicleLoad -= actualLoad;
                 }
 
-                //If both negative, load at this station maximum capacity/2
-                if (!currentStationHasPositiveDemand && !nextStationHasPositiveDemand) {
-                    maxLoad = 12;
-                    double freeLocksAtStation = routeUnderConstruction.get(i).getStation().getCapacity()-routeUnderConstruction.get(i).getStation().getLoad();
-                    if (freeLocksAtStation < maxLoad) {
-                        maxLoad = freeLocksAtStation;
-                    }
-                    if (vehicleLoad < maxLoad) {
-                        maxLoad = vehicleLoad;
-                    }
-                    actualLoad = maxLoad;
+                //If both delivery stations, load at this station maximum capacity/2
+                else if (!currentStationisPickUpStation && !nextStationisPickUpStation) {
+                    maxLoad = Math.round(vehicleLoad/2);;
+                    maxLoad = loadRestrictedByFreeLocksAtStation(routeUnderConstruction.get(i).getStation().getCapacity(), loadRightBeforeVisit, maxLoad);
+                    maxLoad = loadRestrictedByBikesInVehicle(vehicleLoad, maxLoad);
+
+                    actualLoad = Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
-                    vehicleLoad -= maxLoad;
+                    vehicleLoad -= actualLoad;
                 }
 
-                //if next station positive and current station negative, load maximum capacity
-                if (!currentStationHasPositiveDemand & nextStationHasPositiveDemand) {
-                    double freeLocksAtStation = routeUnderConstruction.get(i).getStation().getCapacity()-routeUnderConstruction.get(i).getStation().getLoad();
-                    if (freeLocksAtStation < maxLoad) {
-                        maxLoad = freeLocksAtStation;
-                    }
-                    if (vehicleLoad < maxLoad) {
-                        maxLoad = vehicleLoad;
-                    }
-                    actualLoad=maxLoad;
+                //if next station pick up station and current station delivery station, load maximum capacity
+                else if (!currentStationisPickUpStation & nextStationisPickUpStation) {
+                    maxLoad = capacity;
+                    maxLoad = loadRestrictedByFreeLocksAtStation(routeUnderConstruction.get(i).getStation().getCapacity(), loadRightBeforeVisit, maxLoad);
+                    maxLoad = loadRestrictedByBikesInVehicle(vehicleLoad, maxLoad);
+
+                    actualLoad = Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
-                    vehicleLoad -= maxLoad;
+                    vehicleLoad -= actualLoad;
                 }
 
-                //if next station negative and current station positive, load maximum -capacity
-                if (currentStationHasPositiveDemand & !nextStationHasPositiveDemand) {
-                    if (loadRightBeforeVisit < maxLoad) {
-                        maxLoad = loadRightBeforeVisit;
-                    }
-                    double freeSpacesInVehicle = capacity-vehicleLoad;
-                    if (freeSpacesInVehicle < maxLoad) {
-                        maxLoad = freeSpacesInVehicle;
-                    }
-                    actualLoad = -maxLoad;
+                //if next station delivery station and current station pick up station, load maximum -capacity
+                else {
+                    maxLoad = capacity;
+                    maxLoad = loadRestrictedByBikesAtStation(maxLoad, loadRightBeforeVisit);
+                    maxLoad = loadRestrictedByFreeSpacesInVehicle(maxLoad, vehicleLoad, capacity);
+
+                    actualLoad = -Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
-                    vehicleLoad += maxLoad;
+                    vehicleLoad -= actualLoad;
                 }
 
             } else {
                 //If current station is last station in route
 
-                if (currentStationHasPositiveDemand) {
-                    if (loadRightBeforeVisit < maxLoad) {
-                        maxLoad = loadRightBeforeVisit;
-                    }
-                    double freeSpacesInVehicle = capacity-vehicleLoad;
-                    if (freeSpacesInVehicle < maxLoad) {
-                        maxLoad = freeSpacesInVehicle;
-                    }
-                    actualLoad = -maxLoad;
+                //Current station is pick up station
+                if (currentStationisPickUpStation) {
+                    maxLoad = capacity;
+                    maxLoad = loadRestrictedByBikesAtStation(maxLoad, loadRightBeforeVisit);
+                    maxLoad = loadRestrictedByFreeSpacesInVehicle(maxLoad, vehicleLoad, capacity);
+
+                    actualLoad = -Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
-                    vehicleLoad += maxLoad;
-                } else {
-                    double freeLocksAtStation = routeUnderConstruction.get(i).getStation().getCapacity()-routeUnderConstruction.get(i).getStation().getLoad();
-                    if (freeLocksAtStation < maxLoad) {
-                        maxLoad = freeLocksAtStation;
-                    }
-                    if (vehicleLoad < maxLoad) {
-                        maxLoad = vehicleLoad;
-                    }
-                    actualLoad = maxLoad;
+                    vehicleLoad -= actualLoad;
+                }
+
+                //Current station is delivery station
+                else {
+                    maxLoad = capacity;
+                    maxLoad = loadRestrictedByFreeLocksAtStation(routeUnderConstruction.get(i).getStation().getCapacity(), loadRightBeforeVisit, maxLoad);
+                    maxLoad = loadRestrictedByBikesInVehicle(vehicleLoad, maxLoad);
+
+                    actualLoad = Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
-                    vehicleLoad -= maxLoad;
+                    vehicleLoad -= actualLoad;
                 }
             }
 
@@ -352,9 +337,45 @@ public class Vehicle {
 
         //Return true if more stations should be added to the route.
 
-        return (routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime() < timeHorizon+5);
+        return (routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime() < timeHorizon);
 
     }
+
+    private double loadRestrictedByBikesInVehicle(int vehicleLoad, double maxLoad) {
+        if (vehicleLoad < maxLoad) {
+            return vehicleLoad;
+        } else {
+            return maxLoad;
+        }
+    }
+
+    private double loadRestrictedByFreeLocksAtStation(int capacity, double loadRightBeforeVisit, double maxLoad) {
+        double freeLocksAtStation = capacity-loadRightBeforeVisit;
+        if (freeLocksAtStation < maxLoad) {
+            return freeLocksAtStation;
+        } else {
+            return maxLoad;
+        }
+    }
+
+    private double loadRestrictedByFreeSpacesInVehicle(double maxLoad, int vehicleLoad, int capacity) {
+        double freeSpacesInVehicle = capacity-vehicleLoad;
+        if (freeSpacesInVehicle < maxLoad) {
+            return freeSpacesInVehicle;
+        } else {
+            return maxLoad;
+        }
+    }
+
+    private double loadRestrictedByBikesAtStation(double maxLoad, double loadRightBeforeVisit) {
+        if (loadRightBeforeVisit < maxLoad) {
+            return loadRightBeforeVisit;
+        } else {
+            return maxLoad;
+        }
+    }
+
+
 
     //Gets routes under construction and possible stations to visit, and returns new routes
     private ArrayList<ArrayList<StationVisit>> chooseStations(ArrayList<Station> possibleStationsForNextStationVisit, ArrayList<StationVisit> routeUnderConstruction, Input input) {
