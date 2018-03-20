@@ -267,7 +267,7 @@ public class Vehicle {
 
                 //If both delivery stations, load at this station maximum capacity/2
                 else if (!currentStationisPickUpStation && !nextStationisPickUpStation) {
-                    maxLoad = Math.round(vehicleLoad/2);;
+                    maxLoad = Math.round(vehicleLoad/2);
                     maxLoad = loadRestrictedByFreeLocksAtStation(routeUnderConstruction.get(i).getStation().getCapacity(), loadRightBeforeVisit, maxLoad);
                     maxLoad = loadRestrictedByBikesInVehicle(vehicleLoad, maxLoad);
 

@@ -12,13 +12,13 @@ public class Input {
     private double currentMinute = 8*60;              //Minutes
     private double simulationStopTime = 10 *60;
     private double timeHorizon = 20;
-    private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInXpress;
-    private int testInstance = 3;
+    private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInHeuristic;
+    private int testInstance = 1;
     private int nrOfVehicles = 2;
 
 
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 6;             //Create n new routes IN each branching
+    private int nrStationBranching = 3;             //Create n new routes IN each branching
     private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 
@@ -44,10 +44,11 @@ public class Input {
 
     //------------Xpress--------------------
     private String xpressFileColumnGenerationLoadInXpress = "columnGeneration";
+    private String xpressFileColumnGenerationLoadInHeuristic = "columnGenerationLoadInHeuristic";
     private String xpressFileOptimalLevel = "optimalLevel";
     private String timedependentInoutFile = "timeDependentInput.txt";
     private String fixedInputFile = "fixedInput.txt";
-    private int maxVisit = 2;
+    private int maxVisit = 1;
 
 
 
@@ -375,5 +376,13 @@ public class Input {
 
     public void setXpressFileOptimalLevel(String xpressFileOptimalLevel) {
         this.xpressFileOptimalLevel = xpressFileOptimalLevel;
+    }
+
+    public String getXpressFileColumnGenerationLoadInHeuristic() {
+        return xpressFileColumnGenerationLoadInHeuristic;
+    }
+
+    public void setXpressFileColumnGenerationLoadInHeuristic(String xpressFileColumnGenerationLoadInHeuristic) {
+        this.xpressFileColumnGenerationLoadInHeuristic = xpressFileColumnGenerationLoadInHeuristic;
     }
 }

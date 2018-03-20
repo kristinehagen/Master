@@ -12,7 +12,7 @@ public class OptimalInXpress {
     //Constructor
     public  OptimalInXpress(Input input) throws IOException, XPRMCompileException {
         WriteXpressFiles.printFixedInput(input);
-        WriteXpressFiles.printTimeDependentInput(input, false);
+        WriteXpressFiles.printTimeDependentInput(input, false, false);
         RunXpress.runXpress(input.getXpressFileOptimalLevel());
     }
 

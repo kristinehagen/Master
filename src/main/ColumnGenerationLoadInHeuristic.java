@@ -1,26 +1,25 @@
 package main;
 
-import classes.*;
+import classes.Input;
+import classes.StationVisit;
+import classes.Vehicle;
 import com.dashoptimization.XPRMCompileException;
-import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class ColumnGenerationLoadInXpress {
+public class ColumnGenerationLoadInHeuristic {
 
     //Constructor
-    public  ColumnGenerationLoadInXpress(Input input) throws IOException, XPRMCompileException {
+    public  ColumnGenerationLoadInHeuristic(Input input) throws IOException, XPRMCompileException {
         WriteXpressFiles.printFixedInput(input);
         initiateRoutes(input);
-        WriteXpressFiles.printTimeDependentInput(input, true, false);
-        //RunXpress.runXpress(input.getXpressFileColumnGenerationLoadInXpress());
+        WriteXpressFiles.printTimeDependentInput(input, true, true);
+        //RunXpress.runXpress(input.getXpressFileColumnGenerationLoadInHeuristic());
     }
-
 
 
 
@@ -40,7 +39,7 @@ public class ColumnGenerationLoadInXpress {
         graphViewer.displayInitiatedRoutes(input, true);
         */
 
-        /*
+
         //Print initiated routes
         int counter = 1;
         for (Vehicle vehicle: input.getVehicles().values()) {
@@ -50,16 +49,14 @@ public class ColumnGenerationLoadInXpress {
                 counter ++;
                 //Station ids
                 for (StationVisit stationVisit : route) {
-                    System.out.print(stationVisit.getStation().getId() + " ");
+                    System.out.print("(" + stationVisit.getStation().getId() + ", " + stationVisit.getLoadingQuantity() + ", " + stationVisit.getVisitTime() + ") ");
                 }
                 //Total time
                 System.out.println(", total time: " + route.get(route.size()-1).getVisitTime());
             }
         }
-        */
 
     }
-
 
 
 

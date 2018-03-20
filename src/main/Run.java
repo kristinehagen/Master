@@ -18,12 +18,12 @@ public class Run {
                 ColumnGenerationLoadInXpress columnGenerationLoadInXpress = new ColumnGenerationLoadInXpress(input);
                 break;
             case ColumnGenerationLoadInHeuristic:
-                //Run column generation where load is determined with heuristic
+                ColumnGenerationLoadInHeuristic columnGenerationLoadInHeuristic = new ColumnGenerationLoadInHeuristic(input);
                 break;
             case GeneticAlgorithm:
                 //Run genetic algorithm
                 break;
-            case Xpress:
+            case ExactMethod:
                 OptimalInXpress optimalInXpress = new OptimalInXpress(input);
                 break;
         }
