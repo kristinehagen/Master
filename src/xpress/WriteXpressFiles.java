@@ -142,27 +142,51 @@ public class WriteXpressFiles {
             writer.println("intRep : [");
             for (Vehicle vehicle : input.getVehicles().values()) {
                 for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
-                    for (int stationVisit = 0; stationVisit < vehicle.getInitializedRoutes().get(route).size(); stationVisit++) {
-                        ArrayList<Integer> oneLine = new ArrayList<>();
+
+                    ArrayList<ArrayList<Integer>> allStationPairs = new ArrayList<>();
+
+                    for (int stationVisitNr = 0; stationVisitNr < vehicle.getInitializedRoutes().get(route).size(); stationVisitNr++) {
+
+                        ArrayList<Integer> stationPair = new ArrayList<>();
+
                         //From station
-                        oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit).getStation().getId());
+                        stationPair.add(vehicle.getInitializedRoutes().get(route).get(stationVisitNr).getStation().getId());
 
                         //To station (or artificial station)
-                        if (stationVisit == vehicle.getInitializedRoutes().get(route).size()-1) {
-                            oneLine.add(0);
+                        if (stationVisitNr == vehicle.getInitializedRoutes().get(route).size()-1) {
+                            stationPair.add(0);
                         } else {
-                            oneLine.add(vehicle.getInitializedRoutes().get(route).get(stationVisit+1).getStation().getId());
+                            stationPair.add(vehicle.getInitializedRoutes().get(route).get(stationVisitNr+1).getStation().getId());
                         }
 
-                        //Vehicle
-                        oneLine.add(vehicle.getId());
-
-                        //Route
-                        oneLine.add(route+1);
-
-                        //Add to total list
-                        writer.println("( " + oneLine.get(0) + " " + oneLine.get(1) + " " + oneLine.get(2) + " " + oneLine.get(3) + " ) 1");
+                        allStationPairs.add(stationPair);
                     }
+
+                    ArrayList<ArrayList<Integer>> alreadyPrinted = new ArrayList<>();
+
+                    for (ArrayList<Integer> stationPair : allStationPairs) {
+
+                        //Check if station pair is not already printed
+                        if (!alreadyPrinted.contains(stationPair)) {
+                            //Count how many identical station pairs there are
+                            int count = 0;
+                            for (ArrayList<Integer> stationPairToCompareAgainst : allStationPairs) {
+                                if (stationPair.equals(stationPairToCompareAgainst)) {
+                                    count++;
+                                }
+                            }
+
+                            //print
+                            writer.println("( " + stationPair.get(0) + " " + stationPair.get(1) + " " + vehicle.getId() + " " + route+1 + " ) " + count);
+                            alreadyPrinted.add(stationPair);
+                        }
+
+                        else {
+                            //Do nothing
+                        }
+
+                    }
+
                     writer.println();
                 }
             }
