@@ -3,7 +3,6 @@ package main;
 import classes.Input;
 import classes.StationVisit;
 import classes.Vehicle;
-import com.dashoptimization.XPRMCompileException;
 import xpress.WriteXpressFiles;
 
 import java.io.FileNotFoundException;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 public class ColumnGenerationLoadInHeuristic {
 
     //Constructor
-    public  ColumnGenerationLoadInHeuristic(Input input) throws IOException, XPRMCompileException {
+    public  ColumnGenerationLoadInHeuristic(Input input) throws IOException {
         WriteXpressFiles.printFixedInput(input);
         initiateRoutes(input);
         WriteXpressFiles.printTimeDependentInput(input, true, true);

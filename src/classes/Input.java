@@ -14,11 +14,11 @@ public class Input {
     private double timeHorizon = 20;
     private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInHeuristic;
     private int testInstance = 1;
-    private int nrOfVehicles = 2;
+    private int nrOfVehicles = 1;
 
 
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 3;             //Create n new routes IN each branching
+    private int nrStationBranching = 2;             //Create n new routes IN each branching
     private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 

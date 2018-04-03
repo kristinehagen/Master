@@ -421,13 +421,10 @@ public class Vehicle {
                     int idForStationWithHighestScore = findStationWithHighestScore(stationScores);
                     Station stationWithHigestScore = input.getStations().get(idForStationWithHighestScore);
 
-                    ArrayList<StationVisit> newRoute= new ArrayList<>(routeUnderConstruction);
-
-                    //Set all values in previous stations visits to 0
-                    for (StationVisit stationVisit : routeUnderConstruction) {
-                        stationVisit.setLoadingQuantity(0);
-                        stationVisit.setVisitTime(0);
-                        stationVisit.setLoadAfterVisit(0);
+                    ArrayList<StationVisit> newRoute= new ArrayList<>();
+                    for (StationVisit sv : routeUnderConstruction) {
+                        StationVisit newStationVisit = new StationVisit(sv);
+                        newRoute.add(newStationVisit);
                     }
 
                     StationVisit newStationVisit = new StationVisit();

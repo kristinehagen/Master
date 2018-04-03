@@ -1,8 +1,8 @@
 package main;
 
 import classes.*;
-import com.dashoptimization.XPRMCompileException;
-import xpress.RunXpress;
+//import com.dashoptimization.XPRMCompileException;
+//import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class ColumnGenerationLoadInXpress {
 
     //Constructor
-    public  ColumnGenerationLoadInXpress(Input input) throws IOException, XPRMCompileException {
+    public  ColumnGenerationLoadInXpress(Input input) throws IOException {
         WriteXpressFiles.printFixedInput(input);
         initiateRoutes(input);
         WriteXpressFiles.printTimeDependentInput(input, true, false);

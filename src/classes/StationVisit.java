@@ -8,6 +8,14 @@ public class StationVisit {
     private double loadAfterVisit;
 
 
+    //Constructor
+
+    public StationVisit() {
+    }
+
+    public StationVisit(StationVisit stationVisit) {
+        station = stationVisit.getStation();
+    }
 
     //GETTERS AND SETTERS
 
