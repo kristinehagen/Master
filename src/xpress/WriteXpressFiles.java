@@ -202,14 +202,13 @@ public class WriteXpressFiles {
         if (determineLoadInHeuristic) {
 
             writer.println();
-            writer.println("intRepLoad : [");
+            writer.println("intRepUnloadingQuantity : [");
 
 
             for (Vehicle vehicle : input.getVehicles().values()) {
                 for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
 
                     HashMap<Integer, Double> pickUpStations = new HashMap<>();
-                    HashMap<Integer, Double> deliveryStations = new HashMap<>();
 
                     for (int stationVisitNr = 0; stationVisitNr < vehicle.getInitializedRoutes().get(route).size(); stationVisitNr++) {
 
@@ -226,31 +225,53 @@ public class WriteXpressFiles {
                                 pickUpStations.put(stationId, -load);
                             }
                         }
+                    }
+
+                    //Print
+                    for (int stationId : pickUpStations.keySet()) {
+                        double load = pickUpStations.get(stationId);
+                        writer.println("( " + stationId + " " + vehicle.getId()  + " " + (route+1) + " ) " + load);
+                    }
+
+                }
+            }
+            writer.println("]");
+
+
+            writer.println();
+            writer.println("intRepLoadingQuantity : [");
+            for (Vehicle vehicle : input.getVehicles().values()) {
+                for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
+
+                    HashMap<Integer, Double> deliveryStations = new HashMap<>();
+
+                    for (int stationVisitNr = 0; stationVisitNr < vehicle.getInitializedRoutes().get(route).size(); stationVisitNr++) {
+
+                        int stationId = vehicle.getInitializedRoutes().get(route).get(stationVisitNr).getStation().getId();
+                        double load = vehicle.getInitializedRoutes().get(route).get(stationVisitNr).getLoadingQuantity();
 
                         //Delivery station
-                        else {
+                        if (load >= 0) {
                             //Check if station is already in hashmap
                             if (deliveryStations.containsKey(stationId)) {
-                                double currentLoad = pickUpStations.get(stationId);
+                                double currentLoad = deliveryStations.get(stationId);
                                 deliveryStations.put(stationId, currentLoad + load);
                             } else {
                                 deliveryStations.put(stationId, load);
                             }
                         }
                     }
-
                     //Print
-                    for (int stationId : pickUpStations.keySet()) {
-                        double load = pickUpStations.get(stationId);
-                        writer.println("( " + stationId + " " + vehicle.getId()  + " " + route+1 + " ) " + load);
-                    }
-
                     for (int stationId : deliveryStations.keySet()) {
                         double load = deliveryStations.get(stationId);
-                        writer.println("( " + stationId + " " + vehicle.getId()  + " " + route+1 + " ) " + load);
+                        writer.println("( " + stationId + " " + vehicle.getId()  + " " + (route+1) + " ) " + load);
                     }
+
                 }
             }
+            writer.println("]");
+
+
         }
         writer.close();
     }
