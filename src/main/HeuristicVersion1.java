@@ -15,22 +15,37 @@ public class HeuristicVersion1 {
 
     //Constructor
     public HeuristicVersion1(Input input) throws IOException, XPRMCompileException {
+        HashMap<Integer, Double> pricingProblemScores = new HashMap<>();
+
         WriteXpressFiles.printFixedInput(input);
-        initiateRoutes(input);
+        initiateRoutes(input, pricingProblemScores);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
         RunXpress.runXpress(input.getXpressFile());
+
+        //Run pricing problem
+        int nrOfIterations = 0;
+        if (input.isRunPricingProblem()) {
+            while (nrOfIterations < input.getNrOfRunsPricingProblem()) {
+                runPricingProblem(input, pricingProblemScores);
+                input.setNrStationBranching(input.getNrOfBranchingPricingProblem());
+                initiateRoutes(input, pricingProblemScores);
+                WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
+                RunXpress.runXpress(input.getXpressFile());
+            }
+        }
     }
 
+    private void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
+        PricingProblem pricingProblem = new PricingProblem();
+        pricingProblem.runPricingProblem(input, pricingProblemScores);
+        System.out.println("Pricing problem executed");
+    }
 
-
-
-
-
-    private static void initiateRoutes(Input input) throws FileNotFoundException, UnsupportedEncodingException {
+    private static void initiateRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException, UnsupportedEncodingException {
 
         //Initialize routes for each vehicle
         for (Vehicle vehicle: input.getVehicles().values()) {
-            vehicle.createRoutes(input);
+            vehicle.createRoutes(input, pricingProblemScores);
         }
 
         System.out.println("Initial routes created");

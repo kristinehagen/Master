@@ -25,14 +25,13 @@ public class Input {
     private int maxLoad = 15;
 
 
-
-
     //----------COLUMN GENERATION-----------
-    //Score
     private double weightTimeToViolation = -0.2;
+    //Score
     private double weightViolationRate = 8;
     private double weightDrivingTime = -0.1;
     private double weightOptimalState = 0.25;
+    private double weightPricingProblemScore = 8;
 
     //Xpress objective function
     private double weightViolation = 0.6;
@@ -45,6 +44,11 @@ public class Input {
     private int loadInterval = 3;
 
 
+    //--------PRICING PROBLEM---------------
+
+    private boolean runPricingProblem = true;
+    private int nrOfRunsPricingProblem = 2;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 2;
 
 
     //------------Xpress--------------------
@@ -397,5 +401,22 @@ public class Input {
 
     public void setXpressFile(String xpressFile) {
         this.xpressFile = xpressFile;
+    }
+
+    public int getNrOfRunsPricingProblem() {
+        return nrOfRunsPricingProblem;
+    }
+
+    public boolean isRunPricingProblem() {
+        return runPricingProblem;
+    }
+
+
+    public double getWeightPricingProblemScore() {
+        return weightPricingProblemScore;
+    }
+
+    public int getNrOfBranchingPricingProblem() {
+        return nrOfBranchingPricingProblem;
     }
 }

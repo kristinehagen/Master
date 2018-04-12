@@ -20,6 +20,7 @@ public class Vehicle {
     private int initialLoad;
     private ArrayList<Station> clusterStationList = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
+    private HashMap<Integer, Double> pricingProblemScores;
 
     public Vehicle(int id) {
         this.id = id;
@@ -36,7 +37,8 @@ public class Vehicle {
     }
 
     //Rammeverket for initialisering av ruter
-    public void createRoutes(Input input) {
+    public void createRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) {
+        this.pricingProblemScores = pricingProblemScores;
         createCluster(input);
 
         //En liste med alle ruter som ikke er ferdig laget enda
@@ -458,12 +460,17 @@ public class Vehicle {
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
             double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;                            //Each minute
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());         //In minutes
+            double pricingProblemScore = 0;
+            if (pricingProblemScores.containsKey(station.getId())) {
+                pricingProblemScore = pricingProblemScores.get(station.getId());
+            }
 
             //Calculate total score
             double score = input.getWeightTimeToViolation()*timeToViolation
                     + input.getWeightOptimalState()*diffOptimalState
                     + input.getWeightViolationRate() * violationRate
-                    + input.getWeightDrivingTime()*drivingTime;
+                    + input.getWeightDrivingTime()*drivingTime
+                    + input.getWeightPricingProblemScore()*pricingProblemScore;
 
             stationScores.put(station.getId(), score);
         }
