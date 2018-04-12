@@ -16,7 +16,7 @@ public class Input {
     private double currentMinute = 8*60;              //Minutes
     private double simulationStopTime = 10 *60;
     private int testInstance = 5;
-    private int nrOfVehicles = 4;
+    private int nrOfVehicles = 2;
 
 
     //--------INITIALIZATION--------------
