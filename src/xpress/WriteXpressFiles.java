@@ -39,6 +39,7 @@ public class WriteXpressFiles {
                 printStationInitialInformation(input.getStations().values(), writer, input.getCurrentMinute());
                 printInteriorRepresentation(input, writer);
                 printLoadFromHeuristic(input, writer);
+                printArrivalTimeFromHeuristic(input, writer);
                 break;
 
             case HEURISTIC_VERSION_3:
@@ -388,6 +389,41 @@ public class WriteXpressFiles {
             }
         }
         writer.println("]");
+    }
+
+    private static void printArrivalTimeFromHeuristic(Input input, PrintWriter writer) {
+        writer.println();
+        writer.println("intRepArrivalTime : [");
+
+
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
+
+                HashMap<Integer, Double> stations = new HashMap<>();
+
+                for (int stationVisitNr = 0; stationVisitNr < vehicle.getInitializedRoutes().get(route).size(); stationVisitNr++) {
+
+                    int stationId = vehicle.getInitializedRoutes().get(route).get(stationVisitNr).getStation().getId();
+                    double arrivalTime = vehicle.getInitializedRoutes().get(route).get(stationVisitNr).getVisitTime();
+
+                    //Check if station is already in hashmap
+                    if (stations.containsKey(stationId)) {
+                        double currentTime = stations.get(stationId);
+                        stations.put(stationId, currentTime + arrivalTime);
+                    } else {
+                        stations.put(stationId, arrivalTime);
+                    }
+                }
+
+                //Print
+                for (int stationId : stations.keySet()) {
+                    double arrivalTime = stations.get(stationId);
+                    writer.println("( " + stationId + " " + vehicle.getId()  + " " + (route+1) + " ) " + arrivalTime);
+                }
+            }
+        }
+        writer.println("]");
+
     }
 
     private static void printStationInitialInformation(Collection<Station> values, PrintWriter writer, double currentMinute) {

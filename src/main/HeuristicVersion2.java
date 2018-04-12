@@ -4,7 +4,6 @@ import classes.Input;
 import classes.SolutionMethod;
 import classes.StationVisit;
 import classes.Vehicle;
-import com.dashoptimization.XPRMCompileException;
 import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 public class HeuristicVersion2 {
 
     //Constructor
-    public HeuristicVersion2(Input input) throws IOException, XPRMCompileException {
+    public HeuristicVersion2(Input input) throws IOException {
         WriteXpressFiles.printFixedInput(input);
         initiateRoutes(input);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_2);

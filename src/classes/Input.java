@@ -11,7 +11,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
     private double timeHorizon = 20;
     private double currentMinute = 8*60;              //Minutes
     private double simulationStopTime = 10 *60;
@@ -20,7 +20,7 @@ public class Input {
 
 
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 20;             //Create n new routes IN each branching
+    private int nrStationBranching = 3;             //Create n new routes IN each branching
     private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 
