@@ -1,6 +1,7 @@
 package main;
 
 import classes.*;
+import com.dashoptimization.XPRMCompileException;
 
 import java.io.IOException;
 
@@ -8,7 +9,7 @@ import java.io.IOException;
 public class Run {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, XPRMCompileException {
         Input input = new Input();
         SolutionMethod solutionMethod = input.getSolutionMethod();
 
