@@ -1,5 +1,5 @@
 package classes;
 
 public enum SolutionMethod {
-    ColumnGenerationLoadInXpress, ColumnGenerationLoadInHeuristic, GeneticAlgorithm, ExactMethod
+    HEURISTIC_VERSION_1, HEURISTIC_VERSION_2, EXACT_METHOD, HEURISTIC_VERSION_3
 }

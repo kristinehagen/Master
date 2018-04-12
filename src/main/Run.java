@@ -1,7 +1,7 @@
 package main;
 
 import classes.*;
-//import com.dashoptimization.XPRMCompileException;
+import com.dashoptimization.XPRMCompileException;
 
 import java.io.IOException;
 
@@ -9,22 +9,22 @@ import java.io.IOException;
 public class Run {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, XPRMCompileException {
         Input input = new Input();
         SolutionMethod solutionMethod = input.getSolutionMethod();
 
         switch (solutionMethod) {
-            case ColumnGenerationLoadInXpress:
-                ColumnGenerationLoadInXpress columnGenerationLoadInXpress = new ColumnGenerationLoadInXpress(input);
+            case HEURISTIC_VERSION_1:
+                HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
                 break;
-            case ColumnGenerationLoadInHeuristic:
-                ColumnGenerationLoadInHeuristic columnGenerationLoadInHeuristic = new ColumnGenerationLoadInHeuristic(input);
+            case HEURISTIC_VERSION_2:
+                HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
                 break;
-            case GeneticAlgorithm:
-                //Run genetic algorithm
+            case HEURISTIC_VERSION_3:
+                HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
                 break;
-            case ExactMethod:
-                OptimalInXpress optimalInXpress = new OptimalInXpress(input);
+            case EXACT_METHOD:
+                ExactMethod optimalInXpress = new ExactMethod(input);
                 break;
         }
 

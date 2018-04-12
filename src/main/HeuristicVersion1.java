@@ -1,8 +1,8 @@
 package main;
 
 import classes.*;
-//import com.dashoptimization.XPRMCompileException;
-//import xpress.RunXpress;
+import com.dashoptimization.XPRMCompileException;
+import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
 import java.io.FileNotFoundException;
@@ -11,14 +11,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ColumnGenerationLoadInXpress {
+public class HeuristicVersion1 {
 
     //Constructor
-    public  ColumnGenerationLoadInXpress(Input input) throws IOException {
+    public HeuristicVersion1(Input input) throws IOException, XPRMCompileException {
         WriteXpressFiles.printFixedInput(input);
         initiateRoutes(input);
-        WriteXpressFiles.printTimeDependentInput(input, true, false);
-        //RunXpress.runXpress(input.getXpressFileColumnGenerationLoadInXpress());
+        WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
+        RunXpress.runXpress(input.getXpressFile());
     }
 
 

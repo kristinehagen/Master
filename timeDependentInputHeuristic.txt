@@ -1,0 +1,46 @@
+weightViolation : 0.6
+weightDeviation : 0.3
+weightReward : 0.1
+weightDeviationReward : 0.6
+weightDrivingTimePenalty : 0.4
+
+maxRoute : 2
+
+
+intRep : [
+( 148 1 1 ) 1
+( 218 1 1 ) 1
+( 236 1 1 ) 1
+( 179 1 1 ) 1
+
+( 148 1 2 ) 1
+( 218 1 2 ) 1
+( 60 1 2 ) 1
+( 40 1 2 ) 1
+]
+
+starvationPrevented: [
+( 1 1 ) 4
+( 1 2 ) 7
+]
+
+congestionPrevented: [
+( 1 1 ) 4
+( 1 2 ) 7
+]
+	
+deviationImproved: [
+( 1 1 ) 3
+( 1 2 ) 7
+]
+
+deviationReward: [
+( 1 1 ) 5
+( 1 2 ) 1
+]
+
+drivingTimePenalty: [
+( 1 1 ) 4
+( 1 2 ) 9
+]
+

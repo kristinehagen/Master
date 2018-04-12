@@ -9,16 +9,18 @@ import java.util.HashMap;
 
 public class Input {
 
+
+    //Input
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private double timeHorizon = 20;
     private double currentMinute = 8*60;              //Minutes
     private double simulationStopTime = 10 *60;
-    private double timeHorizon = 20;
-    private SolutionMethod solutionMethod = SolutionMethod.ColumnGenerationLoadInHeuristic;
-    private int testInstance = 1;
-    private int nrOfVehicles = 1;
+    private int testInstance = 5;
+    private int nrOfVehicles = 4;
 
 
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 2;             //Create n new routes IN each branching
+    private int nrStationBranching = 20;             //Create n new routes IN each branching
     private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 
@@ -39,16 +41,17 @@ public class Input {
     private double weightDeviationReward  = 0.6;
     private double weightDrivingTimePenalty = 0.4;
 
+    //Load in Xpress can be load from heuristic +- loadInterval
+    private int loadInterval = 3;
+
 
 
 
     //------------Xpress--------------------
-    private String xpressFileColumnGenerationLoadInXpress = "columnGeneration";
-    private String xpressFileColumnGenerationLoadInHeuristic = "columnGenerationLoadInHeuristic";
-    private String xpressFileOptimalLevel = "optimalLevel";
+    private String xpressFile;
     private String timedependentInoutFile = "timeDependentInput.txt";
     private String fixedInputFile = "fixedInput.txt";
-    private int maxVisit = 1;
+    private int maxVisit = 2;
 
 
 
@@ -93,6 +96,7 @@ public class Input {
         //Station file
         String initialStationFile = getStationFile(this.testInstance);
         String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
+        this.xpressFile = determineXpressFile();
 
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
@@ -100,6 +104,8 @@ public class Input {
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
         ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
     }
+
+
 
 
     public Input(double hour) throws FileNotFoundException {
@@ -138,6 +144,19 @@ public class Input {
         }
     }
 
+    private String determineXpressFile() {
+        switch (solutionMethod) {
+            case HEURISTIC_VERSION_1:
+                return "heuristicVersion1";
+            case HEURISTIC_VERSION_2:
+                return "heuristicVersion2";
+            case HEURISTIC_VERSION_3:
+                return "heuristicVersion3";
+            case EXACT_METHOD:
+                return "exactMethod";
+        }
+        return null;
+    }
 
 
     //Getters and setters
@@ -362,27 +381,21 @@ public class Input {
         this.maxVisit = maxVisit;
     }
 
-    public String getXpressFileColumnGenerationLoadInXpress() {
-        return xpressFileColumnGenerationLoadInXpress;
+
+    public int getLoadInterval() {
+        return loadInterval;
     }
 
-    public void setXpressFileColumnGenerationLoadInXpress(String xpressFileColumnGenerationLoadInXpress) {
-        this.xpressFileColumnGenerationLoadInXpress = xpressFileColumnGenerationLoadInXpress;
+    public void setLoadInterval(int loadInterval) {
+        this.loadInterval = loadInterval;
     }
 
-    public String getXpressFileOptimalLevel() {
-        return xpressFileOptimalLevel;
+
+    public String getXpressFile() {
+        return xpressFile;
     }
 
-    public void setXpressFileOptimalLevel(String xpressFileOptimalLevel) {
-        this.xpressFileOptimalLevel = xpressFileOptimalLevel;
-    }
-
-    public String getXpressFileColumnGenerationLoadInHeuristic() {
-        return xpressFileColumnGenerationLoadInHeuristic;
-    }
-
-    public void setXpressFileColumnGenerationLoadInHeuristic(String xpressFileColumnGenerationLoadInHeuristic) {
-        this.xpressFileColumnGenerationLoadInHeuristic = xpressFileColumnGenerationLoadInHeuristic;
+    public void setXpressFile(String xpressFile) {
+        this.xpressFile = xpressFile;
     }
 }

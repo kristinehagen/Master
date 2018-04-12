@@ -64,7 +64,7 @@ public class DrivingTimeMatrix {
             int cellNumber = 1;
             for (Station destination: stations) {
                 if (origin.getId() != destination.getId()) {
-                    if (numberOfQueries10sek < 99) {
+                    if (numberOfQueries10sek > 99) {
                         try {
                             System.out.println("Execution sleeps for 10 seconds");
                             Thread.currentThread().sleep(10*1000);
