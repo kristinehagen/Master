@@ -349,7 +349,9 @@ public class WriteXpressFiles {
                 //Print
                 for (int stationId : pickUpStations.keySet()) {
                     double load = pickUpStations.get(stationId);
-                    writer.println("( " + stationId + " " + vehicle.getId()  + " " + (route+1) + " ) " + load);
+                    if (load > 0) {
+                        writer.println("( " + stationId + " " + vehicle.getId() + " " + (route + 1) + " ) " + load);
+                    }
                 }
 
             }
@@ -383,7 +385,9 @@ public class WriteXpressFiles {
                 //Print
                 for (int stationId : deliveryStations.keySet()) {
                     double load = deliveryStations.get(stationId);
-                    writer.println("( " + stationId + " " + vehicle.getId()  + " " + (route+1) + " ) " + load);
+                    if (load > 0) {
+                        writer.println("( " + stationId + " " + vehicle.getId() + " " + (route + 1) + " ) " + load);
+                    }
                 }
 
             }
@@ -418,7 +422,9 @@ public class WriteXpressFiles {
                 //Print
                 for (int stationId : stations.keySet()) {
                     double arrivalTime = stations.get(stationId);
-                    writer.println("( " + stationId + " " + vehicle.getId()  + " " + (route+1) + " ) " + arrivalTime);
+                    if (arrivalTime > 0) {
+                        writer.println("( " + stationId + " " + vehicle.getId() + " " + (route + 1) + " ) " + arrivalTime);
+                    }
                 }
             }
         }
