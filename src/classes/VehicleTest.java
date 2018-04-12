@@ -23,7 +23,7 @@ class VehicleTest {
         //CalculateTimeToViolationIfNoVisit
 
         Input input = new Input();
-        input.setCurrentMinute(8);
+        input.setSimulationStartTime(8);
         ArrayList<StationVisit> routeUnderConstruction = new ArrayList<>();
         StationVisit stationVisit = new StationVisit();
 

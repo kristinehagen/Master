@@ -37,7 +37,7 @@ public class GraphViewer {
             node.addAttribute("ui.label", station.getId());
 
             //Color (positive station = black, negative station = grey)
-            if (station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())) >= 0) {
+            if (station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getSimulationStartTime())) >= 0) {
                 node.addAttribute("ui.style", "fill-color: black;");
             } else {
                 node.addAttribute("ui.style", "fill-color: grey;");

@@ -1,9 +1,6 @@
-package main;
+package classes;
 
-import classes.Input;
-import classes.SolutionMethod;
-import com.dashoptimization.XPRMCompileException;
-import xpress.RunXpress;
+import enums.SolutionMethod;
 import xpress.WriteXpressFiles;
 
 import java.io.IOException;

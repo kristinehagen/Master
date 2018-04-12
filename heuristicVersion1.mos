@@ -852,6 +852,8 @@ writeln('Reward: ' + getsol(totalReward));
 writeln('Objective value: ' + getsol(Objective1));
 writeln;
 
+end-model
+
 forall(vv in Vehicles) do
 	writeln('Remaining time to final station: ' + getsol(remainingTimeToFinalStation(vv)));
 	writeln('Penalty time for station ' + vv + ': ' + getsol(timePenalty(vv)));

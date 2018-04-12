@@ -1,24 +1,23 @@
-package main;
+package classes;
 
-import classes.*;
 import com.dashoptimization.XPRMCompileException;
+import enums.SolutionMethod;
 import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class HeuristicVersion1 {
 
     //Constructor
     public HeuristicVersion1(Input input) throws IOException, XPRMCompileException {
         WriteXpressFiles.printFixedInput(input);
+
         initiateRoutes(input);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
-        RunXpress.runXpress(input.getXpressFile());
+        //RunXpress.runXpress(input.getXpressFile());
     }
 
 

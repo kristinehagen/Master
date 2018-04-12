@@ -1,5 +1,7 @@
 package classes;
 
+import enums.ReOptimizationMethod;
+import enums.SolutionMethod;
 import functions.*;
 
 import java.io.FileNotFoundException;
@@ -11,16 +13,23 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
+    private int maxVisit = 2;
     private double timeHorizon = 20;
-    private double currentMinute = 8*60;              //Minutes
-    private double simulationStopTime = 10 *60;
+    private double simulationStartTime = 8*60;              //Minutes
+    private double simulationStopTime = 10*60;
     private int testInstance = 5;
-    private int nrOfVehicles = 4;
+    private int nrOfVehicles = 2;
+
+
+    private int numberOfRuns = 15;
+
+
 
 
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 20;             //Create n new routes IN each branching
+    private int nrStationBranching = 5;             //Create n new routes IN each branching
     private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 
@@ -51,7 +60,6 @@ public class Input {
     private String xpressFile;
     private String timedependentInoutFile = "timeDependentInput.txt";
     private String fixedInputFile = "fixedInput.txt";
-    private int maxVisit = 2;
 
 
 
@@ -269,12 +277,12 @@ public class Input {
         this.minLoad = minLoad;
     }
 
-    public double getCurrentMinute() {
-        return currentMinute;
+    public double getSimulationStartTime() {
+        return simulationStartTime;
     }
 
-    public void setCurrentMinute(double currentMinute) {
-        this.currentMinute = currentMinute;
+    public void setSimulationStartTime(double simulationStartTime) {
+        this.simulationStartTime = simulationStartTime;
     }
 
     public double getTimeHorizon() {
@@ -397,5 +405,29 @@ public class Input {
 
     public void setXpressFile(String xpressFile) {
         this.xpressFile = xpressFile;
+    }
+
+    public int getNumberOfRuns() {
+        return numberOfRuns;
+    }
+
+    public void setNumberOfRuns(int numberOfRuns) {
+        this.numberOfRuns = numberOfRuns;
+    }
+
+    public double getSimulationStopTime() {
+        return simulationStopTime;
+    }
+
+    public void setSimulationStopTime(double simulationStopTime) {
+        this.simulationStopTime = simulationStopTime;
+    }
+
+    public ReOptimizationMethod getReOptimizationMethod() {
+        return reOptimizationMethod;
+    }
+
+    public void setReOptimizationMethod(ReOptimizationMethod reOptimizationMethod) {
+        this.reOptimizationMethod = reOptimizationMethod;
     }
 }

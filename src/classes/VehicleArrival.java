@@ -1,6 +1,6 @@
 package classes;
 
-public class StationVisitToSimulate {
+public class VehicleArrival {
 
 
     private int stationId;
@@ -14,7 +14,7 @@ public class StationVisitToSimulate {
     private boolean firstVisit;
 
 
-    public StationVisitToSimulate(int stationId, int stationVisitNr, int stationLoad, double time, int vehicle, int nextStationId, int nextStationVisit, double timeNextVisit, boolean firstVisit) {
+    public VehicleArrival(int stationId, int stationVisitNr, int stationLoad, double time, int vehicle, int nextStationId, int nextStationVisit, double timeNextVisit, boolean firstVisit) {
         this.stationId = stationId;
         this.stationVisitNr = stationVisitNr;
         this.load = stationLoad;

@@ -1,6 +1,7 @@
 package xpress;
 
 import classes.*;
+import enums.SolutionMethod;
 import functions.TimeConverter;
 
 import java.io.FileNotFoundException;
@@ -26,7 +27,7 @@ public class WriteXpressFiles {
                 printMaxVisit(input.getMaxVisit(), writer);
                 printMaxRoute(input.getVehicles().values(), writer);
                 printVehicleInitialInformation(input.getVehicles().values(), writer);
-                printStationInitialInformation(input.getStations().values(), writer, input.getCurrentMinute());
+                printStationInitialInformation(input.getStations().values(), writer, input.getSimulationStartTime());
                 printInteriorRepresentation(input, writer);
                 break;
 
@@ -36,7 +37,7 @@ public class WriteXpressFiles {
                 printMaxVisit(input.getMaxVisit(), writer);
                 printMaxRoute(input.getVehicles().values(), writer);
                 printVehicleInitialInformation(input.getVehicles().values(), writer);
-                printStationInitialInformation(input.getStations().values(), writer, input.getCurrentMinute());
+                printStationInitialInformation(input.getStations().values(), writer, input.getSimulationStartTime());
                 printInteriorRepresentation(input, writer);
                 printLoadFromHeuristic(input, writer);
                 break;
@@ -53,7 +54,7 @@ public class WriteXpressFiles {
                 printLengthOfPlanningHorizon(input.getTimeHorizon(), writer);
                 printMaxVisit(input.getMaxVisit(), writer);
                 printVehicleInitialInformation(input.getVehicles().values(), writer);
-                printStationInitialInformation(input.getStations().values(), writer, input.getCurrentMinute());
+                printStationInitialInformation(input.getStations().values(), writer, input.getSimulationStartTime());
                 break;
         }
 
@@ -68,7 +69,7 @@ public class WriteXpressFiles {
         writer.println("starvationPrevented : [");
         for (Vehicle vehicle : input.getVehicles().values()) {
             for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++ ) {
-                double starvationPrevented = findStarvationsPrevented(vehicle, route, input.getCurrentMinute(), input.getTimeHorizon());
+                double starvationPrevented = findStarvationsPrevented(vehicle, route, input.getSimulationStartTime(), input.getTimeHorizon());
                 writer.println("( " + vehicle.getId() + " " + (route+1) + " ) " + starvationPrevented);
             }
             writer.println();
@@ -81,7 +82,7 @@ public class WriteXpressFiles {
         writer.println("congestionPrevented : [");
         for (Vehicle vehicle : input.getVehicles().values()) {
             for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++ ) {
-                double congestionsPrevented = findCongestionsPrevented(vehicle, route, input.getCurrentMinute(), input.getTimeHorizon());
+                double congestionsPrevented = findCongestionsPrevented(vehicle, route, input.getSimulationStartTime(), input.getTimeHorizon());
                 writer.println("( " + vehicle.getId() + " " + (route+1) + " ) " + congestionsPrevented);
             }
             writer.println();
@@ -94,7 +95,7 @@ public class WriteXpressFiles {
         writer.println("deviationImproved : [");
         for (Vehicle vehicle : input.getVehicles().values()) {
             for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++ ) {
-                double deviationImprovement = findDeviationImprovement(vehicle, route, input.getCurrentMinute(), input.getTimeHorizon());
+                double deviationImprovement = findDeviationImprovement(vehicle, route, input.getSimulationStartTime(), input.getTimeHorizon());
                 writer.println("( " + vehicle.getId() + " " + (route+1) + " ) " + deviationImprovement);
             }
             writer.println();
@@ -107,7 +108,7 @@ public class WriteXpressFiles {
         writer.println("deviationReward : [");
         for (Vehicle vehicle : input.getVehicles().values()) {
             for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++ ) {
-                double deviationLastVisit = findDeviationLastVisit(vehicle, route, input.getCurrentMinute(), input.getTimeHorizon());
+                double deviationLastVisit = findDeviationLastVisit(vehicle, route, input.getSimulationStartTime(), input.getTimeHorizon());
                 writer.println("( " + vehicle.getId() + " " + (route+1) + " ) " + deviationLastVisit);
             }
             writer.println();
