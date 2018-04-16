@@ -29,8 +29,11 @@ public class Run {
             Simulation simulation = new Simulation();
             simulation.run(simulationFile, input);
 
-            totalViolationList.add(simulation.getCongestions() + simulation.getStarvations());
-            percentageViolationsList.add((double) simulation.getCongestions() + simulation.getStarvations() / (double) simulation.getTotalNumberOfCustomers() * 100);
+            double totalViolations = simulation.getCongestions() + simulation.getStarvations();
+            System.out.println("Total violation run " + i + ": " + totalViolations);
+            System.out.println("Total nr of customers " + i + ": " + simulation.getTotalNumberOfCustomers());
+            totalViolationList.add(totalViolations);
+            percentageViolationsList.add((double) totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
             numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
             averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
         }
