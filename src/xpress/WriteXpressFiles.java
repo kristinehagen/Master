@@ -651,6 +651,11 @@ public class WriteXpressFiles {
         writer.println("artificialStation: 0");
         writer.println("visitInterval: 8");
         writer.println("loadInterval: " + input.getLoadInterval());
+        if (input.isSimulation()) {
+            writer.println("simulation: 1");
+        } else {
+            writer.println("simulation: 0");
+        }
 
         //Station IDs
         writer.println();

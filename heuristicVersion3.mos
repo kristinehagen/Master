@@ -47,6 +47,16 @@ finalize(Vehicles);
 
 !FIXED INPUT PARAMETERS
 
+declarations
+	simulation: 				integer;
+end-declarations
+
+initializations from DataFileFixedInput
+
+	simulation;
+end-initializations
+
+
 
 !TIME DEPENDENT INPUT PARAMETERS
 
@@ -148,23 +158,29 @@ maximize(Objective);
 
 fopen("outputXpress.txt",F_OUTPUT);
 	
-	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do
+	if (simulation > 0.5) then
+		forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do
 
-		! Vehicle id
-		if(vv < 0.1) then
-			write(0);
-		else
-			write(vv);
-		end-if
-		write(" ");
+			!Vehicle id
+			if(vv < 0.1) then
+				write(0);
+			else
+				write(vv);
+			end-if
+			write(" ");
+			
+			!Route number
+			write(rr);
+			
+			writeln;
 		
-		!Route number
-		write(rr);
-		
-		writeln;
-		
-	end-do
+		end-do
+	end-if
 	
+	
+	if (simulation < 0.5) then
+		writeln(getsol(Objective));
+	end-if
 
 	
 fclose(F_OUTPUT);

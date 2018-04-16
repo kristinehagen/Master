@@ -3,6 +3,8 @@ package main;
 import classes.*;
 import com.dashoptimization.XPRMCompileException;
 import functions.PrintResults;
+import solutionMethods.*;
+import xpress.ReadXpressResult;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +14,21 @@ public class Run {
 
 
     public static void main(String[] args) throws IOException, XPRMCompileException {
+
         Input input = new Input();
+
+        //Simulate
+        if (input.isSimulation()) {
+            runSimulation(input);
+        } else {
+            runOneVehicleRouteGeneration(input);
+        }
+
+        System.out.println("algorithm successfully terminated");
+
+    }
+
+    private static void runSimulation(Input input) throws IOException, XPRMCompileException {
 
         ArrayList<Double> totalViolationList = new ArrayList<>();
         ArrayList<Double> percentageViolationsList = new ArrayList<>();
@@ -45,13 +61,39 @@ public class Run {
         double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
         double avergaeTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
 
-        PrintResults.printToExcelFile(averageViolation, averagePercentageviolations, sdViolation, sdPercentageviolations, averageNumberOfTimesVehicleRouteGenerated,
+        PrintResults.printOneRouteResultsToExcelFile(averageViolation, averagePercentageviolations, sdViolation, sdPercentageviolations, averageNumberOfTimesVehicleRouteGenerated,
                 avergaeTimeToVehicleRouteGenerated, input);
 
+        System.out.println();
         System.out.println("Average violation percentage: " + averagePercentageviolations);
 
-        System.out.println("algorithm successfully terminated");
+    }
 
+    private static void runOneVehicleRouteGeneration(Input input) throws IOException, XPRMCompileException, IllegalArgumentException {
+
+        input.updateVehiclesAndStationsToInitialState();
+
+        switch (input.getSolutionMethod()) {
+            case HEURISTIC_VERSION_1:
+                HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
+                break;
+            case HEURISTIC_VERSION_2:
+                HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
+                break;
+            case HEURISTIC_VERSION_3:
+                HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
+                break;
+            case EXACT_METHOD:
+                ExactMethod exactMethod = new ExactMethod(input);
+                break;
+            case CURRENT_SOLUTION_IN_OSLO:
+                throw new IllegalArgumentException("Kan ikke kjøre CURRENT_SOLUTION_IN_OSLO i Xpress");
+            case NO_VEHICLES:
+                throw new IllegalArgumentException("Kan ikke kjøre NO_VEHICLES i Xpress");
+        }
+
+        double objectiveValue = ReadXpressResult.readObjectiveValue();
+        PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue);
     }
 
     private static double average(ArrayList<Double> list) {

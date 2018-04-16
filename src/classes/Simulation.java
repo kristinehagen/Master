@@ -5,7 +5,7 @@ import enums.SolutionMethod;
 import solutionMethods.*;
 import enums.NextEvent;
 import functions.NextSimulation;
-import xpress.ReadVehicleArrival;
+import xpress.ReadXpressResult;
 import xpress.WriteXpressFiles;
 
 import java.io.File;
@@ -55,9 +55,9 @@ public class Simulation {
             generateVehicleRoute(input);
             numberOfTimesVehicleRouteGenerated ++;
             if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-                this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
             } else {
-                this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);         //Actual arrival times minutes
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(currentTime);         //Actual arrival times minutes
             }
 
             //Determine time to generate new vehicle routes
@@ -127,9 +127,9 @@ public class Simulation {
                     generateVehicleRoute(input);
                     numberOfTimesVehicleRouteGenerated ++;
                     if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-                        this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
+                        this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
                     } else {
-                        this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);         //Actual arrival times minutes
+                        this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(currentTime);         //Actual arrival times minutes
                     }
 
                     //Update nextVehicleArrival

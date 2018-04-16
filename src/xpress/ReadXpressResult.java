@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 
-public class ReadVehicleArrival {
+public class ReadXpressResult {
 
     public static ArrayList<VehicleArrival> readVehicleArrivals(double currentTime) throws FileNotFoundException {
 
@@ -119,5 +119,27 @@ public class ReadVehicleArrival {
 
         return vehicleArrivals;
 
+    }
+
+    public static double readObjectiveValue() throws FileNotFoundException, IllegalArgumentException {
+
+        File inputFile = new File("outputXpress.txt");
+        Scanner in = new Scanner(inputFile);
+        double objectiveValue = 0;
+
+        while (in.hasNextLine()) {
+            String line = in.nextLine();
+            Scanner element = new Scanner(line);
+
+            if (element.hasNext()) {
+                objectiveValue = Double.parseDouble(element.next());
+            } else {
+                throw new IllegalArgumentException("No objective value from Xpress");
+            }
+
+        }
+        in.close();
+
+        return objectiveValue;
     }
 }
