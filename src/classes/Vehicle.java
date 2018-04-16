@@ -11,15 +11,19 @@ public class Vehicle {
 
     private int id;
     private int nextStation;
-    //private int nextStationInitial;
     private double timeToNextStation;
-    //private double timeToNextStationInitial;
     private int capacity;
     private int load;
-    //private int initialLoad;
+
     private ArrayList<Station> clusterStationList = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
 
+    //Initial values
+    private int initialLoad;
+    private double timeToNextStationInitial;
+    private int nextStationInitial;
+
+    //Constructor
     public Vehicle(int id) {
         this.id = id;
     }
@@ -602,7 +606,7 @@ public class Vehicle {
         this.load = load + newLoad;
     }
 
-    /*
+
     public int getInitialLoad() {
         return initialLoad;
     }
@@ -627,7 +631,7 @@ public class Vehicle {
         this.timeToNextStationInitial = timeToNextStationInitial;
     }
 
-*/
+
     public ArrayList<ArrayList<StationVisit>> getInitializedRoutes() {
         return initializedRoutes;
     }

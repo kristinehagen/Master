@@ -3,8 +3,6 @@ package main;
 import classes.Input;
 import classes.Station;
 import functions.RandomDraws;
-import functions.ReadDemandAndNumberOfBikes;
-import functions.ReadStationList;
 import org.json.JSONException;
 
 import java.io.FileNotFoundException;

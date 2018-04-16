@@ -36,7 +36,7 @@ class VehicleTest {
         stationToCheck.setBikeReturnedMedian(8, 40);
         stationToCheck.setBikeWantedMedian(8, 20);
         stationToCheck.setCapacity(20);
-        stationToCheck.setInitialLoad(15);
+        //stationToCheck.setInitialLoad(15);
 
         routeUnderConstruction.add(stationVisit);
 

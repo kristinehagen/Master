@@ -2,7 +2,6 @@ package main;
 
 import classes.*;
 import com.dashoptimization.XPRMCompileException;
-import enums.SolutionMethod;
 import functions.PrintResults;
 
 import java.io.IOException;
@@ -25,6 +24,8 @@ public class Run {
             String simulationFile = "simulation_Instance"+ input.getTestInstance() + "_Nr" + i + ".txt";
             System.out.println("Run number: " + i);
 
+            input.updateVehiclesAndStationsToInitialState();
+
             Simulation simulation = new Simulation();
             simulation.run(simulationFile, input);
 
@@ -44,7 +45,7 @@ public class Run {
         PrintResults.printToExcelFile(averageViolation, averagePercentageviolations, sdViolation, sdPercentageviolations, averageNumberOfTimesVehicleRouteGenerated,
                 avergaeTimeToVehicleRouteGenerated, input);
 
-
+        System.out.println("Average violation percentage: " + averagePercentageviolations);
 
         System.out.println("algorithm successfully terminated");
 

@@ -21,7 +21,6 @@ public class Station {
 
     public Station(int id, int numberOfBikes) {
         this.id = id;
-        this.currentLoad = numberOfBikes;
         this.bikeReturnedMedian = new HashMap<>();
         this.bikeReturnedStd = new HashMap<>();
         this.bikeWantedMedian = new HashMap<>();

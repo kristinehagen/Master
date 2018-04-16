@@ -26,7 +26,7 @@ public class Input {
     //Load in Xpress can be load from heuristic +- loadInterval
     private int loadInterval = 0;
 
-    private int numberOfRuns = 1;
+    private int numberOfRuns = 2;
 
 
 
@@ -163,6 +163,18 @@ public class Input {
                 return "exactMethod";
         }
         return null;
+    }
+
+
+    public void updateVehiclesAndStationsToInitialState() {
+        for (Station station : this.stations.values()) {
+            station.setLoad(station.getInitialLoad());
+        }
+        for (Vehicle vehicle : this.vehicles.values()) {
+            vehicle.setTimeToNextStation(vehicle.getTimeToNextStationInitial());
+            vehicle.setNextStation(vehicle.getNextStationInitial());
+            vehicle.setLoad(vehicle.getInitialLoad());
+        }
     }
 
 
@@ -414,4 +426,6 @@ public class Input {
     public void setTestInstance(int testInstance) {
         this.testInstance = testInstance;
     }
+
+
 }

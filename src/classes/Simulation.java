@@ -66,14 +66,14 @@ public class Simulation {
 
 
         //3 : NEXT CUSTOMER ARRIVAL
-        nextCustomerArrival.updateNextCustomerArrival(in, currentTime, simulationStopTime);        //Actual time minutes
+        nextCustomerArrival.updateNextCustomerArrival(in, currentTime, simulationStopTime);         //Actual time minutes
 
 
         // 4 : NEXT VEHICLE ARRIVAL
         int vehicleArrivalCounter = 0;
         VehicleArrival nextVehicleArrival = new VehicleArrival(simulationStopTime);
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
-            nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);         //Actual time minutes
+            nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);                        //Actual time minutes
         }
 
 
