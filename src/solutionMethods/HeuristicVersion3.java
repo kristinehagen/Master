@@ -19,7 +19,6 @@ public class HeuristicVersion3 {
         initiateRoutes(input);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_3);
         RunXpress.runXpress(input.getXpressFile());
-
     }
 
     private static void initiateRoutes(Input input) throws FileNotFoundException, UnsupportedEncodingException {

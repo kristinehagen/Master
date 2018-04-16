@@ -54,7 +54,11 @@ public class Simulation {
             //Generate routes for service vehicles
             generateVehicleRoute(input);
             numberOfTimesVehicleRouteGenerated ++;
-            this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);         //Actual arrival times minutes
+            if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
+                this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
+            } else {
+                this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);         //Actual arrival times minutes
+            }
 
             //Determine time to generate new vehicle routes
             timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), currentTime);      //Actual time minutes
@@ -122,7 +126,11 @@ public class Simulation {
                     determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles() );
                     generateVehicleRoute(input);
                     numberOfTimesVehicleRouteGenerated ++;
-                    this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);
+                    if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
+                        this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
+                    } else {
+                        this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);         //Actual arrival times minutes
+                    }
 
                     //Update nextVehicleArrival
                     vehicleArrivalCounter = 0;

@@ -146,7 +146,28 @@ maximize(Objective);
 
 
 
+fopen("outputXpress.txt",F_OUTPUT);
+	
+	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do
 
+		! Vehicle id
+		if(vv < 0.1) then
+			write(0);
+		else
+			write(vv);
+		end-if
+		write(" ");
+		
+		!Route number
+		write(rr);
+		
+		writeln;
+		
+	end-do
+	
+
+	
+fclose(F_OUTPUT);
 
 
 
