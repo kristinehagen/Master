@@ -1,9 +1,9 @@
-package createVehicleRoutes;
+package solutionMethods;
 
 import classes.Input;
 import classes.Vehicle;
-import com.dashoptimization.XPRMCompileException;
 import enums.SolutionMethod;
+import com.dashoptimization.XPRMCompileException;
 import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
@@ -11,21 +11,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class HeuristicVersion1 {
+public class HeuristicVersion3 {
 
     //Constructor
-    public HeuristicVersion1(Input input) throws IOException, XPRMCompileException {
+    public HeuristicVersion3(Input input) throws IOException, XPRMCompileException {
         WriteXpressFiles.printFixedInput(input);
-
         initiateRoutes(input);
-        WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
+        WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_3);
         RunXpress.runXpress(input.getXpressFile());
+
     }
-
-
-
-
-
 
     private static void initiateRoutes(Input input) throws FileNotFoundException, UnsupportedEncodingException {
 
@@ -34,16 +29,7 @@ public class HeuristicVersion1 {
             vehicle.createRoutes(input);
         }
 
-        /*
-        GraphViewer graphViewer = new GraphViewer();
-        graphViewer.displayInitiatedRoutes(input, true);
-        */
 
     }
-
-
-
-
-
 
 }

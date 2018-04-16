@@ -1,10 +1,7 @@
 package classes;
 
 import com.dashoptimization.XPRMCompileException;
-import createVehicleRoutes.ExactMethod;
-import createVehicleRoutes.HeuristicVersion1;
-import createVehicleRoutes.HeuristicVersion2;
-import createVehicleRoutes.HeuristicVersion3;
+import solutionMethods.*;
 import enums.NextEvent;
 import functions.NextSimulation;
 import xpress.ReadVehicleArrival;
@@ -212,6 +209,12 @@ public class Simulation {
                 break;
             case EXACT_METHOD:
                 ExactMethod exactMethod = new ExactMethod(input);
+                break;
+            case CURRENT_SOLUTION_IN_OSLO:
+                CurrentSolutionInOslo currentSolutionInOslo = new CurrentSolutionInOslo(input);
+                break;
+            case NO_VEHICLES:
+                NoVehicles noVehicles = new NoVehicles(input);
                 break;
         }
     }

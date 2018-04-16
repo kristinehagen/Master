@@ -1,4 +1,4 @@
-package createVehicleRoutes;
+package solutionMethods;
 
 import classes.Input;
 import com.dashoptimization.XPRMCompileException;
