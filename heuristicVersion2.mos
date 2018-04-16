@@ -102,8 +102,9 @@ declarations
 	weightDeviationReward: 												real;
 	weightDrivingTimePenalty: 											real;
 	intRep:									array(Stations, Stations, Vehicles, Routes) of integer;
-	intRepUnloadingQuantity:					array(Stations, Vehicles, Routes) of real;
+	intRepUnloadingQuantity:				array(Stations, Vehicles, Routes) of real;
 	intRepLoadingQuantity:					array(Stations, Vehicles, Routes) of real;
+	intRepArrivalTime:						array(Stations, Vehicles, Routes) of real;
 end-declarations
 
 initializations from DataFileTimeDependentInput
@@ -122,6 +123,7 @@ initializations from DataFileTimeDependentInput
 	intRep;
 	intRepUnloadingQuantity;
 	intRepLoadingQuantity;
+	intRepArrivalTime;
 end-initializations
 
 !VARIABLES
@@ -200,9 +202,7 @@ end-do
 
 forall (ii in Stations, mm in Visits, vv in Vehicles | ii <> artificialStation) do
 	create(loadingQuantity(ii,mm,vv));
-	loadingQuantity(ii,mm,vv) is_integer;
 	create(unloadingQuantity(ii,mm,vv));
-	unloadingQuantity(ii,mm,vv) is_integer;
 	create(loadAtVehicle(ii,mm,vv));
 	loadAtVehicle(ii,mm,vv) is_integer;
 end-do
@@ -307,14 +307,16 @@ declarations
 	test: 	linctr;
 	test2: 	linctr;
 	
-	interior:				dynamic array(Stations, Stations, Vehicles) 	of linctr;
-	maxRoutes:				dynamic array(Vehicles)							of linctr;
-	onevisit:				dynamic array(Stations, Visits) 					of linctr;
-	stationOneVisitIfAfterT:	dynamic array(Stations)							of linctr;
+	interior:						dynamic array(Stations, Stations, Vehicles) 	of linctr;
+	maxRoutes:						dynamic array(Vehicles)							of linctr;
+	onevisit:						dynamic array(Stations, Visits) 					of linctr;
+	stationOneVisitIfAfterT:		dynamic array(Stations)							of linctr;
 	totalUnloadingMax:				dynamic array(Stations, Vehicles)		of linctr;
 	totalUnloadingMin:				dynamic array(Stations, Vehicles)		of linctr;
 	totalLoadingMax:				dynamic array(Stations, Vehicles)		of linctr;
 	totalLoadingMin:				dynamic array(Stations, Vehicles)		of linctr;
+	totalArrivalTimeMax:			dynamic array(Stations)					of linctr;
+	totalArrivalTimeMin:			dynamic array(Stations)					of linctr;
 end-declarations
 
 
@@ -357,29 +359,39 @@ end-do
 
 
 
-!----------LOAD IN HEURISTIC----------------
+!----------LOAD AND TIME IN HEURISTIC----------------
 
 
 forall (ii in Stations, vv in Vehicles) do
 	totalUnloadingMax(ii,vv) :=
-		sum(mm in Visits)unloadingQuantity(ii,mm,vv) <= sum(rr in Routes) intRepUnloadingQuantity(ii,vv,rr)*intRepLambda(vv,rr) + loadInterval;
+		sum(mm in Visits)unloadingQuantity(ii,mm,vv) <= sum(rr in Routes) (intRepUnloadingQuantity(ii,vv,rr)+ loadInterval)*intRepLambda(vv,rr);
 end-do
 
 forall (ii in Stations, vv in Vehicles) do
 	totalUnloadingMin(ii,vv) :=
-		sum(mm in Visits)unloadingQuantity(ii,mm,vv) >= sum(rr in Routes) intRepUnloadingQuantity(ii,vv,rr)*intRepLambda(vv,rr) - loadInterval;
+		sum(mm in Visits)unloadingQuantity(ii,mm,vv) >= sum(rr in Routes) (intRepUnloadingQuantity(ii,vv,rr)- loadInterval)*intRepLambda(vv,rr);
 end-do
 
 
 
 forall (ii in Stations, vv in Vehicles) do
 	totalLoadingMax(ii,vv) :=
-		sum(mm in Visits)loadingQuantity(ii,mm,vv) <= sum(rr in Routes) intRepLoadingQuantity(ii,vv,rr)*intRepLambda(vv,rr) + loadInterval;
+		sum(mm in Visits)loadingQuantity(ii,mm,vv) <= sum(rr in Routes) (intRepLoadingQuantity(ii,vv,rr)+ loadInterval)*intRepLambda(vv,rr);
 end-do
 
 forall (ii in Stations, vv in Vehicles) do
 	totalLoadingMin(ii,vv) :=
-		sum(mm in Visits)loadingQuantity(ii,mm,vv) >= sum(rr in Routes) intRepLoadingQuantity(ii,vv,rr)*intRepLambda(vv,rr) - loadInterval;
+		sum(mm in Visits)loadingQuantity(ii,mm,vv) >= sum(rr in Routes) (intRepLoadingQuantity(ii,vv,rr)- loadInterval)*intRepLambda(vv,rr);
+end-do
+
+forall (ii in Stations) do
+	totalArrivalTimeMin(ii) :=
+		sum(mm in Visits)visitTime(ii,mm) >= sum(rr in Routes, vv in Vehicles) (intRepArrivalTime(ii,vv,rr)- loadInterval*0.25)*intRepLambda(vv,rr);
+end-do
+
+forall (ii in Stations) do
+	totalArrivalTimeMax(ii) :=
+		sum(mm in Visits) visitTime(ii,mm) <= sum(rr in Routes, vv in Vehicles) (intRepArrivalTime(ii,vv,rr)+ loadInterval*0.25)*intRepLambda(vv,rr);
 end-do
 
 
@@ -880,7 +892,10 @@ minimize(Objective1);
 
 !PRINT
 
-	
+	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))>0.5) do
+		writeln('Vehicle ' + vv + ' drives route ' + rr);
+	end-do
+		
 	forall (ii in Stations, jj in Stations, mm in Visits, nn in Visits, vv in Vehicles | getsol(flow(ii,mm,jj,nn,vv)) > 0.1) do
 		writeln('x(' + ii + ',' + mm + ',' + jj + ',' + nn + ',' + vv + ') = ' + getsol(flow(ii,mm,jj,nn,vv)));
 	end-do
@@ -992,6 +1007,3 @@ end-do
 
 	
 end-model
-
-
-

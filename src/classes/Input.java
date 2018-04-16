@@ -13,17 +13,17 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 8*60;              //Minutes
-    private double simulationStopTime = 10*60;
+    private double simulationStopTime = 9*60;
     private int testInstance = 5;
     private int nrOfVehicles = 2;
 
 
-    private int numberOfRuns = 15;
+    private int numberOfRuns = 1;
 
 
 
@@ -51,7 +51,7 @@ public class Input {
     private double weightDrivingTimePenalty = 0.4;
 
     //Load in Xpress can be load from heuristic +- loadInterval
-    private int loadInterval = 3;
+    private int loadInterval = 0;
 
 
 
@@ -111,13 +111,22 @@ public class Input {
         ReadCoordinates.lookUpCoordinates(stations, stationIdList);
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
         ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
+
+        if (solutionMethod.equals(SolutionMethod.HEURISTIC_VERSION_3)) {
+            this.maxVisit = 1;}
     }
-
-
 
 
     public Input(double hour) throws FileNotFoundException {
         this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
+    }
+
+    //Create demand scenario
+    public Input(int testInstance) throws FileNotFoundException {
+        this.testInstance = testInstance;
+        String initialStationFile = getStationFile(this.testInstance);
+        this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
+        this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
 
     private String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
@@ -429,5 +438,13 @@ public class Input {
 
     public void setReOptimizationMethod(ReOptimizationMethod reOptimizationMethod) {
         this.reOptimizationMethod = reOptimizationMethod;
+    }
+
+    public int getTestInstance() {
+        return testInstance;
+    }
+
+    public void setTestInstance(int testInstance) {
+        this.testInstance = testInstance;
     }
 }

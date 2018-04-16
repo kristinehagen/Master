@@ -1,5 +1,7 @@
 package classes;
 
+import java.util.ArrayList;
+
 public class VehicleArrival {
 
 
@@ -24,6 +26,10 @@ public class VehicleArrival {
         this.nextStationVisit = nextStationVisit;
         this.timeNextVisit = timeNextVisit;
         this.firstVisit = firstVisit;
+    }
+
+    public VehicleArrival(double simulationStopTime) {
+        this.time = simulationStopTime + 1;
     }
 
     //GETTERS AND SETTERS
@@ -98,5 +104,6 @@ public class VehicleArrival {
     public void setFirstvisit(boolean firstvisit) {
         this.firstVisit = firstvisit;
     }
+
 
 }

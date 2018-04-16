@@ -1,5 +1,7 @@
-package classes;
+package createVehicleRoutes;
 
+import classes.Input;
+import classes.Vehicle;
 import com.dashoptimization.XPRMCompileException;
 import enums.SolutionMethod;
 import xpress.RunXpress;
@@ -17,7 +19,7 @@ public class HeuristicVersion1 {
 
         initiateRoutes(input);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
-        //RunXpress.runXpress(input.getXpressFile());
+        RunXpress.runXpress(input.getXpressFile());
     }
 
 
@@ -32,29 +34,9 @@ public class HeuristicVersion1 {
             vehicle.createRoutes(input);
         }
 
-        System.out.println("Initial routes created");
-
         /*
         GraphViewer graphViewer = new GraphViewer();
         graphViewer.displayInitiatedRoutes(input, true);
-        */
-
-        /*
-        //Print initiated routes
-        int counter = 1;
-        for (Vehicle vehicle: input.getVehicles().values()) {
-            for (ArrayList<StationVisit> route : vehicle.getInitializedRoutes()) {
-                //Route id
-                System.out.print("Route " + counter + ": ");
-                counter ++;
-                //Station ids
-                for (StationVisit stationVisit : route) {
-                    System.out.print(stationVisit.getStation().getId() + " ");
-                }
-                //Total time
-                System.out.println(", total time: " + route.get(route.size()-1).getVisitTime());
-            }
-        }
         */
 
     }
