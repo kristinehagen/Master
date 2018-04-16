@@ -1,6 +1,7 @@
 package classes;
 
 import com.dashoptimization.XPRMCompileException;
+import enums.SolutionMethod;
 import solutionMethods.*;
 import enums.NextEvent;
 import functions.NextSimulation;
@@ -39,24 +40,42 @@ public class Simulation {
         File inputFile = new File(simulationFile);
         Scanner in = new Scanner(inputFile);
 
-        //Fixed values
+
+        // 1 : SIMULATION STOP TIME
         double simulationStopTime = input.getSimulationStopTime();                              //Actual time minutes
 
-        //Generate routes for service vehicles
-        generateVehicleRoute(input);
-        numberOfTimesVehicleRouteGenerated ++;
-        this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);         //Actual arrival times minutes
 
-        //Determine next vehicle arrival
-        int vehicleArrivalCounter = 0;
-        VehicleArrival nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);         //Actual time minutes
+        // 2 : TIME FOR NEW VEHICLE ROUTES
+        double timeToNewVehicleRoutes = simulationStopTime + 1;
 
-        //Determine time to generate new vehicle routes
-        double timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod()) + currentTime;      //Actual time minutes
-        this.timeToNextSimulationList.add(timeToNewVehicleRoutes);
+        //If vehicle routes are to be generated
+        if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
 
-        //Determine next customer arrival
+            //Generate routes for service vehicles
+            generateVehicleRoute(input);
+            numberOfTimesVehicleRouteGenerated ++;
+            this.vehicleArrivals = ReadVehicleArrival.readVehicleArrivals(currentTime);         //Actual arrival times minutes
+
+            //Determine time to generate new vehicle routes
+            timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), currentTime);      //Actual time minutes
+            this.timeToNextSimulationList.add(timeToNewVehicleRoutes);
+
+            System.out.println();
+            System.out.println("Remaining time: " + (simulationStopTime - timeToNewVehicleRoutes));
+        }
+
+
+        //3 : NEXT CUSTOMER ARRIVAL
         nextCustomerArrival.updateNextCustomerArrival(in, currentTime, simulationStopTime);        //Actual time minutes
+
+
+        // 4 : NEXT VEHICLE ARRIVAL
+        int vehicleArrivalCounter = 0;
+        VehicleArrival nextVehicleArrival = new VehicleArrival(simulationStopTime);
+        if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
+            nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);         //Actual time minutes
+        }
+
 
 
 
@@ -69,18 +88,27 @@ public class Simulation {
             double nextEventTime = simulationStopTime;
             NextEvent nextEvent = NextEvent.SIMULATION_STOP;
 
-            if (timeToNewVehicleRoutes < nextEventTime) {
-                nextEventTime = timeToNewVehicleRoutes;
-                nextEvent = NextEvent.NEW_VEHICLE_ROUTES;
+            //If vehicle routes are to be generated
+            if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
+                if (timeToNewVehicleRoutes < nextEventTime) {
+                    nextEventTime = timeToNewVehicleRoutes;
+                    nextEvent = NextEvent.NEW_VEHICLE_ROUTES;
+                }
             }
+
             if (nextCustomerArrival.getTime() < nextEventTime) {
                 nextEventTime = nextCustomerArrival.getTime();
                 nextEvent = NextEvent.CUSTOMER_ARRIVAL;
             }
-            if (nextVehicleArrival.getTime() < nextEventTime) {
-                nextEventTime = nextVehicleArrival.getTime();
-                nextEvent = NextEvent.VEHICLE_ARRIVAL;
+
+            //If vehicle routes are to be generated
+            if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
+                if (nextVehicleArrival.getTime() < nextEventTime) {
+                    nextEventTime = nextVehicleArrival.getTime();
+                    nextEvent = NextEvent.VEHICLE_ARRIVAL;
+                }
             }
+
 
 
             switch (nextEvent) {
@@ -99,8 +127,11 @@ public class Simulation {
                     //Update nextVehicleArrival
                     vehicleArrivalCounter = 0;
                     nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);
-                    timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod()) + currentTime;      //Actual time minutes
+                    timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), currentTime);      //Actual time minutes
                     this.timeToNextSimulationList.add(timeToNewVehicleRoutes);
+
+                    System.out.println();
+                    System.out.println("Remaining time: " + (simulationStopTime - timeToNewVehicleRoutes));
                     break;
 
                 case CUSTOMER_ARRIVAL:
@@ -223,27 +254,27 @@ public class Simulation {
     private void determineRemainingDrivingTimeAndStation(double timeForNewVehicleRoutes, HashMap<Integer, Vehicle> vehicles) {
         for (VehicleArrival vehicleArrival : vehicleArrivals) {
 
-            boolean vehicleArrivalBeforeSimulationStopTime = vehicleArrival.getTime() < timeForNewVehicleRoutes;
-            boolean nextVehicleArrivalAfterOrAtSimulationStopTime = vehicleArrival.getTimeNextVisit() >= timeForNewVehicleRoutes;
+            boolean vehicleArrivalBeforeGeneratingNewRoutes = vehicleArrival.getTime() < timeForNewVehicleRoutes;
+            boolean nextVehicleArrivalAfterOrAtTimeForGeneratingNewRoutes = vehicleArrival.getTimeNextVisit() >= timeForNewVehicleRoutes;
             boolean vehicleArrivalFirstVisit = vehicleArrival.isFirstvisit();
-            boolean vehicleArrivalAfterOrAtSimulationStopTime = vehicleArrival.getTime() >= timeForNewVehicleRoutes;
+            boolean vehicleArrivalAfterOrAtTimeForGeneratingNewRoutes = vehicleArrival.getTime() >= timeForNewVehicleRoutes;
             boolean nextStationIsArtificialStation = vehicleArrival.getNextStationId() == 0;
 
-            if ( vehicleArrivalBeforeSimulationStopTime & nextVehicleArrivalAfterOrAtSimulationStopTime & !nextStationIsArtificialStation) {
+            if ( vehicleArrivalBeforeGeneratingNewRoutes & nextVehicleArrivalAfterOrAtTimeForGeneratingNewRoutes & !nextStationIsArtificialStation) {
                 int vehicleId = vehicleArrival.getVehicle();
                 Vehicle vehicle = vehicles.get(vehicleId);
                 double timeToNextStation = vehicleArrival.getTimeNextVisit()-timeForNewVehicleRoutes;
                 vehicle.setTimeToNextStation(timeToNextStation);
                 vehicle.setNextStation(vehicleArrival.getNextStationId());
 
-            } else if (vehicleArrivalFirstVisit & vehicleArrivalAfterOrAtSimulationStopTime){
+            } else if (vehicleArrivalFirstVisit & vehicleArrivalAfterOrAtTimeForGeneratingNewRoutes){
                 int vehicleId = vehicleArrival.getVehicle();
                 Vehicle vehicle = vehicles.get(vehicleId);
                 double timeToNextStation = vehicleArrival.getTime()-timeForNewVehicleRoutes;
                 vehicle.setTimeToNextStation(timeToNextStation);
                 vehicle.setNextStation(vehicleArrival.getStationId());
 
-            }  else if (nextStationIsArtificialStation & vehicleArrivalBeforeSimulationStopTime ) {
+            }  else if (nextStationIsArtificialStation & vehicleArrivalBeforeGeneratingNewRoutes ) {
                 int vehicleId = vehicleArrival.getVehicle();
                 Vehicle vehicle = vehicles.get(vehicleId);
                 vehicle.setTimeToNextStation(0);

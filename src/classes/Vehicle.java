@@ -11,12 +11,12 @@ public class Vehicle {
 
     private int id;
     private int nextStation;
-    private int nextStationInitial;
+    //private int nextStationInitial;
     private double timeToNextStation;
-    private double timeToNextStationInitial;
+    //private double timeToNextStationInitial;
     private int capacity;
     private int load;
-    private int initialLoad;
+    //private int initialLoad;
     private ArrayList<Station> clusterStationList = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
 
@@ -46,12 +46,12 @@ public class Vehicle {
 
         //Lager en rute som kun går til første stasjon.
         //Legger så denne ruta inn i routesUnderConstruction slik at den kan utvikle seg
-        Station firstStation = input.getStations().get(this.nextStationInitial);
+        Station firstStation = input.getStations().get(this.nextStation);
 
         ArrayList<StationVisit> firstRouteUnderConstruction = new ArrayList<>();
         StationVisit firstStationVisit = new StationVisit();
         firstStationVisit.setStation(firstStation);
-        firstStationVisit.setVisitTime(this.timeToNextStationInitial);
+        firstStationVisit.setVisitTime(this.timeToNextStation);
         firstRouteUnderConstruction.add(firstStationVisit);
         routesUnderConstruction.add(firstRouteUnderConstruction);
 
@@ -602,6 +602,7 @@ public class Vehicle {
         this.load = load + newLoad;
     }
 
+    /*
     public int getInitialLoad() {
         return initialLoad;
     }
@@ -626,7 +627,7 @@ public class Vehicle {
         this.timeToNextStationInitial = timeToNextStationInitial;
     }
 
-
+*/
     public ArrayList<ArrayList<StationVisit>> getInitializedRoutes() {
         return initializedRoutes;
     }

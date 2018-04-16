@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -21,15 +21,17 @@ public class Input {
     private double simulationStopTime = 9*60;
     private int testInstance = 5;
     private int nrOfVehicles = 2;
+    private int nrStationBranching = 3;             //Create n new routes IN each branching
 
+    //Load in Xpress can be load from heuristic +- loadInterval
+    private int loadInterval = 0;
 
     private int numberOfRuns = 1;
 
 
 
-
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 3;             //Create n new routes IN each branching
+
     private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 15;
 
@@ -50,8 +52,7 @@ public class Input {
     private double weightDeviationReward  = 0.6;
     private double weightDrivingTimePenalty = 0.4;
 
-    //Load in Xpress can be load from heuristic +- loadInterval
-    private int loadInterval = 0;
+
 
 
 
@@ -60,17 +61,6 @@ public class Input {
     private String xpressFile;
     private String timedependentInoutFile = "timeDependentInput.txt";
     private String fixedInputFile = "fixedInput.txt";
-
-
-
-
-    //--------GENETIC ALGORITHM------------
-    private int maxNumberOfGenerations = 400;
-    private int sizeOfPopulation = 20;
-    private int tournamentParticipants = 2;
-    private double crossoverProbability = 0.8;
-    private double intraMutationProbability = 1;
-
 
 
 
@@ -178,21 +168,6 @@ public class Input {
 
     //Getters and setters
 
-    public double getIntraMutationProbability() {
-        return intraMutationProbability;
-    }
-
-    public int getTournamentParticipants() {
-        return tournamentParticipants;
-    }
-
-    public double getCrossoverProbability() {
-        return crossoverProbability;
-    }
-
-    public int getSizeOfPopulation() {
-        return sizeOfPopulation;
-    }
 
     public int getNumberOfVehicles() {
         return vehicles.size();
@@ -220,14 +195,6 @@ public class Input {
 
     public ArrayList<Integer> getStationIdList() {
         return stationIdList;
-    }
-
-    public int getMaxNumberOfGenerations() {
-        return maxNumberOfGenerations;
-    }
-
-    public void setMaxNumberOfGenerations(int maxNumberOfGenerations) {
-        this.maxNumberOfGenerations = maxNumberOfGenerations;
     }
 
     public int getNrStationBranching() {

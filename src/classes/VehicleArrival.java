@@ -6,24 +6,20 @@ public class VehicleArrival {
 
 
     private int stationId;
-    private int stationVisitNr;
     private int load;
     private double time;
     private int vehicle;
     private int nextStationId;
-    private int nextStationVisit;
     private double timeNextVisit;
     private boolean firstVisit;
 
 
-    public VehicleArrival(int stationId, int stationVisitNr, int stationLoad, double time, int vehicle, int nextStationId, int nextStationVisit, double timeNextVisit, boolean firstVisit) {
+    public VehicleArrival(int stationId, int stationLoad, double time, int vehicle, int nextStationId, double timeNextVisit, boolean firstVisit) {
         this.stationId = stationId;
-        this.stationVisitNr = stationVisitNr;
         this.load = stationLoad;
         this.time = time;
         this.vehicle = vehicle;
         this.nextStationId = nextStationId;
-        this.nextStationVisit = nextStationVisit;
         this.timeNextVisit = timeNextVisit;
         this.firstVisit = firstVisit;
     }
@@ -39,14 +35,6 @@ public class VehicleArrival {
 
     public void setStationId(int stationId) {
         this.stationId = stationId;
-    }
-
-    public int getStationVisit() {
-        return stationVisitNr;
-    }
-
-    public void setStationVisit(int stationVisitNr) {
-        this.stationVisitNr = stationVisitNr;
     }
 
     public int getLoad() {
@@ -79,14 +67,6 @@ public class VehicleArrival {
 
     public void setNextStationId(int nextStationId) {
         this.nextStationId = nextStationId;
-    }
-
-    public int getNextStationVisit() {
-        return nextStationVisit;
-    }
-
-    public void setNextStationVisit(int nextStationVisit) {
-        this.nextStationVisit = nextStationVisit;
     }
 
     public double getTimeNextVisit() {

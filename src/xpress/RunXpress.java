@@ -25,8 +25,10 @@ public class RunXpress {
         mod.run();
 
         //Stop if no solution is found
-        if(mod.getProblemStatus()!=mod.PB_OPTIMAL)
+        if(mod.getProblemStatus()!=mod.PB_OPTIMAL) {
+            System.out.println("NO SOLUTION FOUND");
             System.exit(1);
+        }
     }
 
 }

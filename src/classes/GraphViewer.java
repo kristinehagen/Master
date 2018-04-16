@@ -47,7 +47,7 @@ public class GraphViewer {
 
         //EGDE
         for (Vehicle vehicle : input.getVehicles().values()) {
-            graph.getNode("Station" + vehicle.getNextStationInitial()).addAttribute("ui.style", "fill-color: red;");
+            graph.getNode("Station" + vehicle.getNextStation()).addAttribute("ui.style", "fill-color: red;");
 
 
             for (ArrayList<StationVisit> route: vehicle.getInitializedRoutes()) {
@@ -112,7 +112,7 @@ public class GraphViewer {
         
 
         for (Vehicle vehicle : input.getVehicles().values()) {
-            graph.getNode("Station" + vehicle.getNextStationInitial()).addAttribute("ui.style", "fill-color: red;");
+            graph.getNode("Station" + vehicle.getNextStation()).addAttribute("ui.style", "fill-color: red;");
         }
 
 

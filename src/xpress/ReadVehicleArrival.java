@@ -24,16 +24,14 @@ public class ReadVehicleArrival {
             if (element.hasNextInt()) {
 
                 int stationId = element.nextInt();
-                int stationVisitNr = element.nextInt();
                 int stationLoad = element.nextInt();
                 double time = Double.parseDouble(element.next());
                 int vehicle = element.nextInt();
                 int nextStationId = element.nextInt();
-                int nextStationVisit = element.nextInt();
                 double TimeNextStation = Double.parseDouble(element.next());
                 boolean firstVisit = ((element.nextInt()) == 1);
 
-                VehicleArrival vehicleArrival = new VehicleArrival(stationId, stationVisitNr, stationLoad, time + currentTime, vehicle, nextStationId, nextStationVisit, TimeNextStation+currentTime, firstVisit);
+                VehicleArrival vehicleArrival = new VehicleArrival(stationId, stationLoad, time + currentTime, vehicle, nextStationId, TimeNextStation+currentTime, firstVisit);
 
                 stationVisitsToSimulate.add(vehicleArrival);
             }

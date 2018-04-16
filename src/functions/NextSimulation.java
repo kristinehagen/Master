@@ -7,22 +7,24 @@ import java.util.ArrayList;
 
 public class NextSimulation {
 
-    public static double determineTimeToNextSimulation(ArrayList<VehicleArrival> stationVisitsToSimulate, double timeHorizon, ReOptimizationMethod reOptimizationMethod) {
-        double firstVisit = timeHorizon;
-        double secondVisit = timeHorizon;
-        double thirdVisit = timeHorizon;
+    public static double determineTimeToNextSimulation(ArrayList<VehicleArrival> stationVisitsToSimulate, double timeHorizon, ReOptimizationMethod reOptimizationMethod, double currentTime) {
+        double firstVisit = timeHorizon + currentTime;
+        double secondVisit = timeHorizon + currentTime;
+        double thirdVisit = timeHorizon + currentTime;
 
         for (VehicleArrival vehicleArrival : stationVisitsToSimulate) {
             double time = vehicleArrival.getTime();
-            if (time > 0.01 & time < firstVisit) {
+
+            if (time > currentTime & time < firstVisit) {
                 firstVisit = time;
             }
-            if (time > 0.01 & time < secondVisit & time > firstVisit) {
+            if (time > currentTime & time < secondVisit & time > firstVisit) {
                 secondVisit = time;
             }
-            if (time > 0.01 & time < thirdVisit & time > secondVisit) {
+            if (time > currentTime & time < thirdVisit & time > secondVisit) {
                 thirdVisit = time;
             }
+
         }
 
         double nextSimulation = 0;
@@ -38,18 +40,16 @@ public class NextSimulation {
                 nextSimulation = thirdVisit;
                 break;
             case TEN_MIN:
-                nextSimulation = 10;
+                nextSimulation = currentTime + 10;
                 break;
             case TWENTY_MIN:
-                nextSimulation = 20;
+                nextSimulation = currentTime + 20;
                 break;
             case THIRTY_MIN:
-                nextSimulation = 30;
+                nextSimulation = currentTime + 30;
                 break;
         }
 
-        System.out.println("Next simulation " + nextSimulation);
-        System.out.println();
         return nextSimulation;
     }
 }
