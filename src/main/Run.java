@@ -59,8 +59,6 @@ public class Run {
             computationalTimeXpressPlussInitialization.add(average(simulation.getComputationalTimesXpressPlussInitialization()));
         }
 
-        //Skal ikke sende inn lista til print. Send heller average!!!!
-
         double averageViolation = average(totalViolationList);
         double averagePercentageviolations = average(percentageViolationsList);
         double sdViolation = sd(totalViolationList, averageViolation);

@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -21,23 +21,23 @@ public class Input {
     private double simulationStopTime = 9*60;
     private int testInstance = 5;
     private int nrOfVehicles = 2;
-    private int nrStationBranching = 6;             //Create n new routes IN each branching
+    private int nrStationBranching = 2;             //Create n new routes IN each branching
     private int loadInterval = 0;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 2;                   //Vanlig med 15
-    private boolean simulation = false;
+    private boolean simulation = true;
 
 
 
     //--------INITIALIZATION--------------
 
-    private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
-    private int maxLoad = 15;
+    private int minLoad = 5;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
+    private int maxLoad = 18;
 
 
 
 
     //----------COLUMN GENERATION-----------
-    //Score
+    //Criticality score
     private double weightTimeToViolation = -0.2;
     private double weightViolationRate = 8;
     private double weightDrivingTime = -0.1;

@@ -1,14 +1,11 @@
-/*package main;
+package main;
 
-import classes.Input;
 import classes.Station;
-import com.oracle.javafx.jmx.json.JSONException;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,7 +22,7 @@ public class DrivingTimeMatrix {
     }
 
 
-    public static void main(String[] args) throws IOException, org.json.JSONException, JSONException {
+    public static void main(String[] args) throws IOException, org.json.JSONException {
 
         lookUpCoordinates();
         getDrivingTimes();
@@ -48,7 +45,7 @@ public class DrivingTimeMatrix {
         in.close();
     }
 
-    public static void getDrivingTimes() throws IOException, JSONException, org.json.JSONException {
+    public static void getDrivingTimes() throws IOException, org.json.JSONException {
         //Oppretter nytt Excell-ark
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Driving Times");
@@ -101,7 +98,7 @@ public class DrivingTimeMatrix {
 
 
 
-    private static int getDrivingTimeBetweenCoordinates(Station origin, Station destination) throws IOException, JSONException, org.json.JSONException {
+    private static int getDrivingTimeBetweenCoordinates(Station origin, Station destination) throws IOException, org.json.JSONException {
         double originLongitude = origin.getLongitude();
         double originLatitude = origin.getLatitude();
         double destinationLongitude = destination.getLongitude();
@@ -111,7 +108,7 @@ public class DrivingTimeMatrix {
         return getDrivingDurationAsInt(json);
     }
 
-    private static JSONObject readJsonFromUrl(String urlRequestGoogleMaps) throws IOException, JSONException, org.json.JSONException {
+    private static JSONObject readJsonFromUrl(String urlRequestGoogleMaps) throws IOException, org.json.JSONException {
         InputStream is = new URL(urlRequestGoogleMaps).openStream();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -132,7 +129,7 @@ public class DrivingTimeMatrix {
         return sb.toString();
     }
 
-    private static int getDrivingDurationAsInt(JSONObject json) throws JSONException, org.json.JSONException {
+    private static int getDrivingDurationAsInt(JSONObject json) throws org.json.JSONException {
         JSONArray rows = json.getJSONArray("rows");
         JSONObject firstObjectRows = rows.getJSONObject(0);
         JSONArray elements = firstObjectRows.getJSONArray("elements");
@@ -142,4 +139,4 @@ public class DrivingTimeMatrix {
     }
 
 
-}*/
+}

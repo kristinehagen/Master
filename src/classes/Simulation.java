@@ -75,7 +75,7 @@ public class Simulation {
 
             //Determine time to generate new vehicle routes
             timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), currentTime);      //Actual time minutes
-            this.timeToNextSimulationList.add(timeToNewVehicleRoutes);
+            this.timeToNextSimulationList.add(timeToNewVehicleRoutes-currentTime);
 
             System.out.println();
             System.out.println("Remaining time: " + (simulationStopTime - timeToNewVehicleRoutes));
@@ -159,7 +159,7 @@ public class Simulation {
                     vehicleArrivalCounter = 0;
                     nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);
                     timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), currentTime);      //Actual time minutes
-                    this.timeToNextSimulationList.add(timeToNewVehicleRoutes);
+                    this.timeToNextSimulationList.add(timeToNewVehicleRoutes-currentTime);
 
                     System.out.println();
                     System.out.println("Remaining time: " + (simulationStopTime - timeToNewVehicleRoutes));

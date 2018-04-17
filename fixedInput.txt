@@ -1,7 +1,7 @@
 artificialStation: 0
 visitInterval: 8
 loadInterval: 0
-simulation: 0
+simulation: 1
 
 Stations : [
 26
