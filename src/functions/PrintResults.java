@@ -74,12 +74,13 @@ public class PrintResults {
         rowOutput.createCell(19).setCellValue(input.getNrStationBranching());
         rowOutput.createCell(20).setCellValue(input.getLoadInterval());
         rowOutput.createCell(21).setCellValue(input.getNumberOfRuns());
+        rowOutput.createCell(22).setCellValue(input.getTresholdLengthRoute());
 
-        rowOutput.createCell(22).setCellValue(avergaeComputationalTimeXpress);
-        rowOutput.createCell(23).setCellValue(averageComputationalTimeXpressPlussInitialization);
-        rowOutput.createCell(24).setCellValue(averagePercentageVoilation);
-        rowOutput.createCell(25).setCellValue(averageNumberOfTimesVehicleRouteGenerated);
-        rowOutput.createCell(26).setCellValue(avergageTimeToVehicleRouteGenerated);
+        rowOutput.createCell(23).setCellValue(avergaeComputationalTimeXpress);
+        rowOutput.createCell(24).setCellValue(averageComputationalTimeXpressPlussInitialization);
+        rowOutput.createCell(25).setCellValue(averagePercentageVoilation);
+        rowOutput.createCell(26).setCellValue(averageNumberOfTimesVehicleRouteGenerated);
+        rowOutput.createCell(27).setCellValue(avergageTimeToVehicleRouteGenerated);
 
         fileInputStream.close();
 
@@ -154,10 +155,12 @@ public class PrintResults {
         rowOutput.createCell(19).setCellValue(input.getNrStationBranching());
         rowOutput.createCell(20).setCellValue(input.getLoadInterval());
         rowOutput.createCell(21).setCellValue(input.getNumberOfRuns());
+        rowOutput.createCell(22).setCellValue(input.getTresholdLengthRoute());
 
-        rowOutput.createCell(22).setCellValue(computationalTimeXpress);
-        rowOutput.createCell(23).setCellValue(computationalTimeIncludingInitialization);
-        rowOutput.createCell(24).setCellValue(objectiveValue);
+
+        rowOutput.createCell(23).setCellValue(computationalTimeXpress);
+        rowOutput.createCell(24).setCellValue(computationalTimeIncludingInitialization);
+        rowOutput.createCell(25).setCellValue(objectiveValue);
 
         fileInputStream.close();
 

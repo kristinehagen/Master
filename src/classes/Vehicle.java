@@ -1,5 +1,6 @@
 package classes;
 
+import enums.RouteLength;
 import functions.TimeConverter;
 
 import java.util.ArrayList;
@@ -80,19 +81,23 @@ public class Vehicle {
         //SECOND STATION VISIT
 
         //Check if route needs to be expanded
-        boolean routeNeedsToBeExpanded = checkIfTimeLimitIsReached(firstRouteUnderConstruction, input);
+        RouteLength routeLength = checkIfTimeLimitIsReached(firstRouteUnderConstruction, input);
 
-        if (routeNeedsToBeExpanded) {
+        //Route needs to be expanded
+        if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON) || routeLength.equals(RouteLength.TOO_SHORT)) {
 
             ArrayList<ArrayList<StationVisit>> newRoutes = performBranchingSecondStation(firstRouteUnderConstruction, possibleStationsForNextStationVisit, input);
             routesUnderConstruction.addAll(newRoutes);
+
+            if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON)) {
+                this.initializedRoutes.add(firstRouteUnderConstruction);
+            }
 
         } else {
 
             //Route is completed
             this.initializedRoutes.add(firstRouteUnderConstruction);
         }
-
 
         //Removes the route containing only the first station visit
         routesUnderConstruction.remove(firstRouteUnderConstruction);
@@ -109,12 +114,17 @@ public class Vehicle {
             for (ArrayList<StationVisit> routeUnderConstruction : routesUnderConstruction) {
 
                 //Check if route needs to be expanded
-                routeNeedsToBeExpanded = checkIfTimeLimitIsReached(routeUnderConstruction, input);
+                routeLength = checkIfTimeLimitIsReached(routeUnderConstruction, input);
 
-                if (routeNeedsToBeExpanded) {
+                //Route needs to be expanded
+                if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON) || routeLength.equals(RouteLength.TOO_SHORT)) {
 
                     ArrayList<ArrayList<StationVisit>> newRoutes = performBranching(routeUnderConstruction, possibleStationsForNextStationVisit, input);
                     newRoutesUnderConstruction.addAll(newRoutes);
+
+                    if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON)) {
+                        this.initializedRoutes.add(routeUnderConstruction);
+                    }
 
                 } else {
 
@@ -227,7 +237,7 @@ public class Vehicle {
     }
 
     //Checks if time limit is reached. Determines time and load to calculate total time
-    private boolean checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction, Input input) {
+    private RouteLength checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction, Input input) {
 
         double timeHorizon = input.getTimeHorizon();
 
@@ -382,7 +392,14 @@ public class Vehicle {
 
         //Return true if more stations should be added to the route.
 
-        return (routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime() < timeHorizon);
+        double totalDurationOfRoute = routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime();
+        if (totalDurationOfRoute > input.getTimeHorizon()) {
+            return RouteLength.LONGER_THAN_TIME_HORIZON;
+        } else if (totalDurationOfRoute > input.getTimeHorizon()-input.getTresholdLengthRoute()) {
+            return RouteLength.ALMOST_TIME_HORIZON;
+        } else {
+            return RouteLength.TOO_SHORT;
+        }
 
     }
 

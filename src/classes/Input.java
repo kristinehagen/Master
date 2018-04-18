@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -34,6 +34,7 @@ public class Input {
     private int maxLoad = 18;
 
     private double currentMinute;
+    private double tresholdLengthRoute = 5;
 
 
 
@@ -450,5 +451,13 @@ public class Input {
 
     public void setVisitInterval(int visitInterval) {
         this.visitInterval = visitInterval;
+    }
+
+    public double getTresholdLengthRoute() {
+        return tresholdLengthRoute;
+    }
+
+    public void setTresholdLengthRoute(double tresholdLengthRoute) {
+        this.tresholdLengthRoute = tresholdLengthRoute;
     }
 }
