@@ -7,12 +7,12 @@ import java.util.ArrayList;
 
 public class NextSimulation {
 
-    public static double determineTimeToNextSimulation(ArrayList<VehicleArrival> stationVisitsToSimulate, double timeHorizon, ReOptimizationMethod reOptimizationMethod, double currentTime) {
+    public static double determineTimeToNextSimulation(ArrayList<VehicleArrival> vehicleArrivals, double timeHorizon, ReOptimizationMethod reOptimizationMethod, double currentTime) {
         double firstVisit = timeHorizon + currentTime;
         double secondVisit = timeHorizon + currentTime;
         double thirdVisit = timeHorizon + currentTime;
 
-        for (VehicleArrival vehicleArrival : stationVisitsToSimulate) {
+        for (VehicleArrival vehicleArrival : vehicleArrivals) {
             double time = vehicleArrival.getTime();
 
             if (time > currentTime & time < firstVisit) {

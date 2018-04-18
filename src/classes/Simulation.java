@@ -16,7 +16,6 @@ import java.util.Scanner;
 
 public class Simulation {
 
-    private ArrayList<VehicleArrival> vehicleArrivals;
     private double numberOfTimesVehicleRouteGenerated = 0;
     private double congestions = 0;
     private double starvations = 0;
@@ -32,7 +31,7 @@ public class Simulation {
 
     public void run(String simulationFile, Input input) throws IOException, XPRMCompileException, InterruptedException {
 
-        double currentTime = input.getSimulationStartTime();
+        input.setCurrentMinute(input.getSimulationStartTime());
 
         //Xpress
         WriteXpressFiles.printFixedInput(input);
@@ -49,6 +48,7 @@ public class Simulation {
 
         // 2 : TIME FOR NEW VEHICLE ROUTES
         double timeToNewVehicleRoutes = simulationStopTime + 1;
+        ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
 
         //If vehicle routes are to be generated
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
@@ -61,9 +61,9 @@ public class Simulation {
             generateVehicleRoute(input);
 
             if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-                this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
+                vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
             } else {
-                this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(currentTime);                      //Actual arrival times minutes
+                vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());                      //Actual arrival times minutes
             }
 
             //Stop timer
@@ -74,8 +74,8 @@ public class Simulation {
             System.out.println("Time first Xpress + initialization: " + computationalTimesXpressPlussInitialization.get(0));
 
             //Determine time to generate new vehicle routes
-            timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), currentTime);      //Actual time minutes
-            this.timeToNextSimulationList.add(timeToNewVehicleRoutes-currentTime);
+            timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), input.getCurrentMinute());      //Actual time minutes
+            this.timeToNextSimulationList.add(timeToNewVehicleRoutes-input.getCurrentMinute());
 
             System.out.println();
             System.out.println("Remaining time: " + (simulationStopTime - timeToNewVehicleRoutes));
@@ -84,14 +84,16 @@ public class Simulation {
 
 
         //3 : NEXT CUSTOMER ARRIVAL
-        nextCustomerArrival.updateNextCustomerArrival(in, currentTime, simulationStopTime);         //Actual time minutes
+        nextCustomerArrival.updateNextCustomerArrival(in, input.getCurrentMinute(), simulationStopTime);         //Actual time minutes
 
 
         // 4 : NEXT VEHICLE ARRIVAL
         int vehicleArrivalCounter = 0;
         VehicleArrival nextVehicleArrival = new VehicleArrival(simulationStopTime);
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
-            nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);                        //Actual time minutes
+            if (vehicleArrivals.size() > 0) {
+                nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);                        //Actual time minutes
+            }
         }
 
 
@@ -137,7 +139,8 @@ public class Simulation {
 
                 case NEW_VEHICLE_ROUTES:
                     //Generate new routes
-                    determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles() );
+                    determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles(), vehicleArrivals );
+                    input.setCurrentMinute(timeToNewVehicleRoutes);
 
                     //Start timer
                     StopWatch stopWatchTotalComputationTime = new StopWatch();
@@ -146,9 +149,9 @@ public class Simulation {
                     generateVehicleRoute(input);
 
                     if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-                        this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), currentTime);
+                        vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
                     } else {
-                        this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(currentTime);         //Actual arrival times minutes
+                        vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());         //Actual arrival times minutes
                     }
 
                     //Stop timer
@@ -158,8 +161,8 @@ public class Simulation {
                     //Update nextVehicleArrival
                     vehicleArrivalCounter = 0;
                     nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);
-                    timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), currentTime);      //Actual time minutes
-                    this.timeToNextSimulationList.add(timeToNewVehicleRoutes-currentTime);
+                    timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), input.getCurrentMinute());      //Actual time minutes
+                    this.timeToNextSimulationList.add(timeToNewVehicleRoutes-input.getCurrentMinute());
 
                     System.out.println();
                     System.out.println("Remaining time: " + (simulationStopTime - timeToNewVehicleRoutes));
@@ -168,19 +171,18 @@ public class Simulation {
                 case CUSTOMER_ARRIVAL:
                     upDateLoadAndViolation(nextCustomerArrival, input.getStations());
                     totalNumberOfCustomers ++;
-                    nextCustomerArrival.updateNextCustomerArrival(in, currentTime, simulationStopTime);
+                    nextCustomerArrival.updateNextCustomerArrival(in, input.getCurrentMinute(), simulationStopTime);
+                    input.setCurrentMinute(nextCustomerArrival.getTime());
                     break;
 
                 case VEHICLE_ARRIVAL:
                     updateStationAfterVehicleArrival(nextVehicleArrival, input.getStations(), input.getVehicles());
                     vehicleArrivalCounter ++;
                     nextVehicleArrival = updateNextVehicleArrival(vehicleArrivals, vehicleArrivalCounter, simulationStopTime);
+                    input.setCurrentMinute(nextVehicleArrival.getTime());
                     break;
 
             }
-
-            currentTime = nextEventTime;
-
         }
     }
 
@@ -294,7 +296,7 @@ public class Simulation {
     }
 
     //Determine time to next station, works as input to next vehicle route generation
-    private void determineRemainingDrivingTimeAndStation(double timeForNewVehicleRoutes, HashMap<Integer, Vehicle> vehicles) {
+    private void determineRemainingDrivingTimeAndStation(double timeForNewVehicleRoutes, HashMap<Integer, Vehicle> vehicles, ArrayList<VehicleArrival> vehicleArrivals) {
         for (VehicleArrival vehicleArrival : vehicleArrivals) {
 
             boolean vehicleArrivalBeforeGeneratingNewRoutes = vehicleArrival.getTime() < timeForNewVehicleRoutes;

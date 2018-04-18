@@ -13,17 +13,17 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
-    private double simulationStartTime = 8*60;              //Minutes
+    private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 9*60;
-    private int testInstance = 5;
-    private int nrOfVehicles = 2;
-    private int nrStationBranching = 2;             //Create n new routes IN each branching
+    private int testInstance = 1;
+    private int nrOfVehicles = 1;
+    private int nrStationBranching = 2;             //Create n new routes in each branching
     private int loadInterval = 0;                   //Load in Xpress can be load from heuristic +- loadInterval
-    private int numberOfRuns = 2;                   //Vanlig med 15
+    private int numberOfRuns = 5;                   //Vanlig med 15
     private boolean simulation = true;
 
 
@@ -33,14 +33,15 @@ public class Input {
     private int minLoad = 5;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 18;
 
+    private double currentMinute;
 
 
 
     //----------COLUMN GENERATION-----------
     //Criticality score
-    private double weightTimeToViolation = -0.2;
-    private double weightViolationRate = 8;
-    private double weightDrivingTime = -0.1;
+    private double weightTimeToViolation = -0.25;
+    private double weightViolationRate = 0.25;
+    private double weightDrivingTime = -0.25;
     private double weightOptimalState = 0.25;
 
     //Xpress objective function
@@ -57,9 +58,9 @@ public class Input {
 
     //------------Xpress--------------------
     private String xpressFile;
-    private String timedependentInoutFile = "timeDependentInput.txt";
+    private String timedependentInputFile = "timeDependentInput.txt";
     private String fixedInputFile = "fixedInput.txt";
-
+    private int visitInterval = 0;                                          //Bilen må ha load på med enn visitInterval for å besøke en delivery stason som siste besøk og vice verca
 
 
 
@@ -102,6 +103,7 @@ public class Input {
 
         if (solutionMethod.equals(SolutionMethod.HEURISTIC_VERSION_3)) {
             this.maxVisit = 1;}
+
     }
 
 
@@ -311,12 +313,12 @@ public class Input {
         this.vehicleParkingTime = vehicleParkingTime;
     }
 
-    public String getTimedependentInoutFile() {
-        return timedependentInoutFile;
+    public String getTimedependentInputFile() {
+        return timedependentInputFile;
     }
 
-    public void setTimedependentInoutFile(String timedependentInoutFile) {
-        this.timedependentInoutFile = timedependentInoutFile;
+    public void setTimedependentInputFile(String timedependentInputFile) {
+        this.timedependentInputFile = timedependentInputFile;
     }
 
     public String getFixedInputFile() {
@@ -432,5 +434,21 @@ public class Input {
 
     public void setSimulation(boolean simulation) {
         this.simulation = simulation;
+    }
+
+    public double getCurrentMinute() {
+        return currentMinute;
+    }
+
+    public void setCurrentMinute(double currentMinute) {
+        this.currentMinute = currentMinute;
+    }
+
+    public int getVisitInterval() {
+        return visitInterval;
+    }
+
+    public void setVisitInterval(int visitInterval) {
+        this.visitInterval = visitInterval;
     }
 }

@@ -16,7 +16,7 @@ public class WriteXpressFiles {
 
     public static void printTimeDependentInput (Input input, SolutionMethod solutionMethod)
             throws FileNotFoundException, UnsupportedEncodingException {
-        String filename = input.getTimedependentInoutFile();
+        String filename = input.getTimedependentInputFile();
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
         switch (solutionMethod) {
@@ -637,6 +637,11 @@ public class WriteXpressFiles {
 
                 writer.println();
             }
+
+            if (vehicle.getInitializedRoutes().size() == 0) {
+                writer.println("( " + vehicle.getNextStation() + " " + 0 + " " + vehicle.getId() + " " + (1) + " ) " + 1);
+            }
+
         }
         writer.println("]");
 
@@ -649,7 +654,7 @@ public class WriteXpressFiles {
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
         writer.println("artificialStation: 0");
-        writer.println("visitInterval: 8");
+        writer.println("visitInterval: " + input.getVisitInterval());
         writer.println("loadInterval: " + input.getLoadInterval());
         if (input.isSimulation()) {
             writer.println("simulation: 1");

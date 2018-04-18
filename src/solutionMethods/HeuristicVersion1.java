@@ -38,6 +38,7 @@ public class HeuristicVersion1 {
         stopWatchXpress.stop();
         this.computationalTimeXpress = stopWatchXpress.getElapsedTimeSecs();
         this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
+        this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
     }
 
 

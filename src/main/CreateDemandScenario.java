@@ -89,7 +89,7 @@ public class CreateDemandScenario {
             double bikeReturnedSd = station.getBikeReturnedStd(currentTime);
             int numberOfBikesReturned = (int) RandomDraws.drawNormal(bikeReturnedMedian, bikeReturnedSd);
             drawArrivals(station.getId(),1.00, numberOfBikesReturned, currentTime);
-            currentTime = currentTime + 1;
+            currentTime++;
         }
     }
 
@@ -99,7 +99,7 @@ public class CreateDemandScenario {
             ArrayList<Double> arrivalTimeEntry = new ArrayList<>();
             arrivalTimeEntry.add(RandomDraws.drawArrivalTimes(currentTime));    //Arrival time in second, real time
             arrivalTimeEntry.add((double) stationId);                           //Station ID
-            arrivalTimeEntry.add(stationLoad);                                  //0 if wanted, 1 if returned
+            arrivalTimeEntry.add(stationLoad);                                  //-1 if wanted, 1 if returned
             arrivalTimes.add(arrivalTimeEntry);
         }
     }
