@@ -93,11 +93,11 @@ public class Vehicle {
                 this.initializedRoutes.add(firstRouteUnderConstruction);
             }
 
-        } else {
-
-            //Route is completed
-            this.initializedRoutes.add(firstRouteUnderConstruction);
         }
+
+        //Always include first station visit in finished routed.
+        this.initializedRoutes.add(firstRouteUnderConstruction);
+
 
         //Removes the route containing only the first station visit
         routesUnderConstruction.remove(firstRouteUnderConstruction);

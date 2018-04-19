@@ -522,7 +522,7 @@ public class WriteXpressFiles {
                 maxRoute = vehicle.getInitializedRoutes().size();
             }
         }
-        writer.println(maxRoute);
+        writer.println(maxRoute+1);
         writer.println();
     }
 
@@ -565,7 +565,9 @@ public class WriteXpressFiles {
     private static void printInteriorRepresentationOnlyOrigin(Input input, PrintWriter writer) {
         writer.println();
         writer.println("intRep : [");
+
         for (Vehicle vehicle : input.getVehicles().values()) {
+
             for (int route = 0; route < vehicle.getInitializedRoutes().size(); route++) {
 
                 for (int stationVisitNr = 0; stationVisitNr < vehicle.getInitializedRoutes().get(route).size(); stationVisitNr++) {
@@ -573,7 +575,7 @@ public class WriteXpressFiles {
                     //From station
                     int stationOriginID = vehicle.getInitializedRoutes().get(route).get(stationVisitNr).getStation().getId();
 
-                    writer.println("( " + stationOriginID + " " + vehicle.getId() + " " + (route+1) + " ) " + 1);
+                    writer.println("( " + stationOriginID + " " + vehicle.getId() + " " + (route + 1) + " ) " + 1);
 
                 }
 
@@ -583,7 +585,6 @@ public class WriteXpressFiles {
         writer.println("]");
 
     }
-
 
     private static void printInteriorRepresentation(Input input, PrintWriter writer) {
         writer.println();
@@ -628,20 +629,9 @@ public class WriteXpressFiles {
                         writer.println("( " + stationPair.get(0) + " " + stationPair.get(1) + " " + vehicle.getId() + " " + (route+1) + " ) " + count);
                         alreadyPrinted.add(stationPair);
                     }
-
-                    else {
-                        //Do nothing
-                    }
-
                 }
-
                 writer.println();
             }
-
-            if (vehicle.getInitializedRoutes().size() == 0) {
-                writer.println("( " + vehicle.getNextStation() + " " + 0 + " " + vehicle.getId() + " " + (1) + " ) " + 1);
-            }
-
         }
         writer.println("]");
 

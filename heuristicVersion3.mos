@@ -20,13 +20,6 @@ parameters
 end-parameters
 
 !SETS
-declarations
-	maxRoute:					integer;
-end-declarations
-
-initializations from DataFileTimeDependentInput
-	maxRoute;
-end-initializations
 
 declarations
 	Stations:		set of integer;
@@ -39,8 +32,6 @@ initializations from DataFileFixedInput
 	Vehicles;
 end-initializations
 
-Routes := 1 .. maxRoute;
-
 finalize(Stations);
 finalize(Vehicles);
 
@@ -52,7 +43,6 @@ declarations
 end-declarations
 
 initializations from DataFileFixedInput
-
 	simulation;
 end-initializations
 
@@ -94,7 +84,7 @@ declarations
 	intRepLambda:			dynamic array(Vehicles, Routes)				of mpvar;
 end-declarations
 
-forall (vv in Vehicles, rr in Routes) do
+forall (vv in Vehicles, rr in Routes | sum(ii in Stations) intRep(ii,vv,rr) > 0) do
 	create(intRepLambda(vv,rr));
 	intRepLambda(vv,rr) is_binary;
 end-do	
@@ -113,7 +103,7 @@ end-declarations
 !Hver bil kan bare kjøre én rute
 forall (vv in Vehicles) do
 	maxRoutes(vv) := 
-		sum(rr in Routes) intRepLambda(vv,rr) <= 1;
+		sum(rr in Routes) intRepLambda(vv,rr) = 1;
 end-do
 
 
