@@ -21,7 +21,6 @@ public class ExactMethod {
         StopWatch stopWatchIncludingInitialization = new StopWatch();
         stopWatchIncludingInitialization.start();
 
-        WriteXpressFiles.printFixedInput(input);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.EXACT_METHOD);
 
         //Start timer and run Xpress

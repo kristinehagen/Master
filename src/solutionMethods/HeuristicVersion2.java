@@ -24,7 +24,6 @@ public class HeuristicVersion2 {
         StopWatch stopWatchincludingInitialization = new StopWatch();
         stopWatchincludingInitialization.start();
 
-        WriteXpressFiles.printFixedInput(input);
         initiateRoutes(input);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_2);
 

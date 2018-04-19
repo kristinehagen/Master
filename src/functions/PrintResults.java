@@ -89,6 +89,7 @@ public class PrintResults {
         fileOut.close();
 
 
+        System.out.println("Printet resultater");
 
     }
 

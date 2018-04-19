@@ -5,6 +5,7 @@ import com.dashoptimization.XPRMCompileException;
 import functions.PrintResults;
 import solutionMethods.*;
 import xpress.ReadXpressResult;
+import xpress.WriteXpressFiles;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public class Run {
     public static void main(String[] args) throws IOException, XPRMCompileException, InterruptedException {
 
         Input input = new Input();
+
+        WriteXpressFiles.printFixedInput(input);
 
         //Simulate
         if (input.isSimulation()) {
@@ -30,32 +33,36 @@ public class Run {
 
     private static void runSimulation(Input input) throws IOException, XPRMCompileException, InterruptedException {
 
-        ArrayList<Double> totalViolationList = new ArrayList<>();
-        ArrayList<Double> percentageViolationsList = new ArrayList<>();
-        ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
-        ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
-        ArrayList<Double> computationalTimeXpress = new ArrayList<>();
-        ArrayList<Double> computationalTimeXpressPlussInitialization = new ArrayList<>();
 
 
-        //for (double weightTimeToViolation = 0; weightTimeToViolation <= 1; weightTimeToViolation += 0.10){
-          //  input.setWeightTimeToViolation(-weightTimeToViolation);
 
-            //for (double weightViolationRate = 0; weightViolationRate <= 1-weightTimeToViolation; weightViolationRate += 0.10) {
-              //  input.setWeightViolationRate(weightViolationRate);
+        for (double weightTimeToViolation = 0; weightTimeToViolation <= 1; weightTimeToViolation += 0.10){
+            input.setWeightTimeToViolation(-weightTimeToViolation);
 
-//                for (double weightDrivingTime = 0; weightDrivingTime <= 1-weightTimeToViolation-weightViolationRate; weightDrivingTime += +.10) {
-  //                  input.setWeightDrivingTime(-weightDrivingTime);
+            for (double weightViolationRate = 0; weightViolationRate <= 1-weightTimeToViolation; weightViolationRate += 0.10) {
+                input.setWeightViolationRate(weightViolationRate);
 
-//                    double weightOptimalState = 1-weightTimeToViolation-weightViolationRate-weightDrivingTime;
-  //                  input.setWeightOptimalState(weightOptimalState);
+                for (double weightDrivingTime = 0; weightDrivingTime <= 1-weightTimeToViolation-weightViolationRate; weightDrivingTime += +.10) {
+                    input.setWeightDrivingTime(-weightDrivingTime);
 
-/*
+                    double weightOptimalState = 1-weightTimeToViolation-weightViolationRate-weightDrivingTime;
+                    input.setWeightOptimalState(weightOptimalState);
+
+
+
                     System.out.println("weightTimeToViolation: " + weightTimeToViolation);
                     System.out.println("weightViolationRate: " + weightViolationRate);
                     System.out.println("weightDrivingTime: " + weightDrivingTime);
                     System.out.println("WeightOptimalState: " + weightOptimalState);
-                    */
+
+
+                    ArrayList<Double> totalViolationList = new ArrayList<>();
+                    ArrayList<Double> percentageViolationsList = new ArrayList<>();
+                    ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
+                    ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
+                    ArrayList<Double> computationalTimeXpress = new ArrayList<>();
+                    ArrayList<Double> computationalTimeXpressPlussInitialization = new ArrayList<>();
+
 
                     for (int i = 1; i <= input.getNumberOfRuns(); i++) {
 
@@ -79,33 +86,29 @@ public class Run {
                         computationalTimeXpressPlussInitialization.add(average(simulation.getComputationalTimesXpressPlussInitialization()));
                     }
 
+                    double averageViolation = average(totalViolationList);
+                    double averagePercentageviolations = average(percentageViolationsList);
+                    double sdViolation = sd(totalViolationList, averageViolation);
+                    double sdPercentageviolations = sd(percentageViolationsList, averagePercentageviolations);
+                    double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
+                    double avergaeTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
+                    double averageComputationalTimeXpress = average(computationalTimeXpress);
+                    double averageComputationalTimeXpressPlussInitialization = average(computationalTimeXpressPlussInitialization);
+
+                    PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageviolations, sdViolation, sdPercentageviolations, averageNumberOfTimesVehicleRouteGenerated,
+                            avergaeTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlussInitialization, input);
+
+                    System.out.println();
+                    System.out.println("Average violation percentage: " + averagePercentageviolations);
 
 
-              //  }
-            //}
-       // }
+
+                }
+            }
+        }
 
 
 
-
-
-
-
-
-        double averageViolation = average(totalViolationList);
-        double averagePercentageviolations = average(percentageViolationsList);
-        double sdViolation = sd(totalViolationList, averageViolation);
-        double sdPercentageviolations = sd(percentageViolationsList, averagePercentageviolations);
-        double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
-        double avergaeTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
-        double averageComputationalTimeXpress = average(computationalTimeXpress);
-        double averageComputationalTimeXpressPlussInitialization = average(computationalTimeXpressPlussInitialization);
-
-        PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageviolations, sdViolation, sdPercentageviolations, averageNumberOfTimesVehicleRouteGenerated,
-                avergaeTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlussInitialization, input);
-
-        System.out.println();
-        System.out.println("Average violation percentage: " + averagePercentageviolations);
 
     }
 

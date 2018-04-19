@@ -33,9 +33,6 @@ public class Simulation {
 
         input.setCurrentMinute(input.getSimulationStartTime());
 
-        //Xpress
-        WriteXpressFiles.printFixedInput(input);
-
         //Demand input file
         CustomerArrival nextCustomerArrival = new CustomerArrival();
         File inputFile = new File(simulationFile);
