@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -22,9 +22,9 @@ public class Input {
     private int testInstance = 5;
     private int nrOfVehicles = 1;
     private int nrStationBranching = 3;             //Create n new routes in each branching
-    private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
+    private int loadInterval = 0;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 15;                   //Vanlig med 15
-    private boolean simulation = true;
+    private boolean simulation = false;
 
 
 

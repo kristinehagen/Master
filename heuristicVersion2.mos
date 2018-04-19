@@ -324,6 +324,7 @@ declarations
 end-declarations
 
 
+
 ! -----------COLUMN GENERATION---------------
 
 !Connect interior representation with flow variable
@@ -813,6 +814,12 @@ Objective1 :=
 	
 minimize(Objective1);
 
+writeln("Voilations: " + getsol(violations11));
+writeln("Deviations: " + getsol(deviation1));
+writeln("Reward: " + getsol(totalReward));
+forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))>0.5) do
+	writeln('Vehicle ' + vv + ' drives route ' + rr);
+end-do
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
 fopen("outputXpress.txt",F_OUTPUT);
@@ -897,6 +904,8 @@ fopen("outputXpress.txt",F_OUTPUT);
 	end-if
 
 fclose(F_OUTPUT);
+
+
 
 end-model
 

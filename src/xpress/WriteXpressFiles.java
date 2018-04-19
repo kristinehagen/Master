@@ -78,15 +78,18 @@ public class WriteXpressFiles {
             double demandPerMinute = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;
             double loadAtHorizon = initialLoad + demandPerMinute*input.getTimeHorizon();
             double optimalState = station.getOptimalState(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
-            double diffFromOptimalState = Math.abs(optimalState-loadAtHorizon);
-            totalDeviationsIfNoVisit += diffFromOptimalState;
 
             if (loadAtHorizon > station.getCapacity()) {
                 totalViolationsIfNoVisit += loadAtHorizon-station.getCapacity();
+                loadAtHorizon = station.getCapacity();
             }
             if (loadAtHorizon < 0) {
                 totalViolationsIfNoVisit += -loadAtHorizon;
+                loadAtHorizon = 0;
             }
+            double diffFromOptimalState = Math.abs(optimalState-loadAtHorizon);
+            totalDeviationsIfNoVisit += diffFromOptimalState;
+
         }
         writer.println("totalViolationsIfNoVisit : " + totalViolationsIfNoVisit);
 

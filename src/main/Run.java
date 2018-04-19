@@ -17,6 +17,7 @@ public class Run {
     public static void main(String[] args) throws IOException, XPRMCompileException, InterruptedException {
 
         Input input = new Input();
+        input.setCurrentMinute(input.getSimulationStartTime());
 
         WriteXpressFiles.printFixedInput(input);
 

@@ -31,8 +31,6 @@ public class Simulation {
 
     public void run(String simulationFile, Input input) throws IOException, XPRMCompileException, InterruptedException {
 
-        input.setCurrentMinute(input.getSimulationStartTime());
-
         //Demand input file
         CustomerArrival nextCustomerArrival = new CustomerArrival();
         File inputFile = new File(simulationFile);

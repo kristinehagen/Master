@@ -62,6 +62,8 @@ declarations
 	weightReward: 															real;
 	weightDeviationReward: 													real;
 	weightDrivingTimePenalty: 												real;
+	totalViolationsIfNoVisit:												real;
+	totalDeviationIfNoVisit:												real;
 end-declarations
 
 initializations from DataFileTimeDependentInput
@@ -76,6 +78,8 @@ initializations from DataFileTimeDependentInput
 	weightReward;
 	weightDeviationReward;
 	weightDrivingTimePenalty;
+	totalViolationsIfNoVisit;
+	totalDeviationIfNoVisit;
 end-initializations
 
 !VARIABLES
@@ -90,14 +94,12 @@ forall (vv in Vehicles, rr in Routes | sum(ii in Stations) intRep(ii,vv,rr) > 0)
 end-do	
 
 
-!CONSTRAINTS
+!------------CONSTRAINTS-------------
 
 declarations
 	maxRoutes:					dynamic array(Vehicles)					of linctr;
-	oneVisitForEachStation:		dynamic array(Stations)					of linctr;
+	oneVisitForEachStation:		dynamic array(Stations)					of linctr;					
 end-declarations
-
-
 
 
 !Hver bil kan bare kjøre én rute
@@ -133,17 +135,22 @@ totalDeviationImproved :=
 	sum(vv in Vehicles, rr in Routes)deviationImproved(vv,rr)*intRepLambda(vv,rr);
 	
 totalReward :=
-	+ weightDeviationReward * sum(vv in Vehicles, rr in Routes) (deviationReward(vv,rr)*intRepLambda(vv,rr))
-	- weightDrivingTimePenalty*sum(vv in Vehicles, rr in Routes) drivingTimePenalty(vv,rr)*intRepLambda(vv,rr);
+	- weightDeviationReward * sum(vv in Vehicles, rr in Routes) (deviationReward(vv,rr)*intRepLambda(vv,rr))
+	+ weightDrivingTimePenalty*sum(vv in Vehicles, rr in Routes) drivingTimePenalty(vv,rr)*intRepLambda(vv,rr);
 
 Objective := 
-	weightViolation*violationsPrevented
-	+ weightDeviation*totalDeviationImproved
+	weightViolation*(totalViolationsIfNoVisit - violationsPrevented)
+	+ weightDeviation*(totalDeviationIfNoVisit - totalDeviationImproved)
 	+ weightReward*totalReward;
 	
-maximize(Objective);
+minimize(Objective);
 
 
+writeln("Voilations: " + getsol(totalViolationsIfNoVisit - violationsPrevented));
+writeln("Deviations: " + getsol(totalDeviationIfNoVisit - totalDeviationImproved));
+writeln("Deviations prevented: " + getsol(totalDeviationImproved));
+writeln("Deviations if no visit: " + getsol(totalDeviationIfNoVisit));
+writeln("Reward: " + getsol(totalReward));
 
 
 fopen("outputXpress.txt",F_OUTPUT);
