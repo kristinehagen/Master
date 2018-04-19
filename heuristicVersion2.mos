@@ -204,7 +204,9 @@ end-do
 
 forall (ii in Stations, mm in Visits, vv in Vehicles | ii <> artificialStation) do
 	create(loadingQuantity(ii,mm,vv));
+	loadingQuantity(ii,mm,vv) is_integer;
 	create(unloadingQuantity(ii,mm,vv));
+	unloadingQuantity(ii,mm,vv) is_integer;
 	create(loadAtVehicle(ii,mm,vv));
 	loadAtVehicle(ii,mm,vv) is_integer;
 end-do
