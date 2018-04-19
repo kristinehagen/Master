@@ -7,6 +7,7 @@ import functions.TimeConverter;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class WriteXpressFiles {
                 printWeights(input, writer);
                 printMaxRoute(input.getVehicles().values(), writer);
                 printInteriorRepresentationOnlyOrigin(input, writer);
-                printViolationAndDeviationImprovement(input, writer);
+                printObjectiveValues(input, writer);
                 break;
 
             case EXACT_METHOD:
@@ -63,7 +64,37 @@ public class WriteXpressFiles {
 
     }
 
-    private static void printViolationAndDeviationImprovement(Input input, PrintWriter writer) {
+    private static void printObjectiveValues(Input input, PrintWriter writer) {
+
+
+        //Violations if no visits
+        writer.println();
+        double totalViolationsIfNoVisit = 0;
+        double totalDeviationsIfNoVisit = 0;
+
+        for (Station station: input.getStations().values()) {
+
+            double initialLoad = station.getLoad();
+            double demandPerMinute = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;
+            double loadAtHorizon = initialLoad + demandPerMinute*input.getTimeHorizon();
+            double optimalState = station.getOptimalState(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
+            double diffFromOptimalState = Math.abs(optimalState-loadAtHorizon);
+            totalDeviationsIfNoVisit += diffFromOptimalState;
+
+            if (loadAtHorizon > station.getCapacity()) {
+                totalViolationsIfNoVisit += loadAtHorizon-station.getCapacity();
+            }
+            if (loadAtHorizon < 0) {
+                totalViolationsIfNoVisit += -loadAtHorizon;
+            }
+        }
+        writer.println("totalViolationsIfNoVisit : " + totalViolationsIfNoVisit);
+
+
+        //Deviations if no visits
+        writer.println();
+        writer.println("totalDeviationIfNoVisit : " + totalDeviationsIfNoVisit);
+
 
         //Starvation prevented
         writer.println();
@@ -129,6 +160,7 @@ public class WriteXpressFiles {
         }
         writer.println("]");
     }
+
 
     private static double findTimeExceedingTimeHorizonAtLastStationVisit(Vehicle vehicle, int route, double timeHorizon) {
         double drivingTimeToLastStation = 0;
