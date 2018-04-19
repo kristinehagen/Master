@@ -49,7 +49,7 @@ public class Run {
                     input.setWeightOptimalState(weightOptimalState);
 
                     //Fortsetter der vi slapp
-                    if (!(weightTimeToViolation <=0.01 && weightViolationRate <=0.01 && weightDrivingTime < 0.85)) {
+                    if (!(weightTimeToViolation <0.01 && weightViolationRate <0.01 || (weightTimeToViolation <0.01 && weightViolationRate <0.11 && weightDrivingTime < 0.01))) {
 
                         System.out.println("weightTimeToViolation: " + weightTimeToViolation);
                         System.out.println("weightViolationRate: " + weightViolationRate);
