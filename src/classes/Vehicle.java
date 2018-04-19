@@ -149,7 +149,7 @@ public class Vehicle {
 
         ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
 
-        boolean firstStationHasPositiveDemand = firstRouteUnderConstruction.get(0).getStation().getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getSimulationStartTime())) > 0;
+        boolean firstStationHasPositiveDemand = firstRouteUnderConstruction.get(0).getStation().getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())) > 0;
         ArrayList<ArrayList<StationVisit>> routesToBeAdded;
 
         if (load <= input.getMinLoad() && !firstStationHasPositiveDemand) {
@@ -238,8 +238,6 @@ public class Vehicle {
 
     //Checks if time limit is reached. Determines time and load to calculate total time
     private RouteLength checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction, Input input) {
-
-        double timeHorizon = input.getTimeHorizon();
 
         double currentMinute = input.getCurrentMinute();
         double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
@@ -557,7 +555,7 @@ public class Vehicle {
             //TESTED
             double timeToViolation = calculateTimeToViolationIfNoVisit(routeUnderConstruction, station, input);
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
-            double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getSimulationStartTime()))/60;                            //Each minute
+            double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;                            //Each minute
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());         //In minutes
 
             //Calculate total score

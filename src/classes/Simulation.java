@@ -170,16 +170,15 @@ public class Simulation {
 
                 case CUSTOMER_ARRIVAL:
                     upDateLoadAndViolation(nextCustomerArrival, input.getStations());
-                    totalNumberOfCustomers ++;
-                    nextCustomerArrival.updateNextCustomerArrival(in, input.getCurrentMinute(), simulationStopTime);
                     input.setCurrentMinute(nextCustomerArrival.getTime());
+                    nextCustomerArrival.updateNextCustomerArrival(in, input.getCurrentMinute(), simulationStopTime);
                     break;
 
                 case VEHICLE_ARRIVAL:
                     updateStationAfterVehicleArrival(nextVehicleArrival, input.getStations(), input.getVehicles());
                     vehicleArrivalCounter ++;
-                    nextVehicleArrival = updateNextVehicleArrival(vehicleArrivals, vehicleArrivalCounter, simulationStopTime);
                     input.setCurrentMinute(nextVehicleArrival.getTime());
+                    nextVehicleArrival = updateNextVehicleArrival(vehicleArrivals, vehicleArrivalCounter, simulationStopTime);
                     break;
 
             }

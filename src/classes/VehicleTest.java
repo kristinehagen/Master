@@ -1,4 +1,4 @@
-package classes;
+/*package classes;
 
 import org.junit.Assert;
 
@@ -72,3 +72,4 @@ class VehicleTest {
     }
 
 }
+*/
