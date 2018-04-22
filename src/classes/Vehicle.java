@@ -597,11 +597,10 @@ public class Vehicle {
             loadAtTimeHorizon = 0;
         }
 
-        double diffFromOptimalState = java.lang.Math.abs(stationToCheck.getOptimalState(currentHourRounded)-loadAtTimeHorizon);
-
-        return diffFromOptimalState;
+        return Math.abs(stationToCheck.getOptimalState(currentHourRounded)-loadAtTimeHorizon);
     }
 
+    //Tested
     //Calculates time to violation if no more visits. Returns time. 0 if violation now
     public double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
         double lastVisitTime = 0.0;
@@ -622,7 +621,7 @@ public class Vehicle {
         if (stationToCheck.getNetDemand(currentHourRouded) > 0) {
             timeToViolation = (stationToCheck.getCapacity() - load) / (stationToCheck.getNetDemand(currentHourRouded)/60);
         } else if (stationToCheck.getNetDemand(currentHourRouded) < 0) {
-            timeToViolation = -load / (stationToCheck.getNetDemand(currentHourRouded) / 60);
+            timeToViolation = -load / (stationToCheck.getNetDemand(currentHourRouded)/60);
         }
 
         return lastVisitTime + timeToViolation;
