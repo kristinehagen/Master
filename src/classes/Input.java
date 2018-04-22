@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -40,10 +40,10 @@ public class Input {
 
     //----------COLUMN GENERATION-----------
     //Criticality score
-    private double weightTimeToViolation = -0.25;
-    private double weightViolationRate = 0.25;
-    private double weightDrivingTime = -0.25;
-    private double weightOptimalState = 0.25;
+    private double weightTimeToViolation = -0.0;
+    private double weightViolationRate = 0.7;
+    private double weightDrivingTime = -0.2;
+    private double weightOptimalState = 0.1;
 
     //Xpress objective function
     private double weightViolation = 0.6;
