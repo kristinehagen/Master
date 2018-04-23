@@ -12,9 +12,9 @@ public class PricingProblem {
     public PricingProblem(){
     }
 
-    public void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
+    public void runPricingProblem(HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
 
-        //Read Xpress input Create pricingProblemScores
+        //Read Xpress input and assign pricingProblemScores
         File inputFile = new File("outputXpressViolationStatistics.txt");
         Scanner in = new Scanner(inputFile);
         while (in.hasNextLine()) {
