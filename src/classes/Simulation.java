@@ -24,6 +24,7 @@ public class Simulation {
     private ArrayList<Double> timeToNextSimulationList = new ArrayList<>();
     private ArrayList<Double> computationalTimesXpress = new ArrayList<>();
     private ArrayList<Double> computationalTimesXpressPlussInitialization = new ArrayList<>();
+    private ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
 
     //Constructor
     public Simulation() {
@@ -34,6 +35,7 @@ public class Simulation {
         //Demand input file
         CustomerArrival nextCustomerArrival = new CustomerArrival();
         File inputFile = new File(simulationFile);
+        input.setCurrentMinute(input.getSimulationStartTime());
         Scanner in = new Scanner(inputFile);
 
 
@@ -43,11 +45,10 @@ public class Simulation {
 
         // 2 : TIME FOR NEW VEHICLE ROUTES
         double timeToNewVehicleRoutes = simulationStopTime + 1;
-        ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
+        vehicleArrivals.clear();
 
         //If vehicle routes are to be generated
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
-
             //Start timer
             StopWatch stopWatchTotalComputationTime = new StopWatch();
             stopWatchTotalComputationTime.start();
@@ -56,9 +57,11 @@ public class Simulation {
             generateVehicleRoute(input);
 
             if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-                vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
-            } else {
-                vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());                      //Actual arrival times minutes
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
+            } else if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_1) || input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_2) || input.getSolutionMethod().equals(SolutionMethod.EXACT_METHOD))  {
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
+            } else if (input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO)) {
+
             }
 
             //Stop timer
@@ -86,8 +89,8 @@ public class Simulation {
         int vehicleArrivalCounter = 0;
         VehicleArrival nextVehicleArrival = new VehicleArrival(simulationStopTime);
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
-            if (vehicleArrivals.size() > 0) {
-                nextVehicleArrival = vehicleArrivals.get(vehicleArrivalCounter);                        //Actual time minutes
+            if (this.vehicleArrivals.size() > 0) {
+                nextVehicleArrival = this.vehicleArrivals.get(vehicleArrivalCounter);                        //Actual time minutes
             }
         }
 
@@ -143,6 +146,7 @@ public class Simulation {
 
                     generateVehicleRoute(input);
 
+                    vehicleArrivals.clear();
                     if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
                         vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
                     } else {
@@ -277,6 +281,7 @@ public class Simulation {
                 break;
             case CURRENT_SOLUTION_IN_OSLO:
                 CurrentSolutionInOslo currentSolutionInOslo = new CurrentSolutionInOslo(input);
+                this.vehicleArrivals = currentSolutionInOslo.getVehicleArrivals();
                 computationalTimeXpress = 0;                                                                //Foreløpig
                 break;
             case NO_VEHICLES:                                                                               //Kan muligens droppe denne
