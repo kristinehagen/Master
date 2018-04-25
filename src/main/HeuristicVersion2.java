@@ -2,6 +2,7 @@ package main;
 
 import classes.*;
 import com.dashoptimization.XPRMCompileException;
+import enums.SolutionMethod;
 import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 

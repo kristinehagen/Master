@@ -21,7 +21,6 @@ public class Station {
 
     public Station(int id, int numberOfBikes) {
         this.id = id;
-        this.currentLoad = numberOfBikes;
         this.bikeReturnedMedian = new HashMap<>();
         this.bikeReturnedStd = new HashMap<>();
         this.bikeWantedMedian = new HashMap<>();
@@ -29,6 +28,22 @@ public class Station {
         this.drivingTime = new HashMap<>();
         this.optimalState = new HashMap<>();
         this.initialLoad = numberOfBikes;
+    }
+
+    public Station(Station oldStation){
+        this.id = oldStation.id;
+        this.bikeReturnedMedian = oldStation.bikeReturnedMedian;
+        this.bikeReturnedStd = oldStation.bikeReturnedStd;
+        this.bikeWantedMedian = oldStation.bikeWantedMedian;
+        this.bikeWantedStd = oldStation.bikeWantedStd;
+        this.optimalState = oldStation.optimalState;
+        this.locationName = oldStation.locationName;
+        this.currentLoad = oldStation.currentLoad;
+        this.initialLoad = oldStation.initialLoad;
+        this.capacity = oldStation.capacity;
+        this.drivingTime = oldStation.drivingTime;
+        this.latitude = oldStation.latitude;
+        this.longitude = oldStation.longitude;
     }
 
     public Station(int id){

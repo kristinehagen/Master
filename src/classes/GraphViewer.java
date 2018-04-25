@@ -15,6 +15,41 @@ public class GraphViewer {
         this.graph = new MultiGraph("Graph 1");
     }
 
+    public void drawStationDemand(Input input, double mediumDemand, double highDemand) {
+
+        graph.clear();
+
+        Edge edge;
+        String color;
+
+        //STATIONS
+        for (Station station : input.getStations().values()) {
+            Node node = graph.addNode("Station" + station.getId());
+            node.addAttribute("y", station.getLatitude());
+            node.addAttribute("x", station.getLongitude());
+            node.addAttribute("layout.frozen");
+            node.addAttribute("ui.label", station.getId());
+
+            double netDemand = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
+            //If demand over highDemand -> red, mediumDemand-HighDemand -> black, 0-mediumDemand grey
+            if (netDemand >= highDemand || netDemand <= -highDemand) {
+                node.addAttribute("ui.style", "fill-color: red;");
+            } else if (netDemand >= mediumDemand || netDemand <= -mediumDemand){
+                node.addAttribute("ui.style", "fill-color: black;");
+            }else {
+                node.addAttribute("ui.style", "fill-color: grey;");
+            }
+
+
+
+        }
+
+        this.graph.display();
+
+    }
+
+
+
     public void displayInitiatedRoutes(Input input, boolean initial) {
         this.graph.clear();
         this.drawInitiatedRoutes(this.graph, input);
@@ -47,7 +82,7 @@ public class GraphViewer {
 
         //EGDE
         for (Vehicle vehicle : input.getVehicles().values()) {
-            graph.getNode("Station" + vehicle.getNextStationInitial()).addAttribute("ui.style", "fill-color: red;");
+            graph.getNode("Station" + vehicle.getNextStation()).addAttribute("ui.style", "fill-color: red;");
 
 
             for (ArrayList<StationVisit> route: vehicle.getInitializedRoutes()) {
@@ -112,7 +147,7 @@ public class GraphViewer {
         
 
         for (Vehicle vehicle : input.getVehicles().values()) {
-            graph.getNode("Station" + vehicle.getNextStationInitial()).addAttribute("ui.style", "fill-color: red;");
+            graph.getNode("Station" + vehicle.getNextStation()).addAttribute("ui.style", "fill-color: red;");
         }
 
 

@@ -1,5 +1,7 @@
 package classes;
 
+import enums.ReOptimizationMethod;
+import enums.SolutionMethod;
 import functions.*;
 
 import java.io.FileNotFoundException;
@@ -12,11 +14,18 @@ public class Input {
 
     //Input
     private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
+    private int maxVisit = 1;
     private double timeHorizon = 20;
-    private double currentMinute = 8*60;              //Minutes
-    private double simulationStopTime = 10 *60;
+    private double simulationStartTime = 7*60;              //Minutes
+    private double simulationStopTime = 11*60;
     private int testInstance = 5;
-    private int nrOfVehicles = 2;
+    private int nrOfVehicles = 1;
+    private int nrStationBranching = 3;             //Create n new routes in each branching
+    private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
+    private int numberOfRuns = 15;                   //Vanlig med 15
+    private boolean simulation = false;
+
 
     //--------PRICING PROBLEM---------------
 
@@ -27,17 +36,18 @@ public class Input {
 
 
     //--------INITIALIZATION--------------
-    private int nrStationBranching = 3;             //Create n new routes IN each branching
-    private int minLoad = 8;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
-    private int maxLoad = 15;
+    private int minLoad = 5;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
+    private int maxLoad = 18;
 
+    private double currentMinute;
+    private double tresholdLengthRoute = 5;
 
     //----------COLUMN GENERATION-----------
-    private double weightTimeToViolation = -0.2;
-    //Score
-    private double weightViolationRate = 8;
-    private double weightDrivingTime = -0.1;
-    private double weightOptimalState = 0.25;
+    //Criticality score
+    private double weightTimeToViolation = -0.0;
+    private double weightViolationRate = 0.7;
+    private double weightDrivingTime = -0.2;
+    private double weightOptimalState = 0.1;
     private double weightPricingProblemScore = 8;
 
     //Xpress objective function
@@ -47,30 +57,15 @@ public class Input {
     private double weightDeviationReward  = 0.6;
     private double weightDrivingTimePenalty = 0.4;
 
-    //Load in Xpress can be load from heuristic +- loadInterval
-    private int loadInterval = 3;
-
 
 
 
 
     //------------Xpress--------------------
     private String xpressFile;
-    private String timedependentInoutFile = "timeDependentInput.txt";
+    private String timedependentInputFile = "timeDependentInput.txt";
     private String fixedInputFile = "fixedInput.txt";
-    private int maxVisit = 2;
-
-
-
-
-    //--------GENETIC ALGORITHM------------
-    private int maxNumberOfGenerations = 400;
-    private int sizeOfPopulation = 20;
-    private int tournamentParticipants = 2;
-    private double crossoverProbability = 0.8;
-    private double intraMutationProbability = 1;
-
-
+    private int visitInterval = 0;                                          //Bilen må ha load på med enn visitInterval for å besøke en delivery stason som siste besøk og vice verca
 
 
 
@@ -110,13 +105,23 @@ public class Input {
         ReadCoordinates.lookUpCoordinates(stations, stationIdList);
         this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
         ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
+
+        if (solutionMethod.equals(SolutionMethod.HEURISTIC_VERSION_3)) {
+            this.maxVisit = 1;}
+
     }
-
-
 
 
     public Input(double hour) throws FileNotFoundException {
         this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
+    }
+
+    //Create demand scenario
+    public Input(int testInstance) throws FileNotFoundException {
+        this.testInstance = testInstance;
+        String initialStationFile = getStationFile(this.testInstance);
+        this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
+        this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
 
     private String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
@@ -166,23 +171,20 @@ public class Input {
     }
 
 
+    public void updateVehiclesAndStationsToInitialState() {
+        for (Station station : this.stations.values()) {
+            station.setLoad(station.getInitialLoad());
+        }
+        for (Vehicle vehicle : this.vehicles.values()) {
+            vehicle.setTimeToNextStation(vehicle.getTimeToNextStationInitial());
+            vehicle.setNextStation(vehicle.getNextStationInitial());
+            vehicle.setLoad(vehicle.getInitialLoad());
+        }
+    }
+
+
     //Getters and setters
 
-    public double getIntraMutationProbability() {
-        return intraMutationProbability;
-    }
-
-    public int getTournamentParticipants() {
-        return tournamentParticipants;
-    }
-
-    public double getCrossoverProbability() {
-        return crossoverProbability;
-    }
-
-    public int getSizeOfPopulation() {
-        return sizeOfPopulation;
-    }
 
     public int getNumberOfVehicles() {
         return vehicles.size();
@@ -210,14 +212,6 @@ public class Input {
 
     public ArrayList<Integer> getStationIdList() {
         return stationIdList;
-    }
-
-    public int getMaxNumberOfGenerations() {
-        return maxNumberOfGenerations;
-    }
-
-    public void setMaxNumberOfGenerations(int maxNumberOfGenerations) {
-        this.maxNumberOfGenerations = maxNumberOfGenerations;
     }
 
     public int getNrStationBranching() {
@@ -276,12 +270,12 @@ public class Input {
         this.minLoad = minLoad;
     }
 
-    public double getCurrentMinute() {
-        return currentMinute;
+    public double getSimulationStartTime() {
+        return simulationStartTime;
     }
 
-    public void setCurrentMinute(double currentMinute) {
-        this.currentMinute = currentMinute;
+    public void setSimulationStartTime(double simulationStartTime) {
+        this.simulationStartTime = simulationStartTime;
     }
 
     public double getTimeHorizon() {
@@ -324,12 +318,12 @@ public class Input {
         this.vehicleParkingTime = vehicleParkingTime;
     }
 
-    public String getTimedependentInoutFile() {
-        return timedependentInoutFile;
+    public String getTimedependentInputFile() {
+        return timedependentInputFile;
     }
 
-    public void setTimedependentInoutFile(String timedependentInoutFile) {
-        this.timedependentInoutFile = timedependentInoutFile;
+    public void setTimedependentInputFile(String timedependentInputFile) {
+        this.timedependentInputFile = timedependentInputFile;
     }
 
     public String getFixedInputFile() {
@@ -429,5 +423,70 @@ public class Input {
 
     public void setNowRunningPricingProblem(boolean nowRunningPricingProblem) {
         isNowRunningPricingProblem = nowRunningPricingProblem;
+    }
+
+    public int getNumberOfRuns() {
+        return numberOfRuns;
+    }
+
+    public void setNumberOfRuns(int numberOfRuns) {
+        this.numberOfRuns = numberOfRuns;
+    }
+
+    public double getSimulationStopTime() {
+        return simulationStopTime;
+    }
+
+    public void setSimulationStopTime(double simulationStopTime) {
+        this.simulationStopTime = simulationStopTime;
+    }
+
+    public ReOptimizationMethod getReOptimizationMethod() {
+        return reOptimizationMethod;
+    }
+
+    public void setReOptimizationMethod(ReOptimizationMethod reOptimizationMethod) {
+        this.reOptimizationMethod = reOptimizationMethod;
+    }
+
+    public int getTestInstance() {
+        return testInstance;
+    }
+
+    public void setTestInstance(int testInstance) {
+        this.testInstance = testInstance;
+    }
+
+
+    public boolean isSimulation() {
+        return simulation;
+    }
+
+    public void setSimulation(boolean simulation) {
+        this.simulation = simulation;
+    }
+
+    public double getCurrentMinute() {
+        return currentMinute;
+    }
+
+    public void setCurrentMinute(double currentMinute) {
+        this.currentMinute = currentMinute;
+    }
+
+    public int getVisitInterval() {
+        return visitInterval;
+    }
+
+    public void setVisitInterval(int visitInterval) {
+        this.visitInterval = visitInterval;
+    }
+
+    public double getTresholdLengthRoute() {
+        return tresholdLengthRoute;
+    }
+
+    public void setTresholdLengthRoute(double tresholdLengthRoute) {
+        this.tresholdLengthRoute = tresholdLengthRoute;
     }
 }

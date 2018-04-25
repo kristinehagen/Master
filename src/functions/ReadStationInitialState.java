@@ -18,7 +18,6 @@ public class ReadStationInitialState {
             Scanner element = new Scanner(line).useDelimiter("\\s*,\\s*");
             if (element.hasNextInt()) {
                 int stationId = element.nextInt();
-                element.nextInt();
                 stationIdList.add(stationId);
             }
             element.close();

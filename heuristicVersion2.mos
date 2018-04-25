@@ -69,8 +69,9 @@ declarations
 	unitHandlingTime:  										real;
 	vehicleCapacity: 			array(Vehicles) 			of integer;	
 	drivingTime:  				array(Stations, Stations) 	of real;
-	visitInterval: integer;
-	loadInterval:	integer;
+	visitInterval: 											integer;
+	loadInterval:											integer;
+	simulation: 											integer;
 end-declarations
 
 initializations from DataFileFixedInput
@@ -81,6 +82,7 @@ initializations from DataFileFixedInput
 	drivingTime;
 	visitInterval;
 	loadInterval;
+	simulation;
 end-initializations
 
 
@@ -202,7 +204,9 @@ end-do
 
 forall (ii in Stations, mm in Visits, vv in Vehicles | ii <> artificialStation) do
 	create(loadingQuantity(ii,mm,vv));
+	loadingQuantity(ii,mm,vv) is_integer;
 	create(unloadingQuantity(ii,mm,vv));
+	unloadingQuantity(ii,mm,vv) is_integer;
 	create(loadAtVehicle(ii,mm,vv));
 	loadAtVehicle(ii,mm,vv) is_integer;
 end-do
@@ -318,6 +322,7 @@ declarations
 	totalArrivalTimeMax:			dynamic array(Stations)					of linctr;
 	totalArrivalTimeMin:			dynamic array(Stations)					of linctr;
 end-declarations
+
 
 
 ! -----------COLUMN GENERATION---------------
@@ -811,88 +816,100 @@ minimize(Objective1);
 
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
-
-!fopen("outputXpress.txt",F_OUTPUT);
-	forall (ii in Stations, mm in Visits | getsol(sum(jj in Stations, nn in Visits, vv in Vehicles)flow(ii,mm,jj,nn,vv)) > 0.1) do
+fopen("outputXpress.txt",F_OUTPUT);
+	
+	if (simulation > 0.5) then
+			
+		forall (ii in Stations, mm in Visits | getsol(sum(jj in Stations, nn in Visits, vv in Vehicles)flow(ii,mm,jj,nn,vv)) > 0.1) do
 		
-		!getsol(sum(vv in Vehicles)loadingQuantity(ii,mm,vv)) > 0.1 or getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm,vv))>0.1) do
-		
-		!Station
-		write(ii);
-		write(" ");
-		
-		!Visit
-		write(mm);
-		write(" ");
-		
-		!Load
-		if (sum(vv in Vehicles)getsol(loadingQuantity(ii,mm, vv)) > 0.1) then
-			write(getsol(sum(vv in Vehicles)loadingQuantity(ii,mm, vv)));
-		elif (sum(vv in Vehicles)getsol(unloadingQuantity(ii,mm, vv)) > 0.1) then
-			write(-getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm, vv)));
-		else
-			write("0");	
-		end-if
-		write(" ");
-		
-		!Time
-		if (getsol(visitTime(ii,mm))<0.1) then 
-			write(0.0);
-		else	
-			write(getsol(visitTime(ii,mm)));
-		end-if
-		write(" ");
-		
-		!Vehicle
-		ww := sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*vv);
-		write(ww);	
-		write(" ");
-		
-		!Next stationId
-		write(sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*jj));	
-		write(" ");
-		
-		!Next stationVisit
-		write(sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*nn));
-		write(" ");
-		
-		!Time next stationVisit
-		if (sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn))<0.1) then 
-			write(0.0);
-		else	
-			write(sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn)));
-		end-if
-		write(" ");
-		
-		!First station
-		first := 0;
-		forall (vv in Vehicles) do
-			if (ii = vehicleInitialStation(vv)) then
-				if (mm =1) then
-					write("1");
-					first := 1;
-				end-if	
+			!getsol(sum(vv in Vehicles)loadingQuantity(ii,mm,vv)) > 0.1 or getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm,vv))>0.1) do
+			
+			!Station
+			write(ii);
+			write(" ");
+			
+			!Load
+			if (sum(vv in Vehicles)getsol(loadingQuantity(ii,mm, vv)) > 0.1) then
+				write(getsol(sum(vv in Vehicles)loadingQuantity(ii,mm, vv)));
+			elif (sum(vv in Vehicles)getsol(unloadingQuantity(ii,mm, vv)) > 0.1) then
+				write(-getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm, vv)));
+			else
+				write("0");	
 			end-if
+			write(" ");
+			
+			!Time
+			if (getsol(visitTime(ii,mm))<0.1) then 
+				write(0.0);
+			else	
+				write(getsol(visitTime(ii,mm)));
+			end-if
+			write(" ");
+			
+			!Vehicle
+			ww := sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*vv);
+			if(ww < 0.1) then
+				write(0);
+			else
+				write(ww);
+			end-if
+			write(" ");
+			
+			!Next stationId
+			if (sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*jj) < 0.1) then
+				write(0);
+			else 
+				write(sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*jj));	
+			end-if
+			write(" ");
+	
+			!Time next stationVisit
+			if (sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn))<0.1) then 
+				write(0.0);
+			else	
+				write(sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn)));
+			end-if
+			write(" ");
+			
+			!First station
+			first := 0;
+			forall (vv in Vehicles) do
+				if (ii = vehicleInitialStation(vv)) then
+					if (mm =1) then
+						write("1");
+						first := 1;
+					end-if	
+				end-if
+			end-do
+			
+			if (first = 0) then
+				write("0");
+			end-if
+			
+			writeln;
+		
 		end-do
 		
-		if (first = 0) then
-			write("0");
-		end-if
-		
-		writeln;
+	end-if
 
 
-			
-	end-do
-	
-!fclose(F_OUTPUT);
+	if (simulation < 0.5) then
+		writeln(getsol(Objective1));
+	end-if
 
-!end-model
+fclose(F_OUTPUT);
+
+
+
+end-model
 
 
 !PRINT
 
-	
+	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))>0.5) do
+		writeln('Vehicle ' + vv + ' drives route ' + rr);
+	end-do
+		
 	forall (ii in Stations, jj in Stations, mm in Visits, nn in Visits, vv in Vehicles | getsol(flow(ii,mm,jj,nn,vv)) > 0.1) do
 		writeln('x(' + ii + ',' + mm + ',' + jj + ',' + nn + ',' + vv + ') = ' + getsol(flow(ii,mm,jj,nn,vv)));
 	end-do
@@ -1004,6 +1021,3 @@ end-do
 
 	
 end-model
-
-
-

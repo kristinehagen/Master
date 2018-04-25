@@ -21,12 +21,14 @@ public class RunXpress {
         mod = mosel.loadModel(moselFile + ".bim");
 
         //Execute model
-        System.out.println("Run " + moselFile + ".mos");
+        //System.out.println("Run " + moselFile + ".mos");
         mod.run();
 
         //Stop if no solution is found
-        if(mod.getProblemStatus()!=mod.PB_OPTIMAL)
+        if(mod.getProblemStatus()!=mod.PB_OPTIMAL) {
+            System.out.println("NO SOLUTION FOUND");
             System.exit(1);
+        }
     }
 
 }

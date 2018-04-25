@@ -1,8 +1,8 @@
 package classes;
 
+import enums.RouteLength;
 import functions.TimeConverter;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,34 +12,47 @@ public class Vehicle {
 
     private int id;
     private int nextStation;
-    private int nextStationInitial;
     private double timeToNextStation;
-    private double timeToNextStationInitial;
     private int capacity;
     private int load;
-    private int initialLoad;
+
     private ArrayList<Station> clusterStationList = new ArrayList<>();
+    private ArrayList<Station> clusterStationCurrentSolution = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
     private HashMap<Integer, Double> pricingProblemScores;
 
+    //Initial values
+    private int initialLoad;
+    private double timeToNextStationInitial;
+    private int nextStationInitial;
+
+    //Constructor
     public Vehicle(int id) {
         this.id = id;
     }
 
-    //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
-    private void createCluster(Input input){
+    private void createCluster(Input input) {
+
+        //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
         HashMap<Integer, Station> stations = input.getStations();
         ArrayList<Station> stationsList = new ArrayList<>();
-        for (Station station : stations.values()) {
-            stationsList.add(station);
-        }
+
+        stationsList.addAll(stations.values());
         this.clusterStationList = stationsList;
+
     }
+
+
 
     //Rammeverket for initialisering av ruter
     public void createRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) {
         this.pricingProblemScores = pricingProblemScores;
+
+        this.clusterStationList.clear();
         createCluster(input);
+
+        //Empty initiated routes from last iteration
+        initializedRoutes.clear();
 
         //En liste med alle ruter som ikke er ferdig laget enda
         ArrayList<ArrayList<StationVisit>> routesUnderConstruction = new ArrayList<>();
@@ -49,37 +62,41 @@ public class Vehicle {
 
         //Lager en rute som kun går til første stasjon.
         //Legger så denne ruta inn i routesUnderConstruction slik at den kan utvikle seg
-        Station firstStation = input.getStations().get(this.nextStationInitial);
+        Station firstStation = input.getStations().get(this.nextStation);
 
         ArrayList<StationVisit> firstRouteUnderConstruction = new ArrayList<>();
         StationVisit firstStationVisit = new StationVisit();
         firstStationVisit.setStation(firstStation);
-        firstStationVisit.setVisitTime(this.timeToNextStationInitial);
+        firstStationVisit.setVisitTime(this.timeToNextStation);
         firstRouteUnderConstruction.add(firstStationVisit);
         routesUnderConstruction.add(firstRouteUnderConstruction);
 
+        //Kopierer alle stasjonene fra clusterlisten inn i possibleStationsForNextStationVisit
+        ArrayList<Station> possibleStationsForNextStationVisit = new ArrayList<>(this.clusterStationList);
 
-        //Deler alle stasjoner inn i positive og negative stasjoner
-        ArrayList<Station> possibleStationsForNextStationVisit = this.clusterStationList;
 
 
 
         //SECOND STATION VISIT
 
         //Check if route needs to be expanded
-        boolean routeNeedsToBeExpanded = checkIfTimeLimitIsReached(firstRouteUnderConstruction, input);
+        RouteLength routeLength = checkIfTimeLimitIsReached(firstRouteUnderConstruction, input);
 
-        if (routeNeedsToBeExpanded) {
+        //Route needs to be expanded
+        if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON) || routeLength.equals(RouteLength.TOO_SHORT)) {
 
             ArrayList<ArrayList<StationVisit>> newRoutes = performBranchingSecondStation(firstRouteUnderConstruction, possibleStationsForNextStationVisit, input);
             routesUnderConstruction.addAll(newRoutes);
-        } else {
 
-            //Route is completed
-            this.initializedRoutes.add(firstRouteUnderConstruction);
+            if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON)) {
+                this.initializedRoutes.add(firstRouteUnderConstruction);
+            }
+
         }
 
-        routesUnderConstruction.remove(firstRouteUnderConstruction);
+        //Always include first station visit in finished routed.
+        this.initializedRoutes.add(firstRouteUnderConstruction);
+
 
         //Removes the route containing only the first station visit
         routesUnderConstruction.remove(firstRouteUnderConstruction);
@@ -96,12 +113,18 @@ public class Vehicle {
             for (ArrayList<StationVisit> routeUnderConstruction : routesUnderConstruction) {
 
                 //Check if route needs to be expanded
-                routeNeedsToBeExpanded = checkIfTimeLimitIsReached(routeUnderConstruction, input);
+                routeLength = checkIfTimeLimitIsReached(routeUnderConstruction, input);
 
-                if (routeNeedsToBeExpanded) {
+                //Route needs to be expanded
+                if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON) || routeLength.equals(RouteLength.TOO_SHORT)) {
 
                     ArrayList<ArrayList<StationVisit>> newRoutes = performBranching(routeUnderConstruction, possibleStationsForNextStationVisit, input);
                     newRoutesUnderConstruction.addAll(newRoutes);
+
+                    if (routeLength.equals(RouteLength.ALMOST_TIME_HORIZON)) {
+                        this.initializedRoutes.add(routeUnderConstruction);
+                    }
+
                 } else {
 
                     //Route is completed
@@ -122,27 +145,41 @@ public class Vehicle {
 
         ArrayList<Station> negativeStations = filterStations(possibleStationsForNextStationVisit, false, input.getCurrentMinute());
         ArrayList<Station> positiveStations = filterStations(possibleStationsForNextStationVisit, true, input.getCurrentMinute());
+
         ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
 
         boolean firstStationHasPositiveDemand = firstRouteUnderConstruction.get(0).getStation().getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())) > 0;
+        ArrayList<ArrayList<StationVisit>> routesToBeAdded;
 
         if (load <= input.getMinLoad() && !firstStationHasPositiveDemand) {
 
             //Assumes vehicle load = 0
             //Can only visit station with positive demand
-            newRoutes.addAll(chooseStations(positiveStations, firstRouteUnderConstruction, input));
+            routesToBeAdded = chooseStations(positiveStations, firstRouteUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
 
         } else if (load >= input.getMaxLoad() && firstStationHasPositiveDemand) {
 
             //Assumes vehicle load = full
             //Can only visit station with negative demand
-            newRoutes.addAll(chooseStations(negativeStations, firstRouteUnderConstruction, input));
+            routesToBeAdded = chooseStations(negativeStations, firstRouteUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
 
         } else {
 
             //Visits stations with both negative and positive demand
-            newRoutes.addAll(chooseStations(positiveStations, firstRouteUnderConstruction, input));
-            newRoutes.addAll(chooseStations(negativeStations, firstRouteUnderConstruction, input));
+            routesToBeAdded = chooseStations(positiveStations, firstRouteUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
+            routesToBeAdded = chooseStations(negativeStations, firstRouteUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
 
         }
 
@@ -162,32 +199,45 @@ public class Vehicle {
         boolean secondLastStationIsPositive = routeUnderConstruction.get(numberOfStationsInRoute-2).getStation().getNetDemand(currentHourRounded) >= 0;
         ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
 
+        ArrayList<ArrayList<StationVisit>> routesToBeAdded;
+
         //Last two stations have positive demand
         if (lastStationIsPositive & secondLastStationIsPositive) {
             //Can only visit station with negative demand
-            newRoutes.addAll(chooseStations(negativeStations, routeUnderConstruction, input));
+            routesToBeAdded = chooseStations(negativeStations, routeUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
 
         //Last two stations have negative demand
         } else if (!lastStationIsPositive & !secondLastStationIsPositive) {
 
             //Can only visit station with positive demand
-            newRoutes.addAll(chooseStations(positiveStations, routeUnderConstruction, input));
+            routesToBeAdded = chooseStations(positiveStations, routeUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
 
         } else {
 
             //Visits stations with both negative and positive demand
-            newRoutes.addAll(chooseStations(positiveStations, routeUnderConstruction, input));
-            newRoutes.addAll(chooseStations(negativeStations, routeUnderConstruction, input));
+            routesToBeAdded = chooseStations(negativeStations, routeUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
+            routesToBeAdded = chooseStations(positiveStations, routeUnderConstruction, input);
+            if (routesToBeAdded != null) {
+                newRoutes.addAll(routesToBeAdded);
+            }
 
         }
         return newRoutes;
 
     }
 
-    //Checks if time limit is reaches. Determines time and load to calculate total time
-    private boolean checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction, Input input) {
+    //Checks if time limit is reached. Determines time and load to calculate total time
+    private RouteLength checkIfTimeLimitIsReached(ArrayList<StationVisit> routeUnderConstruction, Input input) {
 
-        double timeHorizon = input.getTimeHorizon();
         double currentMinute = input.getCurrentMinute();
         double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
         int vehicleLoad = load;
@@ -339,7 +389,14 @@ public class Vehicle {
 
         //Return true if more stations should be added to the route.
 
-        return (routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime() < timeHorizon);
+        double totalDurationOfRoute = routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime();
+        if (totalDurationOfRoute > input.getTimeHorizon()) {
+            return RouteLength.LONGER_THAN_TIME_HORIZON;
+        } else if (totalDurationOfRoute > input.getTimeHorizon()-input.getTresholdLengthRoute()) {
+            return RouteLength.ALMOST_TIME_HORIZON;
+        } else {
+            return RouteLength.TOO_SHORT;
+        }
 
     }
 
@@ -382,6 +439,9 @@ public class Vehicle {
     //Gets routes under construction and possible stations to visit, and returns new routes
     private ArrayList<ArrayList<StationVisit>> chooseStations(ArrayList<Station> possibleStationsForNextStationVisit, ArrayList<StationVisit> routeUnderConstruction, Input input) {
 
+        //Possible stations for next visit er enten bare positive eller bare negative
+
+
         if (possibleStationsForNextStationVisit.size() > 0) {
 
             //Remove last visited station from possibleStationsToVisit
@@ -392,55 +452,91 @@ public class Vehicle {
             }
 
             //Do not create routes that are infesiable with respect to M
-            for (StationVisit stationVisit1 : routeUnderConstruction) {
-                int stationId = stationVisit1.getStation().getId();
+            if (possibleStationsForNextStationVisit.size() > 0) {
+                for (StationVisit stationVisit1 : routeUnderConstruction) {
+                    int stationId = stationVisit1.getStation().getId();
 
-                int numberOfTimesInRoute = 0;
+                    int numberOfTimesInRoute = 0;
 
-                //Check how many times stationId is in route
-                for (StationVisit stationVisit2 : routeUnderConstruction) {
-                    if (stationVisit2.getStation().getId() == stationId) {
-                        numberOfTimesInRoute ++;
+                    //Check how many times stationId is in route
+                    for (StationVisit stationVisit2 : routeUnderConstruction) {
+                        if (stationVisit2.getStation().getId() == stationId) {
+                            numberOfTimesInRoute++;
+                        }
                     }
-                }
 
-                if (numberOfTimesInRoute >= input.getMaxVisit()) {
-                    possibleStationsForNextStationVisit.remove(stationVisit1);
-                }
+                    if (numberOfTimesInRoute >= input.getMaxVisit()) {
+                        possibleStationsForNextStationVisit.remove(stationVisit1);
+                    }
 
+                }
             }
 
-            //This hashmap saves station ID as key, and its respective score as value.
-            HashMap<Integer, Double> stationScores = calculateScore(possibleStationsForNextStationVisit, routeUnderConstruction, input);
+            //Remove station that are either full if you come to pick up bikes, and vise versa.
+            if (possibleStationsForNextStationVisit.size() > 0) {
 
-            ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
+                ArrayList<Station> stationsToBeRemoved = new ArrayList<>();
 
-            //Branching and expands the input route to nrStationBranching new routes
-            for (int branchingCount = 0; branchingCount < input.getNrStationBranching(); branchingCount++) {
+                if (possibleStationsForNextStationVisit.get(0).getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())) >= 0) {
+                    //pick up station
+                    for (Station station : possibleStationsForNextStationVisit) {
+                        if (station.getLoad() == 0) {
+                            stationsToBeRemoved.add(station);
+                        }
+                    }
+                } else {
+                    //Delivery station
+                    for (Station station : possibleStationsForNextStationVisit) {
+                        if (station.getLoad() == station.getCapacity()) {
+                            stationsToBeRemoved.add(station);
+                        }
+                    }
+                }
+                possibleStationsForNextStationVisit.removeAll(stationsToBeRemoved);
+            }
 
-                if (stationScores.size() > 0) {
 
-                    int idForStationWithHighestScore = findStationWithHighestScore(stationScores);
-                    Station stationWithHigestScore = input.getStations().get(idForStationWithHighestScore);
 
-                    ArrayList<StationVisit> newRoute= new ArrayList<>();
-                    for (StationVisit sv : routeUnderConstruction) {
-                        StationVisit newStationVisit = new StationVisit(sv);
+            //Check if there still are stations in possible stations to visit
+            if (possibleStationsForNextStationVisit.size()>0) {
+
+
+                //This hashmap saves station ID as key, and its respective score as value.
+                HashMap<Integer, Double> stationScores = calculateScore(possibleStationsForNextStationVisit, routeUnderConstruction, input);
+
+                ArrayList<ArrayList<StationVisit>> newRoutes = new ArrayList<>();
+
+                //Branching and expands the input route to nrStationBranching new routes
+                for (int branchingCount = 0; branchingCount < input.getNrStationBranching(); branchingCount++) {
+
+                    if (stationScores.size() > 0) {
+
+                        int idForStationWithHighestScore = findStationWithHighestScore(stationScores);
+                        Station stationWithHigestScore = input.getStations().get(idForStationWithHighestScore);
+
+                        ArrayList<StationVisit> newRoute= new ArrayList<>();
+                        for (StationVisit sv : routeUnderConstruction) {
+                            StationVisit newStationVisit = new StationVisit(sv);
+                            newRoute.add(newStationVisit);
+                        }
+
+                        StationVisit newStationVisit = new StationVisit();
+                        newStationVisit.setStation(stationWithHigestScore);
                         newRoute.add(newStationVisit);
+
+                        newRoutes.add(newRoute);
+                        stationScores.remove(stationWithHigestScore.getId());
                     }
-
-                    StationVisit newStationVisit = new StationVisit();
-                    newStationVisit.setStation(stationWithHigestScore);
-                    newRoute.add(newStationVisit);
-
-                    newRoutes.add(newRoute);
-                    stationScores.remove(stationWithHigestScore.getId());
                 }
-            }
 
-            return newRoutes;
+                return newRoutes;
+
+            } else {
+                return null;
+            }
 
         } else {
+            System.out.println("No feasible stations to visit 2");
             return null;
         }
     }
@@ -505,11 +601,10 @@ public class Vehicle {
             loadAtTimeHorizon = 0;
         }
 
-        double diffFromOptimalState = java.lang.Math.abs(stationToCheck.getOptimalState(TimeConverter.convertMinutesToHourRounded(currentMinute))-loadAtTimeHorizon);
-
-        return diffFromOptimalState;
+        return Math.abs(stationToCheck.getOptimalState(currentHourRounded)-loadAtTimeHorizon);
     }
 
+    //Tested
     //Calculates time to violation if no more visits. Returns time. 0 if violation now
     public double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
         double lastVisitTime = 0.0;
@@ -530,20 +625,22 @@ public class Vehicle {
         if (stationToCheck.getNetDemand(currentHourRouded) > 0) {
             timeToViolation = (stationToCheck.getCapacity() - load) / (stationToCheck.getNetDemand(currentHourRouded)/60);
         } else if (stationToCheck.getNetDemand(currentHourRouded) < 0) {
-            timeToViolation = -load / (stationToCheck.getNetDemand(currentHourRouded) / 60);
+            timeToViolation = -load / (stationToCheck.getNetDemand(currentHourRouded)/60);
         }
 
         return lastVisitTime + timeToViolation;
     }
 
     //Returns a list with either positive or negative stations.
-    private ArrayList<Station> filterStations(ArrayList<Station> stationList, boolean returnPositive, double currentMinute) {
+    private ArrayList<Station> filterStations(ArrayList<Station> possibleStationsForNextStationVisit, boolean returnPositive, double currentMinute) {
+
         ArrayList<Station> stationListFiltered = new ArrayList<>();
         double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
-        for (Station station:stationList) {
-            if (returnPositive & station.getNetDemand(currentHourRounded)>=0) {
+
+        for (Station station : possibleStationsForNextStationVisit) {
+            if (returnPositive & station.getNetDemand(currentHourRounded) >= 0) {
                 stationListFiltered.add(station);
-            } else if (!returnPositive & station.getNetDemand(currentHourRounded)<=currentHourRounded) {
+            } else if (!returnPositive & station.getNetDemand(currentHourRounded) < 0) {
                 stationListFiltered.add(station);
             }
         }
@@ -610,6 +707,7 @@ public class Vehicle {
         this.load = load + newLoad;
     }
 
+
     public int getInitialLoad() {
         return initialLoad;
     }
@@ -642,4 +740,6 @@ public class Vehicle {
     public void setInitializedRoutes(ArrayList<ArrayList<StationVisit>> initializedRoutes) {
         this.initializedRoutes = initializedRoutes;
     }
+
+
 }
