@@ -16,7 +16,7 @@ public class HeuristicVersion1 {
     //Constructor
     public HeuristicVersion1(Input input) throws IOException, XPRMCompileException {
         HashMap<Integer, Double> pricingProblemScores = new HashMap<>();
-
+        int initialBranchingConstant = input.getNrStationBranching();
         WriteXpressFiles.printFixedInput(input);
         initiateRoutes(input, pricingProblemScores);
         WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
@@ -32,6 +32,7 @@ public class HeuristicVersion1 {
                 WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
                 RunXpress.runXpress(input.getXpressFile());
             }
+            input.setNrStationBranching(initialBranchingConstant);
         }
     }
 

@@ -18,6 +18,13 @@ public class Input {
     private int testInstance = 5;
     private int nrOfVehicles = 2;
 
+    //--------PRICING PROBLEM---------------
+
+    private boolean runPricingProblem = true;
+    private int nrOfRunsPricingProblem = 2;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 2;
+    private boolean isNowRunningPricingProblem = false;
+
 
     //--------INITIALIZATION--------------
     private int nrStationBranching = 3;             //Create n new routes IN each branching
@@ -44,11 +51,7 @@ public class Input {
     private int loadInterval = 3;
 
 
-    //--------PRICING PROBLEM---------------
 
-    private boolean runPricingProblem = true;
-    private int nrOfRunsPricingProblem = 2;         //OBS! Have to be 1 or larger
-    private int nrOfBranchingPricingProblem = 2;
 
 
     //------------Xpress--------------------
@@ -418,5 +421,13 @@ public class Input {
 
     public int getNrOfBranchingPricingProblem() {
         return nrOfBranchingPricingProblem;
+    }
+
+    public boolean isNowRunningPricingProblem() {
+        return isNowRunningPricingProblem;
+    }
+
+    public void setNowRunningPricingProblem(boolean nowRunningPricingProblem) {
+        isNowRunningPricingProblem = nowRunningPricingProblem;
     }
 }
