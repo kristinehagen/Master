@@ -1,5 +1,6 @@
-/*package classes;
+package classes;
 
+import enums.RouteLength;
 import org.junit.Assert;
 
 import java.io.IOException;
@@ -9,43 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 class VehicleTest {
-
-    @org.junit.jupiter.api.Test
-    void createCluster() {
-    }
-
-
-    @org.junit.jupiter.api.Test
-    void createRoutes() throws IOException {
-
-        Vehicle vehicle = new Vehicle(1);
-
-        //CalculateTimeToViolationIfNoVisit
-
-        Input input = new Input();
-        input.setSimulationStartTime(8);
-        ArrayList<StationVisit> routeUnderConstruction = new ArrayList<>();
-        StationVisit stationVisit = new StationVisit();
-
-        //Station already added
-        Station stationAlreadyInRoute = new Station(1);
-        stationVisit.setStation(stationAlreadyInRoute);
-
-        //Station to check
-        Station stationToCheck = new Station(2);
-        stationToCheck.setBikeReturnedMedian(8, 40);
-        stationToCheck.setBikeWantedMedian(8, 20);
-        stationToCheck.setCapacity(20);
-        //stationToCheck.setInitialLoad(15);
-
-        routeUnderConstruction.add(stationVisit);
-
-        double actual = vehicle.calculateTimeToViolationIfNoVisit(routeUnderConstruction, stationToCheck, input);
-        System.out.println(actual);
-        double expected = 15;
-
-        Assert.assertEquals(expected, actual, 0.00);
-    }
 
     @org.junit.jupiter.api.Test
     void findStationWithHighestScore() {
@@ -71,5 +35,54 @@ class VehicleTest {
         Assert.assertEquals(id, actual);
     }
 
+    //Sjekker regretfunksjonen. Må gjøres public for testing
+    /*
+    @org.junit.jupiter.api.Test
+    void checkIfTimeLimitIsReachedTest() throws IOException {
+
+        Input input = new Input();
+        input.setTimeHorizon(20);
+        input.setCurrentMinute(8*60);
+
+        StationVisit stationVisit1 = new StationVisit();
+        stationVisit1.setStation(new Station(1, 0));
+        stationVisit1.getStation().setBikeReturnedMedian(8, 0);
+        stationVisit1.getStation().setBikeWantedMedian(8, 10);
+        stationVisit1.getStation().setCapacity(10);
+        stationVisit1.getStation().setLoad(0);
+        stationVisit1.getStation().addDistanceToStationHashmap(2, 4.0);
+
+        StationVisit stationVisit2 = new StationVisit();
+        stationVisit2.setStation(new Station(2, 5));
+        stationVisit2.getStation().setBikeReturnedMedian(8, 0);
+        stationVisit2.getStation().setBikeWantedMedian(8, 10);
+        stationVisit2.getStation().setCapacity(3);
+        stationVisit2.getStation().setLoad(0);
+
+
+        ArrayList<StationVisit> routeUnderConstruction = new ArrayList<>();
+        routeUnderConstruction.add(stationVisit1);
+        routeUnderConstruction.add(stationVisit2);
+
+        Vehicle vehicle = new Vehicle(1);
+        vehicle.setLoad(10);
+        vehicle.setCapacity(10);
+
+        ArrayList<Double> expected = new ArrayList<>();
+        expected.add(7.0);
+        expected.add(3.0);
+
+        ArrayList<Double> actual = new ArrayList<>();
+
+        RouteLength routeLength = vehicle.checkIfTimeLimitIsReached(routeUnderConstruction, input);
+
+        actual.add(routeUnderConstruction.get(0).getLoadingQuantity());
+        actual.add(routeUnderConstruction.get(1).getLoadingQuantity());
+
+        Assert.assertEquals(expected, actual);
+
+
+    }
+    */
+
 }
-*/

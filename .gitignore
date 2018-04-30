@@ -12,3 +12,6 @@ gen
 demand.txt
 stationInitial.txt
 vehicleInitial.txt
+outputXpress.txt
+timeDependentInput.txt
+fixedInput.txt

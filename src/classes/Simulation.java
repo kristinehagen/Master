@@ -281,7 +281,6 @@ public class Simulation {
                 break;
             case CURRENT_SOLUTION_IN_OSLO:
                 CurrentSolutionInOslo currentSolutionInOslo = new CurrentSolutionInOslo(input);
-                this.vehicleArrivals = currentSolutionInOslo.getVehicleArrivals();
                 computationalTimeXpress = 0;                                                                //Foreløpig
                 break;
             case NO_VEHICLES:                                                                               //Kan muligens droppe denne

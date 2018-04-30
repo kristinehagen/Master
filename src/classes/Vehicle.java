@@ -70,12 +70,6 @@ public class Vehicle {
         //Kopierer alle stasjonene fra clusterlisten inn i possibleStationsForNextStationVisit
         ArrayList<Station> possibleStationsForNextStationVisit = new ArrayList<>(this.clusterStationList);
 
-        /*for(Station station : this.clusterStationList){
-            Station newStation = new Station(station);
-            possibleStationsForNextStationVisit.add(newStation);
-        }*/
-
-
 
         //SECOND STATION VISIT
 
@@ -241,10 +235,21 @@ public class Vehicle {
         double currentMinute = input.getCurrentMinute();
         double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
         int vehicleLoad = load;
+        boolean returnToLastStation = false;
+        int extraCapacity = 0;
 
         int numberOfStationVisitsInRoute = routeUnderConstruction.size();
+        int i = 0;
+        boolean moreStationVisitsToDetermine = numberOfStationVisitsInRoute > 0;
 
-        for (int i = 0; i < numberOfStationVisitsInRoute; i++) {
+        while (moreStationVisitsToDetermine) {
+
+
+            if (returnToLastStation) {
+                returnToLastStation = false;
+                vehicleLoad = (int) (vehicleLoad + routeUnderConstruction.get(i-1).getLoadingQuantity() + routeUnderConstruction.get(i-2).getLoadingQuantity());
+                i = i - 2 ;
+            }
 
 
 
@@ -297,18 +302,19 @@ public class Vehicle {
 
 
             //---------Set load------------
-            boolean currentStationisPickUpStation = routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded) >= 0;
+            boolean currentStationIsPickUpStation = routeUnderConstruction.get(i).getStation().getNetDemand(currentHourRounded) >= 0;
             double maxLoad;
             double actualLoad;
 
             //If current station is not the last station in the route
             if (i < numberOfStationVisitsInRoute - 1) {
 
-                boolean nextStationisPickUpStation = routeUnderConstruction.get(i + 1).getStation().getNetDemand(currentHourRounded) >= 0;
+                boolean nextStationIsPickUpStation = routeUnderConstruction.get(i + 1).getStation().getNetDemand(currentHourRounded) >= 0;
 
                 //If both pick up stations, load at this station maximum -capacity/2
-                if (currentStationisPickUpStation && nextStationisPickUpStation) {
-                    maxLoad = Math.round((capacity-vehicleLoad)/2);
+                if (currentStationIsPickUpStation && nextStationIsPickUpStation) {
+                    maxLoad = Math.round((capacity - vehicleLoad) / 2) + extraCapacity;
+                    extraCapacity = 0;
                     maxLoad = loadRestrictedByBikesAtStation(maxLoad, loadRightBeforeVisit);
                     maxLoad = loadRestrictedByFreeSpacesInVehicle(maxLoad, vehicleLoad, capacity);
 
@@ -318,8 +324,9 @@ public class Vehicle {
                 }
 
                 //If both delivery stations, load at this station maximum capacity/2
-                else if (!currentStationisPickUpStation && !nextStationisPickUpStation) {
-                    maxLoad = Math.round(vehicleLoad/2);
+                else if (!currentStationIsPickUpStation && !nextStationIsPickUpStation) {
+                    maxLoad = Math.round(vehicleLoad / 2) + extraCapacity;
+                    extraCapacity = 0;
                     maxLoad = loadRestrictedByFreeLocksAtStation(routeUnderConstruction.get(i).getStation().getCapacity(), loadRightBeforeVisit, maxLoad);
                     maxLoad = loadRestrictedByBikesInVehicle(vehicleLoad, maxLoad);
 
@@ -329,7 +336,7 @@ public class Vehicle {
                 }
 
                 //if next station pick up station and current station delivery station, load maximum capacity
-                else if (!currentStationisPickUpStation & nextStationisPickUpStation) {
+                else if (!currentStationIsPickUpStation & nextStationIsPickUpStation) {
                     maxLoad = capacity;
                     maxLoad = loadRestrictedByFreeLocksAtStation(routeUnderConstruction.get(i).getStation().getCapacity(), loadRightBeforeVisit, maxLoad);
                     maxLoad = loadRestrictedByBikesInVehicle(vehicleLoad, maxLoad);
@@ -337,6 +344,16 @@ public class Vehicle {
                     actualLoad = Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
+
+                    if (vehicleLoad > 0 && i > 0) {
+                        boolean lastStationAlsoDeliveryStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) <= 0;
+                        if (lastStationAlsoDeliveryStation && extraCapacity != vehicleLoad) {
+                            extraCapacity = vehicleLoad;
+                            returnToLastStation = true;
+                        }
+                    }
+
+
                 }
 
                 //if next station delivery station and current station pick up station, load maximum -capacity
@@ -348,13 +365,22 @@ public class Vehicle {
                     actualLoad = -Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
+
+                    if (vehicleLoad < capacity && i > 0) {
+                        boolean lastStationAlsoPickUpStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) >= 0;
+                        if (lastStationAlsoPickUpStation && extraCapacity != capacity - vehicleLoad) {
+                            extraCapacity = capacity - vehicleLoad;
+                            returnToLastStation = true;
+                        }
+                    }
+
                 }
 
             } else {
                 //If current station is last station in route
 
                 //Current station is pick up station
-                if (currentStationisPickUpStation) {
+                if (currentStationIsPickUpStation) {
                     maxLoad = capacity;
                     maxLoad = loadRestrictedByBikesAtStation(maxLoad, loadRightBeforeVisit);
                     maxLoad = loadRestrictedByFreeSpacesInVehicle(maxLoad, vehicleLoad, capacity);
@@ -362,6 +388,18 @@ public class Vehicle {
                     actualLoad = -Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
+
+                    if (vehicleLoad < capacity && i > 0) {
+                        boolean lastStationAlsoPickUpStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) >= 0;
+                        if (lastStationAlsoPickUpStation && extraCapacity != capacity - vehicleLoad) {
+                            extraCapacity = capacity - vehicleLoad;
+                            returnToLastStation = true;
+                        } else {
+                            moreStationVisitsToDetermine = false;
+                        }
+                    } else {
+                        moreStationVisitsToDetermine = false;
+                    }
                 }
 
                 //Current station is delivery station
@@ -373,22 +411,31 @@ public class Vehicle {
                     actualLoad = Math.floor(maxLoad);
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
+
+                    if (vehicleLoad > 0 && i > 0) {
+                        boolean lastStationAlsoDeliveryStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) <= 0;
+                        if (lastStationAlsoDeliveryStation && extraCapacity != vehicleLoad) {
+                            extraCapacity = vehicleLoad;
+                            returnToLastStation = true;
+                        } else {
+                            moreStationVisitsToDetermine = false;
+                        }
+                    } else {
+                        moreStationVisitsToDetermine = false;
+                    }
                 }
+
             }
-
-
-
             //------Set updated load at station-----------
 
             routeUnderConstruction.get(i).setLoadAfterVisit(loadRightBeforeVisit+actualLoad);
 
+            i++;
         }
 
 
 
-
-        //Return true if more stations should be added to the route.
-
+        //Return length of route
         double totalDurationOfRoute = routeUnderConstruction.get(numberOfStationVisitsInRoute-1).getVisitTime();
         if (totalDurationOfRoute > input.getTimeHorizon()) {
             return RouteLength.LONGER_THAN_TIME_HORIZON;
