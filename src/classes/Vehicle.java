@@ -41,34 +41,6 @@ public class Vehicle {
 
     }
 
-    private void createClusterCurrentMethod(Input input) {
-
-        //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
-        HashMap<Integer, Station> stations = input.getStations();
-        ArrayList<Station> stationsList = new ArrayList<>();
-
-        stationsList.addAll(stations.values());
-        this.clusterStationList = stationsList;
-
-    }
-
-    /*
-
-    public ArrayList<VehicleArrival> createRoutesCurrentMethod(Input input) {
-
-        this.clusterStationCurrentSolution.clear();
-        createClusterCurrentMethod(input);
-
-        boolean currentStationPickUpStation = input.getStations().get(nextStation).getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())) > 0;
-        boolean vehicleEmpty = load < 11;
-
-        HashMap<Integer, Double> stationScores = calculateScore(clusterStationCurrentSolution, null , input);
-
-    }
-
-    */
-
-
     //Rammeverket for initialisering av ruter
     public void createRoutes(Input input) {
 
