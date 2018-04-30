@@ -153,33 +153,31 @@ writeln("Deviations if no visit: " + getsol(totalDeviationIfNoVisit));
 writeln("Reward: " + getsol(totalReward));
 
 
-fopen("outputXpress.txt",F_OUTPUT);
-	
-	if (simulation > 0.5) then
-		forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do
+fopen("outputRoutesXpress.txt",F_OUTPUT);
 
-			!Vehicle id
-			if(vv < 0.1) then
-				write(0);
-			else
-				write(vv);
-			end-if
-			write(" ");
+	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do
+
+		!Vehicle id
+		if(vv < 0.1) then
+			write(0);
+		else
+			write(vv);
+		end-if
+		write(" ");
 			
-			!Route number
-			write(rr);
+		!Route number
+		write(rr);
 			
-			writeln;
+		writeln;
 		
-		end-do
-	end-if
+	end-do
+fclose(F_OUTPUT);
 	
 	
-	if (simulation < 0.5) then
-		writeln(getsol(Objective));
-	end-if
+fopen("outputObjectiveXpress.txt",F_OUTPUT);
 
-	
+	writeln(getsol(Objective));
+
 fclose(F_OUTPUT);
 
 

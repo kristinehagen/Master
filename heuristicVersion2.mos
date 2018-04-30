@@ -816,86 +816,82 @@ minimize(Objective1);
 
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
-fopen("outputXpress.txt",F_OUTPUT);
+fopen("outputRoutesXpress.txt",F_OUTPUT);
+			
+	forall (ii in Stations, mm in Visits | getsol(sum(jj in Stations, nn in Visits, vv in Vehicles)flow(ii,mm,jj,nn,vv)) > 0.1) do
 	
-	if (simulation > 0.5) then
-			
-		forall (ii in Stations, mm in Visits | getsol(sum(jj in Stations, nn in Visits, vv in Vehicles)flow(ii,mm,jj,nn,vv)) > 0.1) do
+		!getsol(sum(vv in Vehicles)loadingQuantity(ii,mm,vv)) > 0.1 or getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm,vv))>0.1) do
 		
-			!getsol(sum(vv in Vehicles)loadingQuantity(ii,mm,vv)) > 0.1 or getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm,vv))>0.1) do
-			
-			!Station
-			write(ii);
-			write(" ");
-			
-			!Load
-			if (sum(vv in Vehicles)getsol(loadingQuantity(ii,mm, vv)) > 0.1) then
-				write(getsol(sum(vv in Vehicles)loadingQuantity(ii,mm, vv)));
-			elif (sum(vv in Vehicles)getsol(unloadingQuantity(ii,mm, vv)) > 0.1) then
-				write(-getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm, vv)));
-			else
-				write("0");	
-			end-if
-			write(" ");
-			
-			!Time
-			if (getsol(visitTime(ii,mm))<0.1) then 
-				write(0.0);
-			else	
-				write(getsol(visitTime(ii,mm)));
-			end-if
-			write(" ");
-			
-			!Vehicle
-			ww := sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*vv);
-			if(ww < 0.1) then
-				write(0);
-			else
-				write(ww);
-			end-if
-			write(" ");
-			
-			!Next stationId
-			if (sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*jj) < 0.1) then
-				write(0);
-			else 
-				write(sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*jj));	
-			end-if
-			write(" ");
-	
-			!Time next stationVisit
-			if (sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn))<0.1) then 
-				write(0.0);
-			else	
-				write(sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn)));
-			end-if
-			write(" ");
-			
-			!First station
-			first := 0;
-			forall (vv in Vehicles) do
-				if (ii = vehicleInitialStation(vv)) then
-					if (mm =1) then
-						write("1");
-						first := 1;
-					end-if	
-				end-if
-			end-do
-			
-			if (first = 0) then
-				write("0");
-			end-if
-			
-			writeln;
+		!Station
+		write(ii);
+		write(" ");
 		
+		!Load
+		if (sum(vv in Vehicles)getsol(loadingQuantity(ii,mm, vv)) > 0.1) then
+			write(getsol(sum(vv in Vehicles)loadingQuantity(ii,mm, vv)));
+		elif (sum(vv in Vehicles)getsol(unloadingQuantity(ii,mm, vv)) > 0.1) then
+			write(-getsol(sum(vv in Vehicles)unloadingQuantity(ii,mm, vv)));
+		else
+			write("0");	
+		end-if
+		write(" ");
+		
+		!Time
+		if (getsol(visitTime(ii,mm))<0.1) then 
+			write(0.0);
+		else	
+			write(getsol(visitTime(ii,mm)));
+		end-if
+		write(" ");
+		
+		!Vehicle
+		ww := sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*vv);
+		if(ww < 0.1) then
+			write(0);
+		else
+			write(ww);
+		end-if
+		write(" ");
+		
+		!Next stationId
+		if (sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*jj) < 0.1) then
+			write(0);
+		else 
+			write(sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*jj));	
+		end-if
+		write(" ");
+
+		!Time next stationVisit
+		if (sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn))<0.1) then 
+			write(0.0);
+		else	
+			write(sum (jj in Stations, nn in Visits, vv in Vehicles) getsol(flow(ii,mm,jj,nn,vv))*getsol(visitTime(jj,nn)));
+		end-if
+		write(" ");
+		
+		!First station
+		first := 0;
+		forall (vv in Vehicles) do
+			if (ii = vehicleInitialStation(vv)) then
+				if (mm =1) then
+					write("1");
+					first := 1;
+				end-if	
+			end-if
 		end-do
 		
-	end-if
+		if (first = 0) then
+			write("0");
+		end-if
+		
+		writeln;
+	
+	end-do
+	
+fclose(F_OUTPUT);
 
-
-	if (simulation < 0.5) then
-		writeln(getsol(Objective1));
-	end-if
+fopen("outputObjectiveXpress.txt",F_OUTPUT);
+	writeln(getsol(Objective1));
 
 fclose(F_OUTPUT);
 

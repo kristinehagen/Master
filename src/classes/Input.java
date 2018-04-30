@@ -13,18 +13,18 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.EXACT_METHOD;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 5;
+    private int testInstance = 1;
     private int nrOfVehicles = 1;
     private int nrStationBranching = 5;             //Create n new routes in each branching
     private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 15;                   //Vanlig med 15
-    private boolean simulation = false;
+    private boolean simulation = true;
 
 
     //--------PRICING PROBLEM---------------
@@ -33,7 +33,7 @@ public class Input {
     private int nrOfRunsPricingProblem = 6;         //OBS! Have to be 1 or larger
     private int nrOfBranchingPricingProblem = 5;
     private boolean isNowRunningPricingProblem = false;
-    private int probabilityOfChoosingUnvisitedStation = 40;     //40%
+    private int probabilityOfChoosingUnvisitedStation = 50;     //40%
 
 
     //--------INITIALIZATION--------------

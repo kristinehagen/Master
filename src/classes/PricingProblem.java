@@ -19,6 +19,7 @@ public class PricingProblem {
 
     public void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
         pricingProblemScores.clear();
+
         ArrayList<VehicleArrival> vehicleArrivals;
         if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
             vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
