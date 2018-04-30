@@ -3,10 +3,8 @@ package classes;
 import enums.RouteLength;
 import functions.TimeConverter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Vehicle {
 
@@ -51,8 +49,10 @@ public class Vehicle {
         this.clusterStationList.clear();
         createCluster(input);
 
-        //Empty initiated routes from last iteration
-        initializedRoutes.clear();
+        if (!input.isNowRunningPricingProblem()) {
+            //Empty initiated routes from last iteration
+            initializedRoutes.clear();
+        }
 
         //En liste med alle ruter som ikke er ferdig laget enda
         ArrayList<ArrayList<StationVisit>> routesUnderConstruction = new ArrayList<>();
@@ -558,7 +558,9 @@ public class Vehicle {
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());         //In minutes
             double pricingProblemScore = 0;
             if (pricingProblemScores.containsKey(station.getId())) {
-                pricingProblemScore = pricingProblemScores.get(station.getId());
+                if (ThreadLocalRandom.current().nextInt(0, 100) < input.getProbabilityOfChoosingUnvisitedStation()) { //Slik at ikke alle ruter inneholder ubesøkte ruter
+                    pricingProblemScore = pricingProblemScores.get(station.getId());
+                }
             }
 
             //Calculate total score

@@ -21,7 +21,7 @@ public class Input {
     private double simulationStopTime = 11*60;
     private int testInstance = 5;
     private int nrOfVehicles = 1;
-    private int nrStationBranching = 3;             //Create n new routes in each branching
+    private int nrStationBranching = 5;             //Create n new routes in each branching
     private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 15;                   //Vanlig med 15
     private boolean simulation = false;
@@ -30,9 +30,10 @@ public class Input {
     //--------PRICING PROBLEM---------------
 
     private boolean runPricingProblem = true;
-    private int nrOfRunsPricingProblem = 2;         //OBS! Have to be 1 or larger
-    private int nrOfBranchingPricingProblem = 2;
+    private int nrOfRunsPricingProblem = 6;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 5;
     private boolean isNowRunningPricingProblem = false;
+    private int probabilityOfChoosingUnvisitedStation = 40;     //40%
 
 
     //--------INITIALIZATION--------------
@@ -488,5 +489,13 @@ public class Input {
 
     public void setTresholdLengthRoute(double tresholdLengthRoute) {
         this.tresholdLengthRoute = tresholdLengthRoute;
+    }
+
+    public int getProbabilityOfChoosingUnvisitedStation() {
+        return probabilityOfChoosingUnvisitedStation;
+    }
+
+    public void setProbabilityOfChoosingUnvisitedStation(int probabilityOfChoosingUnvisitedStation) {
+        this.probabilityOfChoosingUnvisitedStation = probabilityOfChoosingUnvisitedStation;
     }
 }

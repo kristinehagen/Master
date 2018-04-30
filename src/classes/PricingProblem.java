@@ -13,7 +13,7 @@ public class PricingProblem {
     }
 
     public void runPricingProblem(HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
-
+        pricingProblemScores.clear();
         //Read Xpress input and assign pricingProblemScores
         File inputFile = new File("outputXpressViolationStatistics.txt");
         Scanner in = new Scanner(inputFile);
@@ -23,11 +23,10 @@ public class PricingProblem {
             if (element.hasNextInt()) {
                 int stationId = element.nextInt();
                 int visited = element.nextInt();
-                double totalViolations = Double.parseDouble(element.next());
-                double starvations = Double.parseDouble(element.next());
-                double congestions = Double.parseDouble(element.next());
+                double deviation = Double.parseDouble(element.next());
+                double totalViolation = Double.parseDouble(element.next());
                 if (visited == 0) {
-                    pricingProblemScores.put(stationId, totalViolations + starvations + congestions);
+                    pricingProblemScores.put(stationId, deviation + totalViolation );
                 }
             }
         }
