@@ -70,7 +70,6 @@ declarations
 	drivingTime:  				array(Stations, Stations) 	of real;
 	visitInterval: 											integer;
 	simulation:												integer;
-	pricingProblem:											integer;
 end-declarations
 
 initializations from DataFileFixedInput
@@ -81,7 +80,6 @@ initializations from DataFileFixedInput
 	drivingTime;
 	visitInterval;
 	simulation;
-	pricingProblem;
 end-initializations
 
 
@@ -840,24 +838,6 @@ fclose(F_OUTPUT);
 
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
-fopen("outputXpressViolationStatistics.txt",F_OUTPUT);
-	
-	if (pricingProblem > 0.5) then
-			
-		forall (ii in Stations | ii <> 0) do
-			write(ii);
-			write(" ");
-			write(sum(mm in Visits, jj in Stations, nn in Visits, vv in Vehicles)getsol(flow(ii,mm,jj,nn,vv)));
-			write(" ");
-			write(getsol(deviation(ii)));
-			write(" ");
-			write(sum(mm in Visits) (getsol(starvation(ii,mm)) + getsol(congestion(ii,mm))) + getsol(starvationBeforeHorizon(ii)) + getsol(congestionBeforeHorizon(ii)) -  getsol(starvationAfterHorizon(ii)) - getsol(congestionAfterHorizon(ii)));
-			writeln("");
-		end-do
-	
-	end-if	
-
-fclose(F_OUTPUT);
 
 writeln(getsol(Objective1));
 

@@ -46,7 +46,7 @@ public class HeuristicVersion1 {
 
             for (int i = 0; i < input.getNrOfRunsPricingProblem(); i ++) {
 
-                runPricingProblem(pricingProblemScores);
+                runPricingProblem(input, pricingProblemScores);
                 input.setNrStationBranching(input.getNrOfBranchingPricingProblem());
                 initiateRoutes(input, pricingProblemScores);
                 WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
@@ -63,9 +63,9 @@ public class HeuristicVersion1 {
     }
 
 
-    private void runPricingProblem(HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
+    private void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
         PricingProblem pricingProblem = new PricingProblem();
-        pricingProblem.runPricingProblem(pricingProblemScores);
+        pricingProblem.runPricingProblem(input, pricingProblemScores);
         System.out.println("Pricing problem executed");
     }
 
