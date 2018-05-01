@@ -36,6 +36,7 @@ class VehicleTest {
     }
 
     //Sjekker regretfunksjonen. Må gjøres public for testing
+
     /*
     @org.junit.jupiter.api.Test
     void checkIfTimeLimitIsReachedTest() throws IOException {
@@ -53,7 +54,7 @@ class VehicleTest {
         stationVisit1.getStation().addDistanceToStationHashmap(2, 4.0);
 
         StationVisit stationVisit2 = new StationVisit();
-        stationVisit2.setStation(new Station(2, 5));
+        stationVisit2.setStation(new Station(2, 0));
         stationVisit2.getStation().setBikeReturnedMedian(8, 0);
         stationVisit2.getStation().setBikeWantedMedian(8, 10);
         stationVisit2.getStation().setCapacity(3);
@@ -79,10 +80,31 @@ class VehicleTest {
         actual.add(routeUnderConstruction.get(0).getLoadingQuantity());
         actual.add(routeUnderConstruction.get(1).getLoadingQuantity());
 
+
+
+
+        //TEST 2 - not enough capacity
+
+        stationVisit1.getStation().setCapacity(5);
+
+        routeUnderConstruction = new ArrayList<>();
+        routeUnderConstruction.add(stationVisit1);
+        routeUnderConstruction.add(stationVisit2);
+
+        expected.add(5.0);
+        expected.add(3.0);
+
+        routeLength = vehicle.checkIfTimeLimitIsReached(routeUnderConstruction, input);
+
+        actual.add(routeUnderConstruction.get(0).getLoadingQuantity());
+        actual.add(routeUnderConstruction.get(1).getLoadingQuantity());
+
+
         Assert.assertEquals(expected, actual);
 
 
     }
     */
+
 
 }

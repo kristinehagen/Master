@@ -237,19 +237,13 @@ public class Vehicle {
         int vehicleLoad = load;
         boolean returnToLastStation = false;
         int extraCapacity = 0;
+        int countNumberOfRegretsInLoop = 0;
 
         int numberOfStationVisitsInRoute = routeUnderConstruction.size();
-        int i = 0;
-        boolean moreStationVisitsToDetermine = numberOfStationVisitsInRoute > 0;
 
-        while (moreStationVisitsToDetermine) {
+        for (int i = 0; i < numberOfStationVisitsInRoute; i++) {
 
 
-            if (returnToLastStation) {
-                returnToLastStation = false;
-                vehicleLoad = (int) (vehicleLoad + routeUnderConstruction.get(i-1).getLoadingQuantity() + routeUnderConstruction.get(i-2).getLoadingQuantity());
-                i = i - 2 ;
-            }
 
 
 
@@ -345,14 +339,13 @@ public class Vehicle {
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
 
-                    if (vehicleLoad > 0 && i > 0) {
+                    if (vehicleLoad > 0 && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoDeliveryStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) <= 0;
-                        if (lastStationAlsoDeliveryStation && extraCapacity != vehicleLoad) {
+                        if (lastStationAlsoDeliveryStation) {
                             extraCapacity = vehicleLoad;
                             returnToLastStation = true;
                         }
                     }
-
 
                 }
 
@@ -366,9 +359,9 @@ public class Vehicle {
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
 
-                    if (vehicleLoad < capacity && i > 0) {
+                    if (vehicleLoad < capacity && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoPickUpStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) >= 0;
-                        if (lastStationAlsoPickUpStation && extraCapacity != capacity - vehicleLoad) {
+                        if (lastStationAlsoPickUpStation) {
                             extraCapacity = capacity - vehicleLoad;
                             returnToLastStation = true;
                         }
@@ -389,16 +382,12 @@ public class Vehicle {
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
 
-                    if (vehicleLoad < capacity && i > 0) {
+                    if (vehicleLoad < capacity && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoPickUpStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) >= 0;
-                        if (lastStationAlsoPickUpStation && extraCapacity != capacity - vehicleLoad) {
+                        if (lastStationAlsoPickUpStation) {
                             extraCapacity = capacity - vehicleLoad;
                             returnToLastStation = true;
-                        } else {
-                            moreStationVisitsToDetermine = false;
                         }
-                    } else {
-                        moreStationVisitsToDetermine = false;
                     }
                 }
 
@@ -412,16 +401,12 @@ public class Vehicle {
                     routeUnderConstruction.get(i).setLoadingQuantity(actualLoad);
                     vehicleLoad -= actualLoad;
 
-                    if (vehicleLoad > 0 && i > 0) {
+                    if (vehicleLoad > 0 && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoDeliveryStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) <= 0;
-                        if (lastStationAlsoDeliveryStation && extraCapacity != vehicleLoad) {
+                        if (lastStationAlsoDeliveryStation) {
                             extraCapacity = vehicleLoad;
                             returnToLastStation = true;
-                        } else {
-                            moreStationVisitsToDetermine = false;
                         }
-                    } else {
-                        moreStationVisitsToDetermine = false;
                     }
                 }
 
@@ -430,7 +415,15 @@ public class Vehicle {
 
             routeUnderConstruction.get(i).setLoadAfterVisit(loadRightBeforeVisit+actualLoad);
 
-            i++;
+
+            if (returnToLastStation) {
+                vehicleLoad = (int) (vehicleLoad + routeUnderConstruction.get(i).getLoadingQuantity() + routeUnderConstruction.get(i-1).getLoadingQuantity());
+                i = i-2;
+                returnToLastStation = false;
+                countNumberOfRegretsInLoop ++;
+            }
+
+
         }
 
 
