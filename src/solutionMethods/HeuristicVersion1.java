@@ -1,6 +1,7 @@
 package solutionMethods;
 
 import classes.Input;
+import classes.Station;
 import classes.StopWatch;
 import classes.Vehicle;
 import com.dashoptimization.XPRMCompileException;
@@ -11,6 +12,8 @@ import xpress.WriteXpressFiles;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HeuristicVersion1 {
 
@@ -49,6 +52,7 @@ public class HeuristicVersion1 {
 
         //Initialize routes for each vehicle
         for (Vehicle vehicle: input.getVehicles().values()) {
+
             vehicle.createRoutes(input);
         }
 

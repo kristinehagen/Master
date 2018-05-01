@@ -16,8 +16,9 @@ public class Vehicle {
     private int capacity;
     private int load;
 
+
+
     private ArrayList<Station> clusterStationList = new ArrayList<>();
-    private ArrayList<Station> clusterStationCurrentSolution = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
 
     //Initial values
@@ -30,22 +31,9 @@ public class Vehicle {
         this.id = id;
     }
 
-    private void createCluster(Input input) {
-
-        //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
-        HashMap<Integer, Station> stations = input.getStations();
-        ArrayList<Station> stationsList = new ArrayList<>();
-
-        stationsList.addAll(stations.values());
-        this.clusterStationList = stationsList;
-
-    }
 
     //Rammeverket for initialisering av ruter
     public void createRoutes(Input input) {
-
-        this.clusterStationList.clear();
-        createCluster(input);
 
         //Empty initiated routes from last iteration
         initializedRoutes.clear();
@@ -641,7 +629,7 @@ public class Vehicle {
 
     //Tested
     //Calculates time to violation if no more visits. Returns time. 0 if violation now
-    public double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
+    private double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
         double lastVisitTime = 0.0;
         double timeToViolation = 0.0;
         double load = stationToCheck.getLoad();
@@ -694,10 +682,9 @@ public class Vehicle {
         return clusterStationList;
     }
 
-    public Station getClusterIdList(int index) {
-        return clusterStationList.get(index);
+    public void setClusterStationList(ArrayList<Station> clusterStationList) {
+        this.clusterStationList = clusterStationList;
     }
-
     public int getId() {
         return id;
     }

@@ -13,18 +13,18 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.CURRENT_SOLUTION_IN_OSLO;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
     private int testInstance = 5;
-    private int nrOfVehicles = 1;
+    private int nrOfVehicles = 4;
     private int nrStationBranching = 3;             //Create n new routes in each branching
     private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 15;                   //Vanlig med 15
-    private boolean simulation = false;
+    private boolean simulation = true;
 
 
 
@@ -44,6 +44,12 @@ public class Input {
     private double weightViolationRate = 0.7;
     private double weightDrivingTime = -0.2;
     private double weightOptimalState = 0.1;
+
+    //Criticality score Current solution in Oslo
+    private double weightTimeToViolationCurrent = -0.5;
+    private double weightViolationRateCurrent = 0.5;
+    private double weightDrivingTimeCurrent = 0;
+    private double weightOptimalStateCurrent = 0;
 
     //Xpress objective function
     private double weightViolation = 0.6;
@@ -457,5 +463,37 @@ public class Input {
 
     public void setTresholdLengthRoute(double tresholdLengthRoute) {
         this.tresholdLengthRoute = tresholdLengthRoute;
+    }
+
+    public double getWeightTimeToViolationCurrent() {
+        return weightTimeToViolationCurrent;
+    }
+
+    public void setWeightTimeToViolationCurrent(double weightTimeToViolationCurrent) {
+        this.weightTimeToViolationCurrent = weightTimeToViolationCurrent;
+    }
+
+    public double getWeightViolationRateCurrent() {
+        return weightViolationRateCurrent;
+    }
+
+    public void setWeightViolationRateCurrent(double weightViolationRateCurrent) {
+        this.weightViolationRateCurrent = weightViolationRateCurrent;
+    }
+
+    public double getWeightDrivingTimeCurrent() {
+        return weightDrivingTimeCurrent;
+    }
+
+    public void setWeightDrivingTimeCurrent(double weightDrivingTimeCurrent) {
+        this.weightDrivingTimeCurrent = weightDrivingTimeCurrent;
+    }
+
+    public double getWeightOptimalStateCurrent() {
+        return weightOptimalStateCurrent;
+    }
+
+    public void setWeightOptimalStateCurrent(double weightOptimalStateCurrent) {
+        this.weightOptimalStateCurrent = weightOptimalStateCurrent;
     }
 }

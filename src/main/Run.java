@@ -4,6 +4,7 @@ import classes.*;
 import com.dashoptimization.XPRMCompileException;
 import enums.SolutionMethod;
 import functions.PrintResults;
+import functions.ReadClusterList;
 import functions.TimeConverter;
 import solutionMethods.*;
 import xpress.ReadXpressResult;
@@ -11,6 +12,7 @@ import xpress.WriteXpressFiles;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Run {
@@ -20,6 +22,7 @@ public class Run {
 
         Input input = new Input();
         input.setCurrentMinute(input.getSimulationStartTime());
+        createClusters(input);
 
         WriteXpressFiles.printFixedInput(input);
 
@@ -31,6 +34,26 @@ public class Run {
         }
 
         System.out.println("algorithm successfully terminated");
+
+    }
+
+    private static void createClusters(Input input) throws IOException {
+
+        if (input.getSolutionMethod() == SolutionMethod.CURRENT_SOLUTION_IN_OSLO) {
+            for (Vehicle vehicle : input.getVehicles().values()) {
+                ArrayList<Station> clusterIdList = ReadClusterList.readClusterList(input, "clusterCurrentSolution.xlsx", vehicle.getId());
+                vehicle.setClusterStationList(clusterIdList);
+            }
+        } else if (input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_1 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_2 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_3) {
+            for (Vehicle vehicle : input.getVehicles().values()) {
+
+                //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
+                HashMap<Integer, Station> stations = input.getStations();
+                ArrayList<Station> stationsList = new ArrayList<>();
+                stationsList.addAll(stations.values());
+                vehicle.setClusterStationList(stationsList);
+            }
+        }
 
     }
 
