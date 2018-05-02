@@ -15,7 +15,7 @@ public class ReadXpressResult {
 
         ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
 
-        File inputFile = new File("outputXpress.txt");
+        File inputFile = new File("outputRoutesXpress.txt");
         Scanner in = new Scanner(inputFile);
         while (in.hasNextLine()) {
             String line = in.nextLine();
@@ -59,7 +59,7 @@ public class ReadXpressResult {
 
         ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
 
-        File inputFile = new File("outputXpress.txt");
+        File inputFile = new File("outputRoutesXpress.txt");
         Scanner in = new Scanner(inputFile);
         while (in.hasNextLine()) {
             String line = in.nextLine();
@@ -123,7 +123,7 @@ public class ReadXpressResult {
 
     public static double readObjectiveValue() throws FileNotFoundException, IllegalArgumentException {
 
-        File inputFile = new File("outputXpress.txt");
+        File inputFile = new File("outputObjectiveXpress.txt");
         Scanner in = new Scanner(inputFile);
         double objectiveValue = 0;
 

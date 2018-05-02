@@ -716,9 +716,7 @@ minimize(Objective1);
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
 
-fopen("outputXpress.txt",F_OUTPUT);
-	
-	if (simulation > 0.5) then
+fopen("outputRoutesXpress.txt",F_OUTPUT);
 			
 		forall (ii in Stations, mm in Visits | getsol(sum(jj in Stations, nn in Visits, vv in Vehicles)flow(ii,mm,jj,nn,vv)) > 0.1) do
 		
@@ -790,12 +788,11 @@ fopen("outputXpress.txt",F_OUTPUT);
 		
 		end-do
 		
-	end-if
+fclose(F_OUTPUT);
 
 
-	if (simulation < 0.5) then
+fopen("outputObjectiveXpress.txt",F_OUTPUT);
 		writeln(getsol(Objective1));
-	end-if
 
 fclose(F_OUTPUT);
 

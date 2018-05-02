@@ -13,30 +13,35 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.EXACT_METHOD;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 5;
+    private int testInstance = 1;
     private int nrOfVehicles = 1;
-    private int nrStationBranching = 3;             //Create n new routes in each branching
+    private int nrStationBranching = 5;             //Create n new routes in each branching
     private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 15;                   //Vanlig med 15
-    private boolean simulation = false;
+    private boolean simulation = true;
 
+
+    //--------PRICING PROBLEM---------------
+
+    private boolean runPricingProblem = true;
+    private int nrOfRunsPricingProblem = 6;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 5;
+    private boolean isNowRunningPricingProblem = false;
+    private int probabilityOfChoosingUnvisitedStation = 50;     //40%
 
 
     //--------INITIALIZATION--------------
-
     private int minLoad = 5;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 18;
 
     private double currentMinute;
     private double tresholdLengthRoute = 5;
-
-
 
     //----------COLUMN GENERATION-----------
     //Criticality score
@@ -44,6 +49,7 @@ public class Input {
     private double weightViolationRate = 0.7;
     private double weightDrivingTime = -0.2;
     private double weightOptimalState = 0.1;
+    private double weightPricingProblemScore = 8;
 
     //Xpress objective function
     private double weightViolation = 0.6;
@@ -51,6 +57,7 @@ public class Input {
     private double weightReward = 0.1;
     private double weightDeviationReward  = 0.6;
     private double weightDrivingTimePenalty = 0.4;
+
 
 
 
@@ -394,6 +401,31 @@ public class Input {
         this.xpressFile = xpressFile;
     }
 
+    public int getNrOfRunsPricingProblem() {
+        return nrOfRunsPricingProblem;
+    }
+
+    public boolean isRunPricingProblem() {
+        return runPricingProblem;
+    }
+
+
+    public double getWeightPricingProblemScore() {
+        return weightPricingProblemScore;
+    }
+
+    public int getNrOfBranchingPricingProblem() {
+        return nrOfBranchingPricingProblem;
+    }
+
+    public boolean isNowRunningPricingProblem() {
+        return isNowRunningPricingProblem;
+    }
+
+    public void setNowRunningPricingProblem(boolean nowRunningPricingProblem) {
+        isNowRunningPricingProblem = nowRunningPricingProblem;
+    }
+
     public int getNumberOfRuns() {
         return numberOfRuns;
     }
@@ -457,5 +489,13 @@ public class Input {
 
     public void setTresholdLengthRoute(double tresholdLengthRoute) {
         this.tresholdLengthRoute = tresholdLengthRoute;
+    }
+
+    public int getProbabilityOfChoosingUnvisitedStation() {
+        return probabilityOfChoosingUnvisitedStation;
+    }
+
+    public void setProbabilityOfChoosingUnvisitedStation(int probabilityOfChoosingUnvisitedStation) {
+        this.probabilityOfChoosingUnvisitedStation = probabilityOfChoosingUnvisitedStation;
     }
 }

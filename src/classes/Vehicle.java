@@ -3,10 +3,8 @@ package classes;
 import enums.RouteLength;
 import functions.TimeConverter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Vehicle {
 
@@ -19,6 +17,7 @@ public class Vehicle {
     private ArrayList<Station> clusterStationList = new ArrayList<>();
     private ArrayList<Station> clusterStationCurrentSolution = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
+    private HashMap<Integer, Double> pricingProblemScores;
 
     //Initial values
     private int initialLoad;
@@ -41,14 +40,19 @@ public class Vehicle {
 
     }
 
+
+
     //Rammeverket for initialisering av ruter
-    public void createRoutes(Input input) {
+    public void createRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) {
+        this.pricingProblemScores = pricingProblemScores;
 
         this.clusterStationList.clear();
         createCluster(input);
 
-        //Empty initiated routes from last iteration
-        initializedRoutes.clear();
+        if (!input.isNowRunningPricingProblem()) {
+            //Empty initiated routes from last iteration
+            initializedRoutes.clear();
+        }
 
         //En liste med alle ruter som ikke er ferdig laget enda
         ArrayList<ArrayList<StationVisit>> routesUnderConstruction = new ArrayList<>();
@@ -512,7 +516,7 @@ public class Vehicle {
                 }
             }
 
-            //Remove station that are either full if you come to pick up bikes, and vise verca.
+            //Remove station that are either full if you come to pick up bikes, and vise versa.
             if (possibleStationsForNextStationVisit.size() > 0) {
 
                 ArrayList<Station> stationsToBeRemoved = new ArrayList<>();
@@ -596,12 +600,19 @@ public class Vehicle {
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
             double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;                            //Each minute
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());         //In minutes
+            double pricingProblemScore = 0;
+            if (pricingProblemScores.containsKey(station.getId())) {
+                if (ThreadLocalRandom.current().nextInt(0, 100) < input.getProbabilityOfChoosingUnvisitedStation()) { //Slik at ikke alle ruter inneholder ubesøkte ruter
+                    pricingProblemScore = pricingProblemScores.get(station.getId());
+                }
+            }
 
             //Calculate total score
             double score = input.getWeightTimeToViolation()*timeToViolation
                     + input.getWeightOptimalState()*diffOptimalState
                     + input.getWeightViolationRate() * violationRate
-                    + input.getWeightDrivingTime()*drivingTime;
+                    + input.getWeightDrivingTime()*drivingTime
+                    + input.getWeightPricingProblemScore()*pricingProblemScore;
 
             stationScores.put(station.getId(), score);
         }

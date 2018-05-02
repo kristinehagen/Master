@@ -678,6 +678,7 @@ public class WriteXpressFiles {
         String filename = input.getFixedInputFile();
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
+
         writer.println("artificialStation: 0");
         writer.println("visitInterval: " + input.getVisitInterval());
         writer.println("loadInterval: " + input.getLoadInterval());
@@ -685,6 +686,11 @@ public class WriteXpressFiles {
             writer.println("simulation: 1");
         } else {
             writer.println("simulation: 0");
+        }
+        if (input.isRunPricingProblem()) {
+            writer.println("pricingProblem: 1");
+        } else {
+            writer.println("pricingProblem: 0");
         }
 
         //Station IDs
