@@ -21,7 +21,7 @@ public class CreateDemandScenario {
     private HashMap<Integer, Station> stations;
     private ArrayList<ArrayList<Double>> arrivalTimes;
     private String outPutFileName;
-    private int testInstance = 1;
+    private int testInstance = 3;
 
 
     public static void main(String[] args) throws IOException, JSONException {

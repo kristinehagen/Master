@@ -13,7 +13,6 @@ public class DrawStations {
     public static void main(String[] args) throws IOException {
 
         Input input = new Input();
-        input.setCurrentMinute(input.getSimulationStartTime());
 
         //Low : 0-mediumDemand, Medium: mediumDemand-highDemand, High: highDemand++
         double highDemand = 30;     //Gir 15% i high

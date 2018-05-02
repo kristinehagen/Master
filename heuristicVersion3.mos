@@ -146,13 +146,6 @@ Objective :=
 minimize(Objective);
 
 
-writeln("Voilations: " + getsol(totalViolationsIfNoVisit - violationsPrevented));
-writeln("Deviations: " + getsol(totalDeviationIfNoVisit - totalDeviationImproved));
-writeln("Deviations prevented: " + getsol(totalDeviationImproved));
-writeln("Deviations if no visit: " + getsol(totalDeviationIfNoVisit));
-writeln("Reward: " + getsol(totalReward));
-
-
 fopen("outputRoutesXpress.txt",F_OUTPUT);
 
 	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do

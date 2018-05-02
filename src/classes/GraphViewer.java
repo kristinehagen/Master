@@ -1,11 +1,15 @@
 package classes;
 
+import functions.TimeConverter;
+import javafx.scene.Scene;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.MultiGraph;
+
+
 import java.util.ArrayList;
 import java.util.Random;
-
-import functions.TimeConverter;
-import org.graphstream.graph.*;
-import org.graphstream.graph.implementations.*;
 
 public class GraphViewer {
 
@@ -40,6 +44,48 @@ public class GraphViewer {
                 node.addAttribute("ui.style", "fill-color: grey;");
             }
 
+
+
+        }
+
+        this.graph.display();
+
+    }
+
+    public void drawClusters(Input input) {
+
+        graph.clear();
+
+        Edge edge;
+        String color;
+
+        //STATIONS
+        for (Station station : input.getStations().values()) {
+
+            Node node = graph.addNode("Station" + station.getId());
+            node.addAttribute("y", station.getLatitude());
+            node.addAttribute("x", station.getLongitude());
+            node.addAttribute("layout.frozen");
+            node.addAttribute("ui.label", station.getId());
+
+            int numberOfVehiclesWithStation = 0;
+            int vehicleId = 7;
+            for (Vehicle vehicle : input.getVehicles().values()) {
+                if (vehicle.getClusterStationList().contains(input.getStations().get(station.getId()))) {
+                    numberOfVehiclesWithStation++;
+                    vehicleId = vehicle.getId();
+                }
+            }
+
+            if (numberOfVehiclesWithStation == 1 && vehicleId == 0) {
+                node.addAttribute("ui.style", "fill-color: red;");
+            } else if (numberOfVehiclesWithStation == 1 && vehicleId == 1){
+                node.addAttribute("ui.style", "fill-color: blue;");
+            } else if (numberOfVehiclesWithStation == 1 && vehicleId == 2){
+                node.addAttribute("ui.style", "fill-color: green;");
+            } else if (numberOfVehiclesWithStation == 2) {
+                node.addAttribute("ui.style", "fill-color: purple;");
+            }
 
 
         }
