@@ -2,19 +2,11 @@ package functions;
 
 import classes.Input;
 import enums.SolutionMethod;
-import javafx.scene.control.Cell;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.streaming.SXSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class PrintResults {
 
@@ -72,10 +64,10 @@ public class PrintResults {
             rowOutput.createCell(19).setCellValue(input.getNrStationBranching());
             rowOutput.createCell(22).setCellValue(input.getTresholdLengthRoute());
             //Criticality score
-            rowOutput.createCell(0).setCellValue(input.getWeightTimeToViolation());
-            rowOutput.createCell(1).setCellValue(input.getWeightViolationRate());
-            rowOutput.createCell(2).setCellValue(input.getWeightDrivingTime());
-            rowOutput.createCell(3).setCellValue(input.getWeightOptimalState());
+            rowOutput.createCell(0).setCellValue(input.getWeightCritScTimeToViolation());
+            rowOutput.createCell(1).setCellValue(input.getWeightCritScViolationRate());
+            rowOutput.createCell(2).setCellValue(input.getWeightCritScDrivingTime());
+            rowOutput.createCell(3).setCellValue(input.getWeightCritScOptimalState());
         }
         rowOutput.createCell(14).setCellValue(input.getTimeHorizon());
         rowOutput.createCell(15).setCellValue(input.getSimulationStartTime()/60);
@@ -140,10 +132,10 @@ public class PrintResults {
 
         //Criticality score
         if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_1) || input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_2) || input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-            rowOutput.createCell(0).setCellValue(input.getWeightTimeToViolation());
-            rowOutput.createCell(1).setCellValue(input.getWeightViolationRate());
-            rowOutput.createCell(2).setCellValue(input.getWeightDrivingTime());
-            rowOutput.createCell(3).setCellValue(input.getWeightOptimalState());
+            rowOutput.createCell(0).setCellValue(input.getWeightCritScTimeToViolation());
+            rowOutput.createCell(1).setCellValue(input.getWeightCritScViolationRate());
+            rowOutput.createCell(2).setCellValue(input.getWeightCritScDrivingTime());
+            rowOutput.createCell(3).setCellValue(input.getWeightCritScOptimalState());
             rowOutput.createCell(19).setCellValue(input.getNrStationBranching());
             rowOutput.createCell(22).setCellValue(input.getTresholdLengthRoute());
         }

@@ -35,6 +35,41 @@ class VehicleTest {
         Assert.assertEquals(id, actual);
     }
 
+    /*
+
+    @org.junit.jupiter.api.Test
+    void findStationWithHighestScoreTest() {
+
+        HashMap<Integer, Double> stationScores = new HashMap<>();
+
+        stationScores.put(1, 10.0);
+        stationScores.put(2, 2.0);
+        stationScores.put(3, 21.0);
+        stationScores.put(4, 4.4);
+        stationScores.put(5, 10.1);
+
+        Vehicle vehicle = new Vehicle(0);
+
+        ArrayList<Integer> actual = new ArrayList<>();
+
+        actual.add(vehicle.findStationWithHighestScore(stationScores, 1));
+        actual.add(vehicle.findStationWithHighestScore(stationScores, 2));
+        actual.add(vehicle.findStationWithHighestScore(stationScores, 4));
+        actual.add(vehicle.findStationWithHighestScore(stationScores, 1));
+        actual.add(vehicle.findStationWithHighestScore(stationScores, 6));
+
+        ArrayList<Integer> expected = new ArrayList<>();
+        expected.add(3);
+        expected.add(5);
+        expected.add(4);
+        expected.add(3);
+        expected.add(2);
+
+        Assert.assertEquals(expected, actual);
+    }
+
+*/
+
     //Sjekker regretfunksjonen. Må gjøres public for testing
 
     /*

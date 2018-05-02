@@ -55,12 +55,6 @@ public class HeuristicVersion1 {
 
             vehicle.createRoutes(input);
         }
-
-        /*
-        GraphViewer graphViewer = new GraphViewer();
-        graphViewer.displayInitiatedRoutes(input, true);
-        */
-
     }
 
 
