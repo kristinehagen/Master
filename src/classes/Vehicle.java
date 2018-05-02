@@ -1,10 +1,12 @@
 package classes;
 
 import enums.RouteLength;
+import enums.SolutionMethod;
 import functions.TimeConverter;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 
 public class Vehicle {
 
@@ -14,8 +16,9 @@ public class Vehicle {
     private int capacity;
     private int load;
 
+
+
     private ArrayList<Station> clusterStationList = new ArrayList<>();
-    private ArrayList<Station> clusterStationCurrentSolution = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
     private HashMap<Integer, Double> pricingProblemScores;
 
@@ -29,25 +32,129 @@ public class Vehicle {
         this.id = id;
     }
 
-    private void createCluster(Input input) {
 
-        //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
-        HashMap<Integer, Station> stations = input.getStations();
-        ArrayList<Station> stationsList = new ArrayList<>();
+    //Rammeverk for initialisering av ruter med currentSolutionInOslo
+    public ArrayList<StationVisit> createRoutesCurrentSolution(Input input) {
 
-        stationsList.addAll(stations.values());
-        this.clusterStationList = stationsList;
+        ArrayList<StationVisit> initializedRoute = new ArrayList<>();
+
+        //First station visit
+        Station firstStation = input.getStations().get(this.nextStation);
+        StationVisit firstStationVisit = new StationVisit();
+        firstStationVisit.setStation(firstStation);
+        firstStationVisit.setVisitTime(this.timeToNextStation);
+        initializedRoute.add(firstStationVisit);
+
+
+        //Setter load på nåværende stasjon
+        RouteLength routeLength = checkIfTimeLimitIsReached(initializedRoute, input);
+
+        double loadAtVehicleAfterFirstVisit = load - initializedRoute.get(0).getLoadingQuantity();
+
+        //PickUpStation
+        ArrayList<Station> pickUpStations = filterStations(this.clusterStationList, true, input.getCurrentMinute());
+        HashMap<Integer, Double> stationScoresPickUpStations = calculateScore(pickUpStations, initializedRoute, input);
+
+        //Delivery station
+        ArrayList<Station> delivertStations = filterStations(this.clusterStationList, false, input.getCurrentMinute());
+        HashMap<Integer, Double> stationScoresDeliveryStations = calculateScore(delivertStations, initializedRoute, input);
+
+        //stationIdWithHighestScore1 = */(stationScoresDeliveryStations);
+        //Station deliveryStationWithHighestScore1 = input.getStations().get(stationIdWithHighestScore1);
+
+
+        Random rand = new Random();
+
+        //Almost full - Visit 1 og 2 delivery stations 50/50
+        if (loadAtVehicleAfterFirstVisit > capacity-5) {
+
+            double random = Math.random();
+            if (random < 0.5) {
+                //Visit one delivery station
+                int randomNum = rand.nextInt((5 - 1) + 1) + 1;
+                int stationId = findStationWithHighestScore(stationScoresDeliveryStations, randomNum);
+                StationVisit newStationVisit = new StationVisit();
+                newStationVisit.setStation(input.getStations().get(stationId));
+                initializedRoute.add(newStationVisit);
+
+            } else {
+                //Visit two delivery
+                int randomNum1 = rand.nextInt((5 - 1) + 1) + 1;
+                int randomNum2 = rand.nextInt((5 - 1) + 1) + 1;
+                while(randomNum1 == randomNum2) {
+                    randomNum2 = rand.nextInt((5 - 1) + 1) + 1;
+                }
+                int stationId1 = findStationWithHighestScore(stationScoresDeliveryStations, randomNum1);
+                int stationId2 = findStationWithHighestScore(stationScoresDeliveryStations, randomNum2);
+                StationVisit newStationVisit1 = new StationVisit();
+                newStationVisit1.setStation(input.getStations().get(stationId1));
+                initializedRoute.add(newStationVisit1);
+                StationVisit newStationVisit2 = new StationVisit();
+                newStationVisit2.setStation(input.getStations().get(stationId2));
+                initializedRoute.add(newStationVisit2);
+            }
+
+        //Almost empty - Visit one or two pick up stations 50/50
+        } else if (loadAtVehicleAfterFirstVisit < 5) {
+
+            double random = Math.random();
+            if (random < 0.5) {
+                //Visit one pick up station
+                int randomNum = rand.nextInt((5 - 1) + 1) + 1;
+                int stationId = findStationWithHighestScore(stationScoresPickUpStations, randomNum);
+                StationVisit newStationVisit = new StationVisit();
+                newStationVisit.setStation(input.getStations().get(stationId));
+                initializedRoute.add(newStationVisit);
+
+            } else {
+                //Visit two pick up stations
+                int randomNum1 = rand.nextInt((5 - 1) + 1) + 1;
+                int randomNum2 = rand.nextInt((5 - 1) + 1) + 1;
+                while(randomNum1 == randomNum2) {
+                    randomNum2 = rand.nextInt((5 - 1) + 1) + 1;
+                }
+                int stationId1 = findStationWithHighestScore(stationScoresPickUpStations, randomNum1);
+                int stationId2 = findStationWithHighestScore(stationScoresPickUpStations, randomNum2);
+                StationVisit newStationVisit1 = new StationVisit();
+                newStationVisit1.setStation(input.getStations().get(stationId1));
+                initializedRoute.add(newStationVisit1);
+                StationVisit newStationVisit2 = new StationVisit();
+                newStationVisit2.setStation(input.getStations().get(stationId2));
+                initializedRoute.add(newStationVisit2);
+            }
+
+        //Halvfull. Velg én pick up eller én delivery 50/50
+        } else {
+
+            double random = Math.random();
+            if (random < 0.5) {
+                //Visit one pick up station
+                int randomNum = rand.nextInt((5 - 1) + 1) + 1;
+                int stationId = findStationWithHighestScore(stationScoresPickUpStations, randomNum);
+                StationVisit newStationVisit = new StationVisit();
+                newStationVisit.setStation(input.getStations().get(stationId));
+                initializedRoute.add(newStationVisit);
+
+            } else {
+                //Visit one delivery station
+                int randomNum = rand.nextInt((5 - 1) + 1) + 1;
+                int stationId = findStationWithHighestScore(stationScoresDeliveryStations, randomNum);
+                StationVisit newStationVisit = new StationVisit();
+                newStationVisit.setStation(input.getStations().get(stationId));
+                initializedRoute.add(newStationVisit);
+            }
+        }
+
+        routeLength = checkIfTimeLimitIsReached(initializedRoute, input);
+
+        return initializedRoute;
+
 
     }
-
-
 
     //Rammeverket for initialisering av ruter
     public void createRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) {
         this.pricingProblemScores = pricingProblemScores;
-
-        this.clusterStationList.clear();
-        createCluster(input);
 
         if (!input.isNowRunningPricingProblem()) {
             //Empty initiated routes from last iteration
@@ -242,6 +349,7 @@ public class Vehicle {
         boolean returnToLastStation = false;
         int extraCapacity = 0;
         int countNumberOfRegretsInLoop = 0;
+        boolean includeRegret = !input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO);
 
         int numberOfStationVisitsInRoute = routeUnderConstruction.size();
 
@@ -346,8 +454,10 @@ public class Vehicle {
                     if (vehicleLoad > 0 && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoDeliveryStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) <= 0;
                         if (lastStationAlsoDeliveryStation) {
-                            extraCapacity = vehicleLoad;
-                            returnToLastStation = true;
+                            if (includeRegret) {
+                                extraCapacity = vehicleLoad;
+                                returnToLastStation = true;
+                            }
                         }
                     }
 
@@ -366,8 +476,10 @@ public class Vehicle {
                     if (vehicleLoad < capacity && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoPickUpStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) >= 0;
                         if (lastStationAlsoPickUpStation) {
-                            extraCapacity = capacity - vehicleLoad;
-                            returnToLastStation = true;
+                            if (includeRegret) {
+                                extraCapacity = capacity - vehicleLoad;
+                                returnToLastStation = true;
+                            }
                         }
                     }
 
@@ -389,8 +501,10 @@ public class Vehicle {
                     if (vehicleLoad < capacity && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoPickUpStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) >= 0;
                         if (lastStationAlsoPickUpStation) {
-                            extraCapacity = capacity - vehicleLoad;
-                            returnToLastStation = true;
+                            if (includeRegret) {
+                                extraCapacity = capacity - vehicleLoad;
+                                returnToLastStation = true;
+                            }
                         }
                     }
                 }
@@ -408,8 +522,10 @@ public class Vehicle {
                     if (vehicleLoad > 0 && i > 0 && countNumberOfRegretsInLoop == 0) {
                         boolean lastStationAlsoDeliveryStation = routeUnderConstruction.get(i - 1).getStation().getNetDemand(currentHourRounded) <= 0;
                         if (lastStationAlsoDeliveryStation) {
-                            extraCapacity = vehicleLoad;
-                            returnToLastStation = true;
+                            if (includeRegret) {
+                                extraCapacity = vehicleLoad;
+                                returnToLastStation = true;
+                            }
                         }
                     }
                 }
@@ -555,7 +671,7 @@ public class Vehicle {
 
                     if (stationScores.size() > 0) {
 
-                        int idForStationWithHighestScore = findStationWithHighestScore(stationScores);
+                        int idForStationWithHighestScore = findStationWithHighestScore(stationScores, 1);
                         Station stationWithHigestScore = input.getStations().get(idForStationWithHighestScore);
 
                         ArrayList<StationVisit> newRoute= new ArrayList<>();
@@ -586,8 +702,22 @@ public class Vehicle {
     }
 
     //Returns station with highest score
-    private int findStationWithHighestScore(HashMap<Integer, Double> stationScores) {
-        return (Collections.max(stationScores.entrySet(), Map.Entry.comparingByValue()).getKey());
+    private int findStationWithHighestScore(HashMap<Integer, Double> stationScores, int range) {
+
+        HashMap<Integer, Double> copiedList = new HashMap<>(stationScores);
+
+        int valueToBeReturned = 0;
+
+        for (int i = 0; i < range; i++) {
+
+            if (copiedList.size() > 0 ) {
+                valueToBeReturned = (Collections.max(copiedList.entrySet(), Map.Entry.comparingByValue()).getKey());
+                copiedList.remove(valueToBeReturned);
+            }
+        }
+
+        return valueToBeReturned;
+
     }
 
     //Calculate score of a list of stations. Returns a hashmap with station id and score
@@ -595,7 +725,12 @@ public class Vehicle {
         HashMap<Integer, Double> stationScores = new HashMap<>();
         for (Station station: stationList) {
 
-            //TESTED
+            //Weights
+            double weightTimeToViolation = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScTimeToViolationCurrent() : input.getWeightCritScTimeToViolation();
+            double weightDiffOptimalState = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScOptimalStateCurrent() : input.getWeightCritScOptimalState();
+            double weightNetDemand = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScViolationRateCurrent() : input.getWeightCritScViolationRate();
+            double weightDrivingTime = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScDrivingTimeCurrent() : input.getWeightCritScDrivingTime();
+
             double timeToViolation = calculateTimeToViolationIfNoVisit(routeUnderConstruction, station, input);
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
             double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;                            //Each minute
@@ -608,10 +743,11 @@ public class Vehicle {
             }
 
             //Calculate total score
-            double score = input.getWeightTimeToViolation()*timeToViolation
-                    + input.getWeightOptimalState()*diffOptimalState
-                    + input.getWeightViolationRate() * violationRate
-                    + input.getWeightDrivingTime()*drivingTime
+            double score =
+                    - weightTimeToViolation*timeToViolation
+                    + weightDiffOptimalState*diffOptimalState
+                    - weightNetDemand * violationRate
+                    + weightDrivingTime*drivingTime
                     + input.getWeightPricingProblemScore()*pricingProblemScore;
 
             stationScores.put(station.getId(), score);
@@ -652,7 +788,7 @@ public class Vehicle {
 
     //Tested
     //Calculates time to violation if no more visits. Returns time. 0 if violation now
-    public double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
+    private double calculateTimeToViolationIfNoVisit(ArrayList<StationVisit> routeUnderConstruction, Station stationToCheck, Input input) {
         double lastVisitTime = 0.0;
         double timeToViolation = 0.0;
         double load = stationToCheck.getLoad();
@@ -705,10 +841,9 @@ public class Vehicle {
         return clusterStationList;
     }
 
-    public Station getClusterIdList(int index) {
-        return clusterStationList.get(index);
+    public void setClusterStationList(ArrayList<Station> clusterStationList) {
+        this.clusterStationList = clusterStationList;
     }
-
     public int getId() {
         return id;
     }
@@ -778,6 +913,9 @@ public class Vehicle {
         this.timeToNextStationInitial = timeToNextStationInitial;
     }
 
+    public void addStationToClusterList (Station station) {
+        clusterStationList.add(station);
+    }
 
     public ArrayList<ArrayList<StationVisit>> getInitializedRoutes() {
         return initializedRoutes;
@@ -786,6 +924,7 @@ public class Vehicle {
     public void setInitializedRoutes(ArrayList<ArrayList<StationVisit>> initializedRoutes) {
         this.initializedRoutes = initializedRoutes;
     }
+
 
 
 }

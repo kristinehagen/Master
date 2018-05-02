@@ -27,7 +27,7 @@ public class CreateDemandScenario {
     public static void main(String[] args) throws IOException, JSONException {
         CreateDemandScenario simulation = new CreateDemandScenario();                   //Read input data
         simulation.CreateScenarios(simulation);
-      }
+    }
 
     private void CreateScenarios(CreateDemandScenario simulation) throws FileNotFoundException, UnsupportedEncodingException {
 

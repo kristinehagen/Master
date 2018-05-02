@@ -19,12 +19,13 @@ public class Input {
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 1;
-    private int nrOfVehicles = 1;
+    private int testInstance = 2;
+    private int nrOfVehicles = 2;
     private int nrStationBranching = 3;             //Create n new routes in each branching
     private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 15;                   //Vanlig med 15
     private boolean simulation = true;
+    private  boolean clustering = true;
 
 
     //--------PRICING PROBLEM---------------
@@ -37,19 +38,29 @@ public class Input {
 
 
     //--------INITIALIZATION--------------
+
     private int minLoad = 5;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
     private int maxLoad = 18;
 
     private double currentMinute;
     private double tresholdLengthRoute = 5;
 
+
+
     //----------COLUMN GENERATION-----------
     //Criticality score
-    private double weightTimeToViolation = -0.0;
-    private double weightViolationRate = 0.7;
-    private double weightDrivingTime = -0.2;
-    private double weightOptimalState = 0.1;
+    private double weightCritScTimeToViolation = 0.0;
+    private double weightCritScViolationRate = 0.7;
+    private double weightCritScDrivingTime = 0.2;
+    private double weightCritScOptimalState = 0.1;
     private double weightPricingProblemScore = 8;
+
+    //Criticality score Current solution in Oslo
+    private double weightCritScTimeToViolationCurrent = 0.7;
+    private double weightCritScViolationRateCurrent = 0.3;
+    private double weightCritScDrivingTimeCurrent = 0;
+    private double weightCritScOptimalStateCurrent = 0;
+    private double weightPricingProblemScoreCurrent = 0;
 
     //Xpress objective function
     private double weightViolation = 0.6;
@@ -57,7 +68,6 @@ public class Input {
     private double weightReward = 0.1;
     private double weightDeviationReward  = 0.6;
     private double weightDrivingTimePenalty = 0.4;
-
 
 
 
@@ -70,10 +80,13 @@ public class Input {
 
 
 
-    //--------OPTIMAL LEVEL IN XPRESS-----------
+    //--------CLUSTER-----------
+    private double weightClusterNetDemand = 0.7;
+    private double weightClusterDrivingTime = 0.1;
+    private double weightClusterEqualSize = 0.2;
 
-
-
+    private double highDemand = 30.0;
+    private double mediumDemand = 2.5;
 
 
 
@@ -100,6 +113,7 @@ public class Input {
         String initialStationFile = getStationFile(this.testInstance);
         String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
         this.xpressFile = determineXpressFile();
+        currentMinute = simulationStartTime;
 
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
@@ -223,36 +237,36 @@ public class Input {
         this.nrStationBranching = nrStationBranching;
     }
 
-    public double getWeightOptimalState() {
-        return weightOptimalState;
+    public double getWeightCritScOptimalState() {
+        return weightCritScOptimalState;
     }
 
-    public void setWeightOptimalState(double weightOptimalState) {
-        this.weightOptimalState = weightOptimalState;
+    public void setWeightCritScOptimalState(double weightCritScOptimalState) {
+        this.weightCritScOptimalState = weightCritScOptimalState;
     }
 
-    public double getWeightDrivingTime() {
-        return weightDrivingTime;
+    public double getWeightCritScDrivingTime() {
+        return weightCritScDrivingTime;
     }
 
-    public void setWeightDrivingTime(double weightDrivingTime) {
-        this.weightDrivingTime = weightDrivingTime;
+    public void setWeightCritScDrivingTime(double weightCritScDrivingTime) {
+        this.weightCritScDrivingTime = weightCritScDrivingTime;
     }
 
-    public double getWeightViolationRate() {
-        return weightViolationRate;
+    public double getWeightCritScViolationRate() {
+        return weightCritScViolationRate;
     }
 
-    public void setWeightViolationRate(double weightViolationRate) {
-        this.weightViolationRate = weightViolationRate;
+    public void setWeightCritScViolationRate(double weightCritScViolationRate) {
+        this.weightCritScViolationRate = weightCritScViolationRate;
     }
 
-    public double getWeightTimeToViolation() {
-        return weightTimeToViolation;
+    public double getWeightCritScTimeToViolation() {
+        return weightCritScTimeToViolation;
     }
 
-    public void setWeightTimeToViolation(double weightTimeToViolation) {
-        this.weightTimeToViolation = weightTimeToViolation;
+    public void setWeightCritScTimeToViolation(double weightCritScTimeToViolation) {
+        this.weightCritScTimeToViolation = weightCritScTimeToViolation;
     }
 
     public int getMaxLoad() {
@@ -497,5 +511,85 @@ public class Input {
 
     public void setProbabilityOfChoosingUnvisitedStation(int probabilityOfChoosingUnvisitedStation) {
         this.probabilityOfChoosingUnvisitedStation = probabilityOfChoosingUnvisitedStation;
+    }
+
+    public double getWeightCritScTimeToViolationCurrent() {
+        return weightCritScTimeToViolationCurrent;
+    }
+
+    public void setWeightCritScTimeToViolationCurrent(double weightCritScTimeToViolationCurrent) {
+        this.weightCritScTimeToViolationCurrent = weightCritScTimeToViolationCurrent;
+    }
+
+    public double getWeightCritScViolationRateCurrent() {
+        return weightCritScViolationRateCurrent;
+    }
+
+    public void setWeightCritScViolationRateCurrent(double weightCritScViolationRateCurrent) {
+        this.weightCritScViolationRateCurrent = weightCritScViolationRateCurrent;
+    }
+
+    public double getWeightCritScDrivingTimeCurrent() {
+        return weightCritScDrivingTimeCurrent;
+    }
+
+    public void setWeightCritScDrivingTimeCurrent(double weightCritScDrivingTimeCurrent) {
+        this.weightCritScDrivingTimeCurrent = weightCritScDrivingTimeCurrent;
+    }
+
+    public double getWeightCritScOptimalStateCurrent() {
+        return weightCritScOptimalStateCurrent;
+    }
+
+    public void setWeightCritScOptimalStateCurrent(double weightCritScOptimalStateCurrent) {
+        this.weightCritScOptimalStateCurrent = weightCritScOptimalStateCurrent;
+    }
+
+    public double getWeightClusterNetDemand() {
+        return weightClusterNetDemand;
+    }
+
+    public void setWeightClusterNetDemand(double weightClusterNetDemand) {
+        this.weightClusterNetDemand = weightClusterNetDemand;
+    }
+
+    public double getWeightClusterDrivingTime() {
+        return weightClusterDrivingTime;
+    }
+
+    public void setWeightClusterDrivingTime(double weightClusterDrivingTime) {
+        this.weightClusterDrivingTime = weightClusterDrivingTime;
+    }
+
+    public double getWeightClusterEqualSize() {
+        return weightClusterEqualSize;
+    }
+
+    public void setWeightClusterEqualSize(double weightClusterEqualSize) {
+        this.weightClusterEqualSize = weightClusterEqualSize;
+    }
+
+    public double getHighDemand() {
+        return highDemand;
+    }
+
+    public void setHighDemand(double highDemand) {
+        this.highDemand = highDemand;
+    }
+
+    public double getMediumDemand() {
+        return mediumDemand;
+    }
+
+    public void setMediumDemand(double mediumDemand) {
+        this.mediumDemand = mediumDemand;
+    }
+
+    public boolean isClustering() {
+        return clustering;
+    }
+
+    public void setClustering(boolean clustering) {
+        this.clustering = clustering;
     }
 }

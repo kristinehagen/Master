@@ -2,6 +2,7 @@ package solutionMethods;
 
 import classes.Input;
 import classes.PricingProblem;
+import classes.Station;
 import classes.StopWatch;
 import classes.Vehicle;
 import com.dashoptimization.XPRMCompileException;
@@ -12,6 +13,8 @@ import xpress.WriteXpressFiles;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HeuristicVersion1 {

@@ -15,3 +15,4 @@ vehicleInitial.txt
 outputXpress.txt
 timeDependentInput.txt
 fixedInput.txt
+*.txt

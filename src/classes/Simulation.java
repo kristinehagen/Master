@@ -45,7 +45,6 @@ public class Simulation {
 
         // 2 : TIME FOR NEW VEHICLE ROUTES
         double timeToNewVehicleRoutes = simulationStopTime + 1;
-        vehicleArrivals.clear();
 
         //If vehicle routes are to be generated
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
@@ -56,20 +55,9 @@ public class Simulation {
             //Generate routes for service vehicles
             generateVehicleRoute(input);
 
-            if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-                this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
-            } else if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_1) || input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_2) || input.getSolutionMethod().equals(SolutionMethod.EXACT_METHOD))  {
-                this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
-            } else if (input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO)) {
-
-            }
-
             //Stop timer
             stopWatchTotalComputationTime.stop();
             computationalTimesXpressPlussInitialization.add(stopWatchTotalComputationTime.getElapsedTimeSecs());
-
-            System.out.println("Time first Xpress: " + computationalTimesXpress.get(0));
-            System.out.println("Time first Xpress + initialization: " + computationalTimesXpressPlussInitialization.get(0));
 
             //Determine time to generate new vehicle routes
             timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), input.getCurrentMinute());      //Actual time minutes
@@ -146,12 +134,6 @@ public class Simulation {
 
                     generateVehicleRoute(input);
 
-                    vehicleArrivals.clear();
-                    if (input.getSolutionMethod().equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-                        vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
-                    } else {
-                        vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());         //Actual arrival times minutes
-                    }
 
                     //Stop timer
                     stopWatchTotalComputationTime.stop();
@@ -261,26 +243,33 @@ public class Simulation {
     private void generateVehicleRoute(Input input) throws IOException, XPRMCompileException {
         numberOfTimesVehicleRouteGenerated ++;
         double computationalTimeXpress;
+        vehicleArrivals.clear();
+
 
         switch (input.getSolutionMethod()) {
             case HEURISTIC_VERSION_1:
                 HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
                 computationalTimeXpress = heuristicVersion1.getComputationalTimeXpress();
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
             case HEURISTIC_VERSION_2:
                 HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
                 computationalTimeXpress = heuristicVersion2.getComputationalTimeXpress();
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
             case HEURISTIC_VERSION_3:
                 HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
                 computationalTimeXpress = heuristicVersion3.getComputationalTimeXpress();
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
                 break;
             case EXACT_METHOD:
                 ExactMethod exactMethod = new ExactMethod(input);
                 computationalTimeXpress = exactMethod.getComputationalTimeXpress();
+                this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
             case CURRENT_SOLUTION_IN_OSLO:
                 CurrentSolutionInOslo currentSolutionInOslo = new CurrentSolutionInOslo(input);
+                this.vehicleArrivals = currentSolutionInOslo.getVehicleArrivals();
                 computationalTimeXpress = 0;                                                                //Foreløpig
                 break;
             case NO_VEHICLES:                                                                               //Kan muligens droppe denne

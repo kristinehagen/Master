@@ -749,4 +749,71 @@ public class WriteXpressFiles {
 
         writer.close();
     }
+
+    public static void writeClusterInformation(Input input) throws FileNotFoundException, UnsupportedEncodingException {
+
+        String filename = "clusterInput.txt";
+        PrintWriter writer = new PrintWriter(filename, "UTF-8");
+
+        writer.println("weightNetDemand: " + input.getWeightClusterNetDemand());
+        writer.println("weightDrivingTime: " + input.getWeightClusterDrivingTime());
+        writer.println("weightEqualSize: " + input.getWeightClusterEqualSize());
+        writer.println("instance: " + input.getTestInstance());
+        writer.println("vehicleNr: " + input.getVehicles().size());
+
+        //Station IDs
+        writer.println();
+        writer.println("Stations : [");
+        for (Station station : input.getStations().values()) {
+            writer.println(station.getId());
+        }
+        writer.println("]");
+
+        //Vehicle IDs
+        writer.println();
+        writer.println("Vehicles : [");
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            writer.println(vehicle.getId());
+        }
+        writer.println("]");
+
+        //Demand
+        writer.println();
+        writer.println("demand : [");
+        for (Station station : input.getStations().values()) {
+            writer.println(station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute())));
+        }
+        writer.println("]");
+
+        //ClusterNr
+        writer.println();
+        writer.println("clusterNr : [");
+        for (Station station : input.getStations().values()) {
+            double netDemand = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
+            double highDemand = input.getHighDemand();
+            double mediumDemand = input.getMediumDemand();
+            if (netDemand >= highDemand || netDemand <= -highDemand) {
+                writer.println(2);
+            } else if (netDemand >= mediumDemand || netDemand <= -mediumDemand) {
+                writer.println(1);
+            } else {
+                writer.println(0);
+            }
+        }
+        writer.println("]");
+
+        //DrivingTime
+        writer.println();
+        writer.println("drivingTime : [");
+        for (Station stationOrigin : input.getStations().values()) {
+            for (Station stationDestination : input.getStations().values()) {
+                writer.print(stationOrigin.getDrivingTimeToStation(stationDestination.getId()) + " ");
+            }
+        }
+        writer.println("]");
+
+        writer.close();
+
+
+    }
 }
