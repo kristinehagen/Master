@@ -727,8 +727,6 @@ public class Vehicle {
             double weightNetDemand = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScViolationRateCurrent() : input.getWeightCritScViolationRate();
             double weightDrivingTime = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScDrivingTimeCurrent() : input.getWeightCritScDrivingTime();
 
-
-
             double timeToViolation = calculateTimeToViolationIfNoVisit(routeUnderConstruction, station, input);
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
             double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;                            //Each minute
@@ -736,9 +734,9 @@ public class Vehicle {
 
             //Calculate total score
             double score =
-                    weightTimeToViolation*timeToViolation
+                    - weightTimeToViolation*timeToViolation
                     + weightDiffOptimalState*diffOptimalState
-                    + weightNetDemand * violationRate
+                    - weightNetDemand * violationRate
                     + weightDrivingTime*drivingTime;
 
             stationScores.put(station.getId(), score);
@@ -904,6 +902,9 @@ public class Vehicle {
         this.timeToNextStationInitial = timeToNextStationInitial;
     }
 
+    public void addStationToClusterList (Station station) {
+        clusterStationList.add(station);
+    }
 
     public ArrayList<ArrayList<StationVisit>> getInitializedRoutes() {
         return initializedRoutes;

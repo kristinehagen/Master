@@ -13,18 +13,19 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.CURRENT_SOLUTION_IN_OSLO;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 5;
+    private int testInstance = 2;
     private int nrOfVehicles = 2;
     private int nrStationBranching = 3;             //Create n new routes in each branching
     private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
     private int numberOfRuns = 15;                   //Vanlig med 15
     private boolean simulation = true;
+    private  boolean clustering = true;
 
 
 
@@ -40,13 +41,13 @@ public class Input {
 
     //----------COLUMN GENERATION-----------
     //Criticality score
-    private double weightCritScTimeToViolation = -0.5;
-    private double weightCritScViolationRate = 0.5;
-    private double weightCritScDrivingTime = -0.0;
-    private double weightCritScOptimalState = 0.0;
+    private double weightCritScTimeToViolation = 0.0;
+    private double weightCritScViolationRate = 0.7;
+    private double weightCritScDrivingTime = 0.2;
+    private double weightCritScOptimalState = 0.1;
 
     //Criticality score Current solution in Oslo
-    private double weightCritScTimeToViolationCurrent = -0.7;
+    private double weightCritScTimeToViolationCurrent = 0.7;
     private double weightCritScViolationRateCurrent = 0.3;
     private double weightCritScDrivingTimeCurrent = 0;
     private double weightCritScOptimalStateCurrent = 0;
@@ -69,10 +70,13 @@ public class Input {
 
 
 
-    //--------OPTIMAL LEVEL IN XPRESS-----------
+    //--------CLUSTER-----------
+    private double weightClusterNetDemand = 0.7;
+    private double weightClusterDrivingTime = 0.1;
+    private double weightClusterEqualSize = 0.2;
 
-
-
+    private double highDemand = 30.0;
+    private double mediumDemand = 2.5;
 
 
 
@@ -99,6 +103,7 @@ public class Input {
         String initialStationFile = getStationFile(this.testInstance);
         String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
         this.xpressFile = determineXpressFile();
+        currentMinute = simulationStartTime;
 
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
@@ -495,5 +500,53 @@ public class Input {
 
     public void setWeightCritScOptimalStateCurrent(double weightCritScOptimalStateCurrent) {
         this.weightCritScOptimalStateCurrent = weightCritScOptimalStateCurrent;
+    }
+
+    public double getWeightClusterNetDemand() {
+        return weightClusterNetDemand;
+    }
+
+    public void setWeightClusterNetDemand(double weightClusterNetDemand) {
+        this.weightClusterNetDemand = weightClusterNetDemand;
+    }
+
+    public double getWeightClusterDrivingTime() {
+        return weightClusterDrivingTime;
+    }
+
+    public void setWeightClusterDrivingTime(double weightClusterDrivingTime) {
+        this.weightClusterDrivingTime = weightClusterDrivingTime;
+    }
+
+    public double getWeightClusterEqualSize() {
+        return weightClusterEqualSize;
+    }
+
+    public void setWeightClusterEqualSize(double weightClusterEqualSize) {
+        this.weightClusterEqualSize = weightClusterEqualSize;
+    }
+
+    public double getHighDemand() {
+        return highDemand;
+    }
+
+    public void setHighDemand(double highDemand) {
+        this.highDemand = highDemand;
+    }
+
+    public double getMediumDemand() {
+        return mediumDemand;
+    }
+
+    public void setMediumDemand(double mediumDemand) {
+        this.mediumDemand = mediumDemand;
+    }
+
+    public boolean isClustering() {
+        return clustering;
+    }
+
+    public void setClustering(boolean clustering) {
+        this.clustering = clustering;
     }
 }

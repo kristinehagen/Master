@@ -21,7 +21,6 @@ public class Run {
     public static void main(String[] args) throws IOException, XPRMCompileException, InterruptedException {
 
         Input input = new Input();
-        input.setCurrentMinute(input.getSimulationStartTime());
         createClusters(input);
 
         WriteXpressFiles.printFixedInput(input);
@@ -40,19 +39,25 @@ public class Run {
     private static void createClusters(Input input) throws IOException {
 
         if (input.getSolutionMethod() == SolutionMethod.CURRENT_SOLUTION_IN_OSLO) {
-            for (Vehicle vehicle : input.getVehicles().values()) {
-                ArrayList<Station> clusterIdList = ReadClusterList.readClusterList(input, "clusterCurrentSolution.xlsx", vehicle.getId());
-                vehicle.setClusterStationList(clusterIdList);
-            }
-        } else if (input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_1 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_2 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_3) {
-            for (Vehicle vehicle : input.getVehicles().values()) {
+            ReadClusterList.readClusterListExcel(input, "clusterCurrentSolution.xlsx");
 
-                //MIDLERTIDIG - Skal returnere stasjonenen som denne bilen har lov til å besøke
-                HashMap<Integer, Station> stations = input.getStations();
-                ArrayList<Station> stationsList = new ArrayList<>();
-                stationsList.addAll(stations.values());
-                vehicle.setClusterStationList(stationsList);
+        } else if (input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_1 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_2 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_3) {
+
+            if (input.isClustering()) {
+                String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
+                ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
+
+            } else {
+                //Returnerer alle stasjonene
+                for (Vehicle vehicle : input.getVehicles().values()) {
+                    HashMap<Integer, Station> stations = input.getStations();
+                    ArrayList<Station> stationsList = new ArrayList<>();
+                    stationsList.addAll(stations.values());
+                    vehicle.setClusterStationList(stationsList);
+                }
             }
+
+
         }
 
     }
