@@ -1,5 +1,7 @@
 package classes;
 
+
+/*
 import enums.RouteLength;
 import org.junit.Assert;
 
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 
 class VehicleTest {
 
@@ -104,7 +107,8 @@ class VehicleTest {
 
 
     }
-    */
+
 
 
 }
+    */
