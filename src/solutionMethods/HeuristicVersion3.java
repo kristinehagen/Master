@@ -36,26 +36,27 @@ public class HeuristicVersion3 {
 
         RunXpress.runXpress(input.getXpressFile());
 
-        stopWatchIncludingInitialization.stop();
-        stopWatchXpress.stop();
 
         //Run pricing problem
         if (input.isRunPricingProblem()) {
-            int initialBranchingConstant = input.getNrStationBranching();
             input.setNowRunningPricingProblem(true);
+            int initialBranchingConstant = input.getNrStationBranching();
 
             for (int i = 0; i < input.getNrOfRunsPricingProblem(); i ++) {
 
                 runPricingProblem(input, pricingProblemScores);
                 input.setNrStationBranching(input.getNrOfBranchingPricingProblem());
                 initiateRoutes(input, pricingProblemScores);
-                WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_3);
+                WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
                 RunXpress.runXpress(input.getXpressFile());
             }
 
             input.setNrStationBranching(initialBranchingConstant);
             input.setNowRunningPricingProblem(false);
         }
+
+        stopWatchIncludingInitialization.stop();
+        stopWatchXpress.stop();
 
         this.computationalTimeXpress = stopWatchXpress.getElapsedTimeSecs();
         this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
@@ -65,7 +66,7 @@ public class HeuristicVersion3 {
 
     private void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
         PricingProblem pricingProblem = new PricingProblem();
-        pricingProblem.runPricingProblem(input, pricingProblemScores);
+        pricingProblem.setPricingProblemScore(input, pricingProblemScores);
         System.out.println("Pricing problem executed");
     }
 

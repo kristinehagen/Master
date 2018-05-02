@@ -730,11 +730,14 @@ public class Vehicle {
             double weightDiffOptimalState = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScOptimalStateCurrent() : input.getWeightCritScOptimalState();
             double weightNetDemand = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScViolationRateCurrent() : input.getWeightCritScViolationRate();
             double weightDrivingTime = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? input.getWeightCritScDrivingTimeCurrent() : input.getWeightCritScDrivingTime();
+            double weightPricingProblem = input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO) ? 0 : input.getWeightPricingProblemScore();
+
 
             double timeToViolation = calculateTimeToViolationIfNoVisit(routeUnderConstruction, station, input);
             double diffOptimalState = calculateDiffFromOptimalStateIfNoVisit(routeUnderConstruction, station, input);
             double violationRate = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;                            //Each minute
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());         //In minutes
+
             double pricingProblemScore = 0;
             if (pricingProblemScores.containsKey(station.getId())) {
                 if (ThreadLocalRandom.current().nextInt(0, 100) < input.getProbabilityOfChoosingUnvisitedStation()) { //Slik at ikke alle ruter inneholder ubesøkte ruter
@@ -748,7 +751,7 @@ public class Vehicle {
                     + weightDiffOptimalState*diffOptimalState
                     - weightNetDemand * violationRate
                     + weightDrivingTime*drivingTime
-                    + input.getWeightPricingProblemScore()*pricingProblemScore;
+                    + weightPricingProblem*pricingProblemScore;
 
             stationScores.put(station.getId(), score);
         }

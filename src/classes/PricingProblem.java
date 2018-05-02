@@ -17,7 +17,7 @@ public class PricingProblem {
     public PricingProblem(){
     }
 
-    public void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
+    public void setPricingProblemScore(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
         pricingProblemScores.clear();
 
         ArrayList<VehicleArrival> vehicleArrivals;
@@ -30,49 +30,38 @@ public class PricingProblem {
         }
 
         for (Station station: input.getStations().values()) {
+
+            //Checks if station is visited by any service vehicles
+            boolean visited = false;
             for (VehicleArrival vehicleArrival : vehicleArrivals) {
-                if (vehicleArrival.getStationId() != station.getId()) {
-                    double ViolationsIfNoVisit = 0;
-                    double DeviationsIfNoVisit = 0;
-                    double initialLoad = station.getLoad();
-                    double demandPerMinute = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;
-                    double loadAtHorizon = initialLoad + demandPerMinute*input.getTimeHorizon();
-                    double optimalState = station.getOptimalState(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
-
-                    if (loadAtHorizon > station.getCapacity()) {
-                        ViolationsIfNoVisit = loadAtHorizon-station.getCapacity();
-                        loadAtHorizon = station.getCapacity();
-                    }
-                    if (loadAtHorizon < 0) {
-                        ViolationsIfNoVisit = -loadAtHorizon;
-                        loadAtHorizon = 0;
-                    }
-                    double diffFromOptimalState = Math.abs(optimalState-loadAtHorizon);
-                    DeviationsIfNoVisit = diffFromOptimalState;
-
-                    pricingProblemScores.put(station.getId(), ViolationsIfNoVisit + DeviationsIfNoVisit);
+                if (vehicleArrival.getStationId() == station.getId()) {
+                    visited = true;
                 }
             }
-        }
 
-        //Read Xpress input and assign pricingProblemScores
-        /*
-        File inputFile = new File("outputXpressViolationStatistics.txt");
-        Scanner in = new Scanner(inputFile);
-        while (in.hasNextLine()) {
-            String line = in.nextLine();
-            Scanner element = new Scanner(line);
-            if (element.hasNextInt()) {
-                int stationId = element.nextInt();
-                int visited = element.nextInt();
-                double deviation = Double.parseDouble(element.next());
-                double totalViolation = Double.parseDouble(element.next());
-                if (visited == 0) {
-                    pricingProblemScores.put(stationId, deviation + totalViolation );
+            if (!visited) {
+                double ViolationsIfNoVisit = 0;
+                double DeviationsIfNoVisit;
+                double initialLoad = station.getLoad();
+                double demandPerMinute = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()))/60;
+                double loadAtHorizon = initialLoad + demandPerMinute*input.getTimeHorizon();
+                double optimalState = station.getOptimalState(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
+
+                if (loadAtHorizon > station.getCapacity()) {
+                    ViolationsIfNoVisit = loadAtHorizon-station.getCapacity();
+                    loadAtHorizon = station.getCapacity();
                 }
+                else if (loadAtHorizon < 0) {
+                    ViolationsIfNoVisit = -loadAtHorizon;
+                    loadAtHorizon = 0;
+                }
+                double diffFromOptimalState = Math.abs(optimalState-loadAtHorizon);
+                DeviationsIfNoVisit = diffFromOptimalState;
+
+                pricingProblemScores.put(station.getId(), ViolationsIfNoVisit + DeviationsIfNoVisit);
             }
+
+
         }
-        in.close();
-        */
     }
 }

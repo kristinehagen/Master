@@ -2,7 +2,6 @@ package solutionMethods;
 
 import classes.Input;
 import classes.PricingProblem;
-import classes.Station;
 import classes.StopWatch;
 import classes.Vehicle;
 import com.dashoptimization.XPRMCompileException;
@@ -13,8 +12,6 @@ import xpress.WriteXpressFiles;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HeuristicVersion1 {
@@ -39,13 +36,11 @@ public class HeuristicVersion1 {
 
         RunXpress.runXpress(input.getXpressFile());
 
-        stopWatchIncludingInitialization.stop();
-        stopWatchXpress.stop();
 
         //Run pricing problem
         if (input.isRunPricingProblem()) {
-            int initialBranchingConstant = input.getNrStationBranching();
             input.setNowRunningPricingProblem(true);
+            int initialBranchingConstant = input.getNrStationBranching();
 
             for (int i = 0; i < input.getNrOfRunsPricingProblem(); i ++) {
 
@@ -60,6 +55,9 @@ public class HeuristicVersion1 {
             input.setNowRunningPricingProblem(false);
         }
 
+        stopWatchIncludingInitialization.stop();
+        stopWatchXpress.stop();
+
         this.computationalTimeXpress = stopWatchXpress.getElapsedTimeSecs();
         this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
         this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
@@ -68,7 +66,7 @@ public class HeuristicVersion1 {
 
     private void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
         PricingProblem pricingProblem = new PricingProblem();
-        pricingProblem.runPricingProblem(input, pricingProblemScores);
+        pricingProblem.setPricingProblemScore(input, pricingProblemScores);
         System.out.println("Pricing problem executed");
     }
 
@@ -78,7 +76,6 @@ public class HeuristicVersion1 {
         for (Vehicle vehicle: input.getVehicles().values()) {
             vehicle.createRoutes(input, pricingProblemScores);
         }
-
 
     }
 
