@@ -18,13 +18,13 @@ public class Input {
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
-    private double simulationStopTime = 8*60;
+    private double simulationStopTime = 11*60;
     private int testInstance = 3;
-    private int nrOfVehicles = 3;
-    private int nrStationBranching = 8;             //Create n new routes in each branching
-    private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
-    private int numberOfRuns = 3;                   //Vanlig med 15
-    private boolean simulation = false;
+    private int nrOfVehicles = 1;
+    private int nrStationBranching = 3;             //Create n new routes in each branching
+    private int loadInterval = 3;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
+    private int numberOfRuns = 10;                   //Vanlig med 15
+    private boolean simulation = true;
 
 
     //--------CLUSTER-----------
