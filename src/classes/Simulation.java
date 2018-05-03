@@ -2,10 +2,12 @@ package classes;
 
 import com.dashoptimization.XPRMCompileException;
 import enums.SolutionMethod;
+import functions.ReadClusterList;
 import solutionMethods.*;
 import enums.NextEvent;
 import functions.NextSimulation;
 import xpress.ReadXpressResult;
+import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
 import java.io.File;
@@ -124,6 +126,15 @@ public class Simulation {
                     break;
 
                 case NEW_VEHICLE_ROUTES:
+
+                    //Generate new clusters
+                    if (input.isDynamicClustering()) {
+                        WriteXpressFiles.writeClusterInformation(input);
+                        RunXpress.runXpress("createCluster");
+                        String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
+                        ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
+                    }
+
                     //Generate new routes
                     determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles(), vehicleArrivals );
                     input.setCurrentMinute(timeToNewVehicleRoutes);

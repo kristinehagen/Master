@@ -8,6 +8,7 @@ import functions.ReadClusterList;
 import functions.TimeConverter;
 import solutionMethods.*;
 import xpress.ReadXpressResult;
+import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class Run {
 
     }
 
-    private static void createClusters(Input input) throws IOException {
+    private static void createClusters(Input input) throws IOException, XPRMCompileException {
 
         if (input.getSolutionMethod() == SolutionMethod.CURRENT_SOLUTION_IN_OSLO) {
             ReadClusterList.readClusterListExcel(input, "clusterCurrentSolution.xlsx");
@@ -56,7 +57,6 @@ public class Run {
                     vehicle.setClusterStationList(stationsList);
                 }
             }
-
 
         }
 

@@ -16,8 +16,6 @@ public class Vehicle {
     private int capacity;
     private int load;
 
-
-
     private ArrayList<Station> clusterStationList = new ArrayList<>();
     private ArrayList<ArrayList<StationVisit>> initializedRoutes = new ArrayList<>();
     private HashMap<Integer, Double> pricingProblemScores;
@@ -31,6 +29,7 @@ public class Vehicle {
     public Vehicle(int id) {
         this.id = id;
     }
+
 
 
     //Rammeverk for initialisering av ruter med currentSolutionInOslo

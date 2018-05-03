@@ -87,6 +87,7 @@ public class Input {
 
     private double highDemand = 30.0;
     private double mediumDemand = 2.5;
+    private boolean dynamicClustering = true;
 
 
 
@@ -124,9 +125,12 @@ public class Input {
         if (solutionMethod.equals(SolutionMethod.HEURISTIC_VERSION_3)) {
             this.maxVisit = 1;}
 
+        //Update to initial values
+        updateVehiclesAndStationsToInitialState();
+
     }
 
-
+    //Generate test instance
     public Input(double hour) throws FileNotFoundException {
         this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
     }
@@ -591,5 +595,13 @@ public class Input {
 
     public void setClustering(boolean clustering) {
         this.clustering = clustering;
+    }
+
+    public boolean isDynamicClustering() {
+        return dynamicClustering;
+    }
+
+    public void setDynamicClustering(boolean dynamicClustering) {
+        this.dynamicClustering = dynamicClustering;
     }
 }

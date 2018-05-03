@@ -769,6 +769,14 @@ public class WriteXpressFiles {
         }
         writer.println("]");
 
+        //initialStation
+        writer.println();
+        writer.println("initialStation : [");
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            writer.println(vehicle.getNextStation());
+        }
+        writer.println("]");
+
         //Vehicle IDs
         writer.println();
         writer.println("Vehicles : [");

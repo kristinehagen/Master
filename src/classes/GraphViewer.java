@@ -83,6 +83,8 @@ public class GraphViewer {
                 node.addAttribute("ui.style", "fill-color: blue;");
             } else if (numberOfVehiclesWithStation == 1 && vehicleId == 2){
                 node.addAttribute("ui.style", "fill-color: green;");
+            } else if (numberOfVehiclesWithStation == 1 && vehicleId == 3){
+                node.addAttribute("ui.style", "fill-color: pink;");
             } else if (numberOfVehiclesWithStation == 2) {
                 node.addAttribute("ui.style", "fill-color: purple;");
             }

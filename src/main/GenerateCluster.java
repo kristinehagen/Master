@@ -21,13 +21,13 @@ public class GenerateCluster {
     public static void main(String[] args) throws IOException, XPRMCompileException {
         Input input = new Input();
 
-        WriteXpressFiles.writeClusterInformation(input);
+        //WriteXpressFiles.writeClusterInformation(input);
         //RunXpress.runXpress("createCluster");
 
 
-        //readCluster(input);
-        //GraphViewer graph = new GraphViewer();
-        //graph.drawClusters(input);
+        readCluster(input);
+        GraphViewer graph = new GraphViewer();
+        graph.drawClusters(input);
 
     }
 
