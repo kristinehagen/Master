@@ -738,11 +738,14 @@ public class Vehicle {
             double drivingTime = routeUnderConstruction.get(routeUnderConstruction.size()-1).getStation().getDrivingTimeToStation(station.getId());         //In minutes
 
             double pricingProblemScore = 0;
-            if (pricingProblemScores.containsKey(station.getId())) {
-                if (ThreadLocalRandom.current().nextInt(0, 100) < input.getProbabilityOfChoosingUnvisitedStation()) { //Slik at ikke alle ruter inneholder ubesøkte ruter
-                    pricingProblemScore = pricingProblemScores.get(station.getId());
+            if (!input.getSolutionMethod().equals(SolutionMethod.CURRENT_SOLUTION_IN_OSLO)) {
+                if (pricingProblemScores.containsKey(station.getId())) {
+                    if (ThreadLocalRandom.current().nextInt(0, 100) < input.getProbabilityOfChoosingUnvisitedStation()) { //Slik at ikke alle ruter inneholder ubesøkte ruter
+                        pricingProblemScore = pricingProblemScores.get(station.getId());
+                    }
                 }
             }
+
 
             //Calculate total score
             double score =
@@ -822,10 +825,12 @@ public class Vehicle {
         double currentHourRounded = TimeConverter.convertMinutesToHourRounded(currentMinute);
 
         for (Station station : possibleStationsForNextStationVisit) {
-            if (returnPositive & station.getNetDemand(currentHourRounded) >= 0) {
-                stationListFiltered.add(station);
-            } else if (!returnPositive & station.getNetDemand(currentHourRounded) < 0) {
-                stationListFiltered.add(station);
+            if (station != null) {
+                if (returnPositive & station.getNetDemand(currentHourRounded) >= 0) {
+                    stationListFiltered.add(station);
+                } else if (!returnPositive & station.getNetDemand(currentHourRounded) < 0) {
+                    stationListFiltered.add(station);
+                }
             }
         }
         return stationListFiltered;

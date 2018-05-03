@@ -21,8 +21,8 @@ public class GenerateCluster {
     public static void main(String[] args) throws IOException, XPRMCompileException {
         Input input = new Input();
 
-        //WriteXpressFiles.writeClusterInformation(input);
-        //RunXpress.runXpress("createCluster");
+        WriteXpressFiles.writeClusterInformation(input);
+        RunXpress.runXpress("createCluster");
 
 
         readCluster(input);
@@ -38,20 +38,8 @@ public class GenerateCluster {
 
         } else if (input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_1 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_2 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_3) {
 
-            if (input.isClustering()) {
-                String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
-                ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
-
-            } else {
-                //Returnerer alle stasjonene
-                for (Vehicle vehicle : input.getVehicles().values()) {
-                    HashMap<Integer, Station> stations = input.getStations();
-                    ArrayList<Station> stationsList = new ArrayList<>();
-                    stationsList.addAll(stations.values());
-                    vehicle.setClusterStationList(stationsList);
-                }
-            }
-
+            String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
+            ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
 
         }
 

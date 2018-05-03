@@ -181,21 +181,6 @@ minimize(Objective);
 
 
 
-!-----PRINT------
-
-writeln("Objective: " + getsol(Objective));
-forall (vv in Vehicles) do 
-	writeln("In cluster " + vv + " station:");
-	forall(ii in Stations | getsol(cluster(ii,vv))>0) do
-		writeln(ii);
-	end-do
-	writeln("Total driving time: " + sum(ii in Stations)getsol(totalDrivingTimeInCluster(ii,vv)));
-	writeln("Total net demand in cluster: " + getsol(totalNetDemandInCluster(vv)));
-end-do
-writeln("Total net demand in system: " + sum(vv in Vehicles)getsol(totalNetDemandInCluster(vv)));
-
-
-
 
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
@@ -210,4 +195,19 @@ end-do
 fclose(F_OUTPUT);
 	
 end-model
+
+!-----PRINT------
+
+writeln("Objective: " + getsol(Objective));
+forall (vv in Vehicles) do 
+	writeln("In cluster " + vv + " station:");
+	forall(ii in Stations | getsol(cluster(ii,vv))>0) do
+		writeln(ii);
+	end-do
+	writeln("Total driving time: " + sum(ii in Stations)getsol(totalDrivingTimeInCluster(ii,vv)));
+	writeln("Total net demand in cluster: " + getsol(totalNetDemandInCluster(vv)));
+end-do
+writeln("Total net demand in system: " + sum(vv in Vehicles)getsol(totalNetDemandInCluster(vv)));
+
+
 

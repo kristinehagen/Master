@@ -22,13 +22,8 @@ public class ReadClusterList {
 
         for (Row row : datatypeSheet) {
             int stationId = (int) row.getCell(0).getNumericCellValue();
-            for (Cell cell : row) {
-                if (cell.getColumnIndex() != 0) {
-                    int vehicleBelonging = (int) cell.getNumericCellValue();
-                    input.getVehicles().get(vehicleBelonging).addStationToClusterList(input.getStations().get(stationId));
-                }
-
-            }
+            int vehicleCluster = (int) row.getCell(1).getNumericCellValue();
+            input.getVehicles().get(vehicleCluster).addStationToClusterList(input.getStations().get(stationId));
         }
 
     }

@@ -11,6 +11,7 @@ import xpress.ReadXpressResult;
 import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,8 @@ public class Run {
 
             if (input.isClustering()) {
                 String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
+                WriteXpressFiles.writeClusterInformation(input);
+                RunXpress.runXpress("createCluster");
                 ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
 
             } else {
@@ -59,6 +62,13 @@ public class Run {
             }
 
         }
+
+    }
+
+    private static boolean checkIfFileExcist(String xpressOutputFile) {
+
+        File f = new File(xpressOutputFile);
+        return (f.exists() && !f.isDirectory());
 
     }
 
@@ -97,19 +107,19 @@ public class Run {
         }
 
         double averageViolation = average(totalViolationList);
-        double averagePercentageviolations = average(percentageViolationsList);
+        double averagePercentageViolations = average(percentageViolationsList);
         double sdViolation = sd(totalViolationList, averageViolation);
-        double sdPercentageviolations = sd(percentageViolationsList, averagePercentageviolations);
+        double sdPercentageViolations = sd(percentageViolationsList, averagePercentageViolations);
         double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
-        double avergaeTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
+        double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
         double averageComputationalTimeXpress = average(computationalTimeXpress);
-        double averageComputationalTimeXpressPlussInitialization = average(computationalTimeXpressPlussInitialization);
+        double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlussInitialization);
 
-        PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageviolations, sdViolation, sdPercentageviolations, averageNumberOfTimesVehicleRouteGenerated,
-                avergaeTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlussInitialization, input);
+        PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, sdViolation, sdPercentageViolations, averageNumberOfTimesVehicleRouteGenerated,
+                averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlusInitialization, input);
 
         System.out.println();
-        System.out.println("Average violation percentage: " + averagePercentageviolations);
+        System.out.println("Average violation percentage: " + averagePercentageViolations);
 
         //}
     }

@@ -36,7 +36,7 @@ declarations
 	Stations:		set of integer;
 	Vehicles:		set of integer;
 	Visits:			set of integer;
-	Route:			set of integer;
+	Routes:			set of integer;
 	StarvationStations: set of integer;
 	CongestionStations:	set of integer;
 end-declarations
@@ -52,7 +52,6 @@ initializations from DataFileTimeDependentInput
 end-initializations
 
 Visits := 1 .. maxVisits;
-Routes := 1 .. 3;
 
 finalize(Stations);
 finalize(Vehicles);

@@ -18,36 +18,36 @@ public class Input {
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
-    private double simulationStopTime = 11*60;
-    private int testInstance = 5;
-    private int nrOfVehicles = 4;
-    private int nrStationBranching = 3;             //Create n new routes in each branching
+    private double simulationStopTime = 8*60;
+    private int testInstance = 3;
+    private int nrOfVehicles = 3;
+    private int nrStationBranching = 8;             //Create n new routes in each branching
     private int loadInterval = 3;                   //Load in Xpress can be load from heuristic +- loadInterval
-    private int numberOfRuns = 15;                   //Vanlig med 15
-    private boolean simulation = true;
-    private  boolean clustering = true;
+    private int numberOfRuns = 3;                   //Vanlig med 15
+    private boolean simulation = false;
+
+
+    //--------CLUSTER-----------
+
+    private  boolean clustering = false;
+    private boolean dynamicClustering = false;
+    private double highDemand = 30.0;
+    private double mediumDemand = 2.5;
 
 
     //--------PRICING PROBLEM---------------
 
     private boolean runPricingProblem = false;
-    private int nrOfRunsPricingProblem = 3;         //OBS! Have to be 1 or larger
-    private int nrOfBranchingPricingProblem = 3;
-    private boolean isNowRunningPricingProblem = false;
+    private int nrOfRunsPricingProblem = 5;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 5;
     private int probabilityOfChoosingUnvisitedStation = 50;     //40%
 
 
-    //--------INITIALIZATION--------------
-
-    private int minLoad = 5;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
-    private int maxLoad = 18;
-
-    private double currentMinute;
-    private double tresholdLengthRoute = 5;
 
 
 
-    //----------COLUMN GENERATION-----------
+
+    //----------WEIGHTS-----------
     //Criticality score
     private double weightCritScTimeToViolation = 0.0;
     private double weightCritScViolationRate = 0.7;
@@ -69,6 +69,20 @@ public class Input {
     private double weightDeviationReward  = 0.6;
     private double weightDrivingTimePenalty = 0.4;
 
+    //Cluster
+    private double weightClusterNetDemand = 0.7;
+    private double weightClusterDrivingTime = 0.1;
+    private double weightClusterEqualSize = 0.2;
+
+
+
+    //--------INITIALIZATION--------------
+
+    private int minLoad = 5;                        //Initial vehicle load må være i intervallet [Min max] for å kunne kjøre til positive og negative stasjoner.
+    private int maxLoad = 18;
+
+    private double currentMinute;
+    private double tresholdLengthRoute = 5;
 
 
 
@@ -80,22 +94,12 @@ public class Input {
 
 
 
-    //--------CLUSTER-----------
-    private double weightClusterNetDemand = 0.7;
-    private double weightClusterDrivingTime = 0.1;
-    private double weightClusterEqualSize = 0.2;
-
-    private double highDemand = 30.0;
-    private double mediumDemand = 2.5;
-    private boolean dynamicClustering = true;
-
-
-
     //------------Constants----------------
     private double vehicleHandlingTime = 0.25;
     private double vehicleParkingTime = 2;
     private String demandFile = "demand.txt";
 
+    private boolean isNowRunningPricingProblem = false;
 
 
 
@@ -127,6 +131,11 @@ public class Input {
 
         //Update to initial values
         updateVehiclesAndStationsToInitialState();
+
+        //No cluster if only one vehicle
+        if (nrOfVehicles == 1) {
+            clustering = false;
+        }
 
     }
 

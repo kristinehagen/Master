@@ -46,7 +46,7 @@ public class HeuristicVersion2 {
                 runPricingProblem(input, pricingProblemScores);
                 input.setNrStationBranching(input.getNrOfBranchingPricingProblem());
                 initiateRoutes(input, pricingProblemScores);
-                WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_1);
+                WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_2);
                 RunXpress.runXpress(input.getXpressFile());
             }
 
