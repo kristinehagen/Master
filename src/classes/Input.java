@@ -13,26 +13,26 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 3;
-    private int nrOfVehicles = 1;
+    private int testInstance = 1;
+    private int nrOfVehicles = 2;
     private int nrStationBranching = 3;             //Create n new routes in each branching
-    private int loadInterval = 3;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
+    private int loadInterval = 0;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                   //Vanlig med 15
-    private boolean simulation = true;
+    private boolean simulation = false;
 
 
     //--------CLUSTER-----------
 
     private  boolean clustering = false;
     private boolean dynamicClustering = false;
-    private double highDemand = 30.0;
-    private double mediumDemand = 2.5;
+    private double highDemand = 35;
+    private double mediumDemand = 11.5;
 
 
     //--------PRICING PROBLEM---------------
@@ -70,9 +70,9 @@ public class Input {
     private double weightDrivingTimePenalty = 0.4;
 
     //Cluster
-    private double weightClusterNetDemand = 0.7;
-    private double weightClusterDrivingTime = 0.1;
-    private double weightClusterEqualSize = 0.2;
+    private double weightClusterNetDemand = 0.1;
+    private double weightClusterDrivingTime = 0.3;
+    private double weightClusterEqualSize = 0.4;
 
 
 

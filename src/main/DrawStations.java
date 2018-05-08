@@ -15,8 +15,8 @@ public class DrawStations {
         Input input = new Input();
 
         //Low : 0-mediumDemand, Medium: mediumDemand-highDemand, High: highDemand++
-        double highDemand = 30;     //Gir 15% i high
-        double mediumDemand = 2.5;    // 3/5 i medium, og 1/5 i low
+        double highDemand = input.getHighDemand();     //Gir 15% i high
+        double mediumDemand = input.getMediumDemand();    // 3/5 i medium, og 1/5 i low
 
         GraphViewer graph = new GraphViewer();
         graph.drawStationDemand(input, mediumDemand, highDemand);

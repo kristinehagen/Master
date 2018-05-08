@@ -37,11 +37,11 @@ public class GraphViewer {
             double netDemand = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
             //If demand over highDemand -> red, mediumDemand-HighDemand -> black, 0-mediumDemand grey
             if (netDemand >= highDemand || netDemand <= -highDemand) {
-                node.addAttribute("ui.style", "fill-color: red;");
+                node.addAttribute("ui.style", "fill-color: red; size: 5px;");
             } else if (netDemand >= mediumDemand || netDemand <= -mediumDemand){
-                node.addAttribute("ui.style", "fill-color: black;");
+                node.addAttribute("ui.style", "fill-color: black; size: 5px;");
             }else {
-                node.addAttribute("ui.style", "fill-color: grey;");
+                node.addAttribute("ui.style", "fill-color: grey; size: 5px;");
             }
 
 
@@ -56,8 +56,6 @@ public class GraphViewer {
 
         graph.clear();
 
-        Edge edge;
-        String color;
 
         //STATIONS
         for (Station station : input.getStations().values()) {
@@ -77,16 +75,63 @@ public class GraphViewer {
                 }
             }
 
+            double netDemand = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
+            //If demand over highDemand -> red, mediumDemand-HighDemand -> black, 0-mediumDemand grey
+            if (netDemand >= input.getHighDemand() || netDemand <= -input.getHighDemand()) {
+                node.addAttribute("ui.style", "fill-color: red; size: 5px;");
+            } else if (netDemand >= input.getMediumDemand() || netDemand <= -input.getMediumDemand()){
+                node.addAttribute("ui.style", "fill-color: black; size: 5px;");
+            }else {
+                node.addAttribute("ui.style", "fill-color: grey; size: 5px;");
+            }
+/*
+
             if (numberOfVehiclesWithStation == 1 && vehicleId == 0) {
-                node.addAttribute("ui.style", "fill-color: red;");
+                node.addAttribute("ui.style", "fill-color: red; size: 5px;");
             } else if (numberOfVehiclesWithStation == 1 && vehicleId == 1){
-                node.addAttribute("ui.style", "fill-color: blue;");
+                node.addAttribute("ui.style", "fill-color: black; size: 5px;");
             } else if (numberOfVehiclesWithStation == 1 && vehicleId == 2){
-                node.addAttribute("ui.style", "fill-color: green;");
+                node.addAttribute("ui.style", "fill-color: green; size: 5px;");
             } else if (numberOfVehiclesWithStation == 1 && vehicleId == 3){
-                node.addAttribute("ui.style", "fill-color: pink;");
+                node.addAttribute("ui.style", "fill-color: pink; size: 5px;");
             } else if (numberOfVehiclesWithStation == 2) {
-                node.addAttribute("ui.style", "fill-color: purple;");
+                node.addAttribute("ui.style", "fill-color: purple; size: 5px;");
+            } else {
+                node.addAttribute("ui.style", "fill-color: black; size: 5px;");
+            }
+*/
+
+
+        }
+
+        //EDGE
+        for (Vehicle vehicle : input.getVehicles().values()) {
+
+            if (vehicle.getId() == 1) {
+                Edge edge;
+
+                //From station
+                Station fromStationNode = input.getStations().get(vehicle.getNextStation());
+                Node nodeFromStation = graph.getNode("Station" + fromStationNode.getId());
+
+                for (Station station : input.getStations().values()) {
+
+                    if (vehicle.getClusterStationList().contains(station)) {
+
+                        //To station
+                        Node nodeToStation = graph.getNode("Station" + station.getId());
+
+                        //Edge ID
+                        String edgeId = "V" + vehicle.getId() + "S" + station.getId();
+
+                        //Add edge
+                        edge = graph.addEdge(edgeId, nodeFromStation, nodeToStation, true);
+
+                        edge.addAttribute("ui.style", "size: 1px; fill-color: black ;");
+
+                    }
+
+                }
             }
 
 
@@ -128,7 +173,7 @@ public class GraphViewer {
         }
 
 
-        //EGDE
+        //EDGE
         for (Vehicle vehicle : input.getVehicles().values()) {
             graph.getNode("Station" + vehicle.getNextStation()).addAttribute("ui.style", "fill-color: red;");
 

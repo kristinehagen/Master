@@ -50,6 +50,9 @@ declarations
 	instance:																integer;
 	vehicleNr:																integer;
 	initialStation:								array(Vehicles)				of integer;
+	weightNetDemand:														real;
+	weightDrivingTime:														real;
+	weightEqualSize:														real;
 end-declarations
 
 initializations from DataFile
@@ -59,6 +62,9 @@ initializations from DataFile
 	instance;
 	vehicleNr;
 	initialStation;
+	weightNetDemand;
+	weightDrivingTime;
+	weightEqualSize;
 end-initializations
 
 
@@ -145,18 +151,6 @@ forall(vv in Vehicles) do
 end-do
 
 !Driving time in cluster
-!M := 100;
-!forall(ii in Stations, jj in Stations, vv in Vehicles | ii < jj) do
-!	totalDrivingTimeInCluster1(ii, jj, vv) := 
-!		totalDrivingTimeInCluster(ii, jj, vv) >= drivingTime(ii,jj) - M*(2-cluster(ii,vv)-cluster(jj,vv));
-!	totalDrivingTimeInCluster2(ii, jj, vv) := 
-!		totalDrivingTimeInCluster(ii, jj, vv) <= drivingTime(ii,jj) + M*(2-cluster(ii,vv)-cluster(jj,vv));
-!end-do
-
-
-
-
-!Driving time in cluster
 M := 100;
 forall(ii in Stations, vv in Vehicles | ii <> initialStation(vv)) do
 	totalDrivingTimeInCluster1(ii,vv) := 
@@ -174,7 +168,7 @@ end-do
 
 !Objective
 Objective := 
-	sum(vv in Vehicles) totalNetDemandInCluster(vv) + sum(ii in Stations, vv in Vehicles) totalDrivingTimeInCluster(ii,vv) + sizeDiff;
+	weightNetDemand*sum(vv in Vehicles) totalNetDemandInCluster(vv) + weightDrivingTime*sum(ii in Stations, vv in Vehicles) totalDrivingTimeInCluster(ii,vv) + weightEqualSize*sizeDiff;
 	
 minimize(Objective);
 
