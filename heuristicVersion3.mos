@@ -145,10 +145,9 @@ Objective :=
 	
 minimize(Objective);
 
-
 fopen("outputRoutesXpress.txt",F_OUTPUT);
 
-	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do
+	forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
 
 		!Vehicle id
 		if(vv < 0.1) then
@@ -200,6 +199,24 @@ writeln('Objective value: ' + getsol(Objective));
 
 	
 end-model
+
+
+
+writeln("Violations: " + (getsol(totalViolationsIfNoVisit) - getsol(violationsPrevented)));
+writeln("Violations if no visit: " + getsol(totalViolationsIfNoVisit));
+writeln("Violations prevented: " + getsol(violationsPrevented));
+forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.5) do
+	writeln("con/star prevented for vehicle " + vv + " route " + rr + ": " + getsol(congestionPrevented(vv,rr)) + "/" + getsol(starvationPrevented(vv,rr)));
+end-do
+writeln;
+writeln("Deviations: " + (getsol(totalDeviationIfNoVisit) - getsol(totalDeviationImproved)));
+writeln("Reward: " + getsol(totalReward));
+
+forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
+	writeln("Vehicle " + vv + " drives route: " + rr);
+end-do
+
+
 
 
 

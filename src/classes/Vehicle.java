@@ -156,7 +156,6 @@ public class Vehicle {
         this.pricingProblemScores = pricingProblemScores;
 
         if (!input.isNowRunningPricingProblem()) {
-            //Empty initiated routes from last iteration
             initializedRoutes.clear();
         }
 
@@ -180,6 +179,14 @@ public class Vehicle {
         //Kopierer alle stasjonene fra clusterlisten inn i possibleStationsForNextStationVisit
         ArrayList<Station> possibleStationsForNextStationVisit = new ArrayList<>(this.clusterStationList);
 
+        //Always include first station visit in finished routed.
+        StationVisit stationVisitDoNothing = new StationVisit();
+        stationVisitDoNothing.setStation(firstStation);
+        stationVisitDoNothing.setVisitTime(this.timeToNextStation);
+        ArrayList<StationVisit> routeDoNothing = new ArrayList<>();
+        routeDoNothing.add(stationVisitDoNothing);
+        this.initializedRoutes.add(routeDoNothing);
+
 
         //SECOND STATION VISIT
 
@@ -198,8 +205,8 @@ public class Vehicle {
 
         }
 
-        //Always include first station visit in finished routed.
-        this.initializedRoutes.add(firstRouteUnderConstruction);
+
+
 
 
         //Removes the route containing only the first station visit
@@ -625,7 +632,7 @@ public class Vehicle {
                     }
 
                     if (numberOfTimesInRoute >= input.getMaxVisit()) {
-                        possibleStationsForNextStationVisit.remove(stationVisit1);
+                        possibleStationsForNextStationVisit.remove(input.getStations().get(stationId));
                     }
 
                 }
