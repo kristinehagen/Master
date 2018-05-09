@@ -7,12 +7,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class PrintResults {
 
-    public static void printSimulationResultsToExcelFile(double averageViolation, double averagePercentageVoilation, double sdViolations, double sdPercentageViolation,
-                                                       double averageNumberOfTimesVehicleRouteGenerated, double avergageTimeToVehicleRouteGenerated,
-                                                       double avergaeComputationalTimeXpress, double averageComputationalTimeXpressPlussInitialization, Input input) throws IOException {
+    public static void printSimulationResultsToExcelFile(double averageViolation, double averagePercentageViolation, ArrayList<Double> percentageViolationsList, double sdViolations, double sdPercentageViolation,
+                                                         double averageNumberOfTimesVehicleRouteGenerated, double avergageTimeToVehicleRouteGenerated,
+                                                         double avergaeComputationalTimeXpress, double averageComputationalTimeXpressPlussInitialization, Input input) throws IOException {
 
         System.out.println("avergaeComputationalTimeXpress: " + avergaeComputationalTimeXpress);
         System.out.println("averageComputationalTimeXpressPlussInitialization" + averageComputationalTimeXpressPlussInitialization);
@@ -55,7 +56,7 @@ public class PrintResults {
             rowOutput.createCell(3).setCellValue(averageNumberOfTimesVehicleRouteGenerated);
             rowOutput.createCell(4).setCellValue(avergageTimeToVehicleRouteGenerated);
         }
-        rowOutput.createCell(2).setCellValue(averagePercentageVoilation);
+        rowOutput.createCell(2).setCellValue(averagePercentageViolation);
 
         if (allHeuristics) {
             //Weights - Criticality score
@@ -134,6 +135,12 @@ public class PrintResults {
                 rowOutput.createCell(38).setCellValue(input.getNrOfBranchingPricingProblem());
                 rowOutput.createCell(39).setCellValue(input.getProbabilityOfChoosingUnvisitedStation());
             }
+        }
+
+
+        //Print results for statistical t-test
+        for (int i = 40; i < input.getNumberOfRuns()+ 40 ; i++) {
+            rowOutput.createCell(i).setCellValue(percentageViolationsList.get(i-40));
         }
 
 

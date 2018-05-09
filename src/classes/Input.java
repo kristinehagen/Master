@@ -13,18 +13,18 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 1;
+    private int testInstance = 5;
     private int nrOfVehicles = 2;
     private int nrStationBranching = 3;             //Create n new routes in each branching
-    private int loadInterval = 0;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
+    private int loadInterval = 11;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                   //Vanlig med 15
-    private boolean simulation = false;
+    private boolean simulation = true;
 
 
     //--------CLUSTER-----------
@@ -162,6 +162,8 @@ public class Input {
                 return "vehicleInitial3.txt";
             case 4:
                 return "vehicleInitial4.txt";
+            case 5:
+                return "vehicleInitial5.txt";
             default:
                 throw new IllegalArgumentException("Ugyldig antall vehicles");
         }

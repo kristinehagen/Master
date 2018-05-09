@@ -846,6 +846,16 @@ fopen("outputRoutesXpress.txt",F_OUTPUT);
 		ww := sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*vv);
 		if(ww < 0.1) then
 			write(0);
+		elif (ww < 1.1) then 
+			write(1);
+		elif (ww < 2.1) then
+			write(2);
+		elif (ww < 3.1) then 
+			write(3);
+		elif (ww < 4.1) then 
+			write(4);
+		elif (ww < 5.1) then
+			write(5);
 		else
 			write(ww);
 		end-if
@@ -895,6 +905,10 @@ fclose(F_OUTPUT);
 
 writeln(getsol(Objective1));
 
+forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
+	writeln("Vehicle " + vv + " drives route: " + rr);
+end-do
+
 
 end-model
 
@@ -902,9 +916,6 @@ writeln("Violations: " + getsol(violations11));
 writeln("Deviations: " + getsol(deviation1));
 writeln("Reward: " + getsol(totalReward));
 
-forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
-	writeln("Vehicle " + vv + " drives route: " + rr);
-end-do
 
 
 !PRINT

@@ -784,6 +784,16 @@ fopen("outputRoutesXpress.txt",F_OUTPUT);
 			ww := sum(jj in Stations, nn in Visits, vv in Vehicles) (getsol(flow(ii,mm,jj,nn,vv))*vv);
 			if(ww < 0.1) then
 				write(0);
+			elif (ww < 1.1) then 
+				write(1);
+			elif (ww < 2.1) then
+				write(2);
+			elif (ww < 3.1) then 
+				write(3);
+			elif (ww < 4.1) then 
+				write(4);
+			elif (ww < 5.1) then
+				write(5);
 			else
 				write(ww);
 			end-if
@@ -834,18 +844,13 @@ fclose(F_OUTPUT);
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
 
-writeln(getsol(Objective1));
-
-
 end-model
 
 
 !PRINT
 
 	
-	forall (ii in Stations, jj in Stations, mm in Visits, nn in Visits, vv in Vehicles | getsol(flow(ii,mm,jj,nn,vv)) > 0.1) do
-		writeln('x(' + ii + ',' + mm + ',' + jj + ',' + nn + ',' + vv + ') = ' + getsol(flow(ii,mm,jj,nn,vv)));
-	end-do
+
 	
 	forall (ii in Stations, mm in Visits,vv in Vehicles | getsol(unloadingQuantity(ii,mm,vv))>0.1) do
 		writeln('unloading from station ' + ii +': -' + getsol(unloadingQuantity(ii,mm,vv)));

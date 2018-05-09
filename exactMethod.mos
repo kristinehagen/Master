@@ -797,6 +797,9 @@ fopen("outputObjectiveXpress.txt",F_OUTPUT);
 fclose(F_OUTPUT);
 
 
+	forall (ii in Stations, jj in Stations, mm in Visits, nn in Visits, vv in Vehicles | getsol(flow(ii,mm,jj,nn,vv)) > 0.1) do
+		writeln('x(' + ii + ',' + mm + ',' + jj + ',' + nn + ',' + vv + ') = ' + getsol(flow(ii,mm,jj,nn,vv)));
+	end-do
 
 end-model
 
@@ -805,9 +808,6 @@ end-model
 
 	!PRINT
 	
-	forall (ii in Stations, jj in Stations, mm in Visits, nn in Visits, vv in Vehicles | getsol(flow(ii,mm,jj,nn,vv)) > 0.1) do
-		writeln('x(' + ii + ',' + mm + ',' + jj + ',' + nn + ',' + vv + ') = ' + getsol(flow(ii,mm,jj,nn,vv)));
-	end-do
 	
 	forall (ii in Stations, mm in Visits,vv in Vehicles | getsol(unloadingQuantity(ii,mm,vv))>0.1) do
 		writeln('unloading from station ' + ii +': -' + getsol(unloadingQuantity(ii,mm,vv)));

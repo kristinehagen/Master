@@ -173,10 +173,6 @@ fopen("outputObjectiveXpress.txt",F_OUTPUT);
 fclose(F_OUTPUT);
 
 
-writeln(getsol(Objective));
-
-
-
 
 
 end-model
@@ -186,15 +182,6 @@ end-model
 
 
 !PRINT
-
-forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr))> 0.1) do
-	writeln('Chosen route: ' + rr + ' for vehicle: ' + vv);
-end-do
-
-writeln('Violations prevented: ' + getsol(violationsPrevented));
-writeln('deviation improved: ' + getsol(totalDeviationImproved));	
-writeln('Reward: ' + getsol(totalReward));
-writeln('Objective value: ' + getsol(Objective));
 
 
 	
