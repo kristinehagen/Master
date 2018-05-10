@@ -903,11 +903,6 @@ fopen("outputObjectiveXpress.txt",F_OUTPUT);
 
 fclose(F_OUTPUT);
 
-writeln(getsol(Objective1));
-
-forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
-	writeln("Vehicle " + vv + " drives route: " + rr);
-end-do
 
 
 end-model
