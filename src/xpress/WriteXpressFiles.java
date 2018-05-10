@@ -27,7 +27,7 @@ public class WriteXpressFiles {
                 printLengthOfPlanningHorizon(input.getTimeHorizon(), writer);
                 printMaxVisit(input.getMaxVisit(), writer);
                 printMaxRoute(input.getVehicles().values(), writer);
-                printVehicleInitialInformation(input.getVehicles().values(), writer);
+                printVehicleInitialInformation(input.getVehicles().values(), input, writer);
                 printStationInitialInformation(input.getStations().values(), writer, input.getCurrentMinute());
                 printInteriorRepresentation(input, writer);
                 break;
@@ -37,7 +37,7 @@ public class WriteXpressFiles {
                 printLengthOfPlanningHorizon(input.getTimeHorizon(), writer);
                 printMaxVisit(input.getMaxVisit(), writer);
                 printMaxRoute(input.getVehicles().values(), writer);
-                printVehicleInitialInformation(input.getVehicles().values(), writer);
+                printVehicleInitialInformation(input.getVehicles().values(), input, writer);
                 printStationInitialInformation(input.getStations().values(), writer, input.getCurrentMinute());
                 printInteriorRepresentation(input, writer);
                 printLoadFromHeuristic(input, writer);
@@ -55,7 +55,7 @@ public class WriteXpressFiles {
                 printWeights(input, writer);
                 printLengthOfPlanningHorizon(input.getTimeHorizon(), writer);
                 printMaxVisit(input.getMaxVisit(), writer);
-                printVehicleInitialInformation(input.getVehicles().values(), writer);
+                printVehicleInitialInformation(input.getVehicles().values(), input, writer);
                 printStationInitialInformation(input.getStations().values(), writer, input.getCurrentMinute());
                 break;
         }
@@ -523,10 +523,11 @@ public class WriteXpressFiles {
         writer.println("]");
     }
 
-    private static void printVehicleInitialInformation(Collection<Vehicle> values, PrintWriter writer) {
+    private static void printVehicleInitialInformation(Collection<Vehicle> vehicles, Input input, PrintWriter writer) {
+
         //vehicleInitialStation
         writer.println("vehicleInitialStation : [");
-        for (Vehicle vehicle : values) {
+        for (Vehicle vehicle : vehicles) {
             writer.println(vehicle.getNextStation());
         }
         writer.println("]");
@@ -534,7 +535,7 @@ public class WriteXpressFiles {
         //vehicleRemainingTimeToInitialStation
         writer.println();
         writer.println("vehicleRemainingTimeToInitialStation : [");
-        for (Vehicle vehicle : values) {
+        for (Vehicle vehicle : vehicles) {
             writer.println(vehicle.getTimeToNextStation());
         }
         writer.println("]");
@@ -542,7 +543,7 @@ public class WriteXpressFiles {
         //vehicleInitialLoad
         writer.println();
         writer.println("vehicleInitialLoad : [");
-        for (Vehicle vehicle : values) {
+        for (Vehicle vehicle : vehicles) {
             writer.println(vehicle.getLoad());
         }
         writer.println("]");

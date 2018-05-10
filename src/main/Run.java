@@ -75,21 +75,10 @@ public class Run {
     private static void runSimulation(Input input) throws IOException, XPRMCompileException, InterruptedException {
 
 
-        for (int j = 1; j < 7; j++) {
 
-            if (j == 1) {
-                input.setNrStationBranching(4);
-            } else if (j == 2) {
-                input.setNrStationBranching(5);
-            } else if (j == 3) {
-                input.setNrStationBranching(6);
-            } else if (j == 4) {
-                input.setNrStationBranching(7);
-            } else if (j == 5) {
-                input.setNrStationBranching(8);
-            } else {
-                input.setNrStationBranching(9);
-            }
+        //for (int j = 1; j < 2; j++) {
+
+
 
             ArrayList<Double> totalViolationList = new ArrayList<>();
             ArrayList<Double> percentageViolationsList = new ArrayList<>();
@@ -131,7 +120,7 @@ public class Run {
             PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations, averageNumberOfTimesVehicleRouteGenerated,
                     averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlusInitialization, input);
 
-        }
+        //}
     }
 
 

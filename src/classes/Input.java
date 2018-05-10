@@ -21,8 +21,8 @@ public class Input {
     private double simulationStopTime = 11*60;
     private int testInstance = 5;
     private int nrOfVehicles = 2;
-    private int nrStationBranching = 0;             //Create n new routes in each branching
-    private int loadInterval = 11;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
+    private int nrStationBranching = 3;             //Create n new routes in each branching
+    private int loadInterval = 5;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                   //Vanlig med 15
     private boolean simulation = true;
 
@@ -37,7 +37,7 @@ public class Input {
 
     //--------PRICING PROBLEM---------------
 
-    private boolean runPricingProblem = false;
+    private boolean runPricingProblem = true;
     private int nrOfRunsPricingProblem = 5;         //OBS! Have to be 1 or larger
     private int nrOfBranchingPricingProblem = 5;
     private int probabilityOfChoosingUnvisitedStation = 50;     //40%
@@ -186,7 +186,7 @@ public class Input {
         }
     }
 
-    private String determineXpressFile() {
+    public String determineXpressFile() {
         switch (solutionMethod) {
             case HEURISTIC_VERSION_1:
                 return "heuristicVersion1";

@@ -3,6 +3,7 @@ package classes;
 import com.dashoptimization.XPRMCompileException;
 import enums.SolutionMethod;
 import functions.ReadClusterList;
+import functions.TimeConverter;
 import solutionMethods.*;
 import enums.NextEvent;
 import functions.NextSimulation;
@@ -136,7 +137,7 @@ public class Simulation {
                     }
 
                     //Generate new routes
-                    determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles(), vehicleArrivals );
+                    determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles(), vehicleArrivals, input.getStations(), input.getCurrentMinute() );
                     input.setCurrentMinute(timeToNewVehicleRoutes);
 
                     //Start timer
@@ -294,7 +295,9 @@ public class Simulation {
     }
 
     //Determine time to next station, works as input to next vehicle route generation
-    private void determineRemainingDrivingTimeAndStation(double timeForNewVehicleRoutes, HashMap<Integer, Vehicle> vehicles, ArrayList<VehicleArrival> vehicleArrivals) {
+    private void determineRemainingDrivingTimeAndStation(double timeForNewVehicleRoutes, HashMap<Integer, Vehicle> vehicles,
+                                                         ArrayList<VehicleArrival> vehicleArrivals, HashMap<Integer, Station> stations, double currentMinute) {
+
         for (VehicleArrival vehicleArrival : vehicleArrivals) {
 
             boolean vehicleArrivalBeforeGeneratingNewRoutes = vehicleArrival.getTime() < timeForNewVehicleRoutes;
@@ -324,7 +327,47 @@ public class Simulation {
                 vehicle.setNextStation(vehicleArrival.getStationId());
             }
         }
+
+        //Find out if multiple vehicles have same initial station
+        ArrayList<Integer> initialStationIds = new ArrayList<>();
+
+        for (Vehicle vehicle : vehicles.values()) {
+            int initialStationId = vehicle.getNextStation();
+
+            if (initialStationIds.contains(initialStationId)) {
+                //Change initial station
+                boolean initialStationIsPickUpStation = stations.get(initialStationId).getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute)) > 0;
+                int newStation = vehicle.getNextStationInitial();
+                for (Station station : stations.values()) {
+                    boolean stationIsPickUpStation = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute)) > 0;
+                    if (stationIsPickUpStation && initialStationIsPickUpStation && station.getId() != vehicle.getNextStation()) {
+                        newStation = station.getId();
+                        break;
+                    } else if (!stationIsPickUpStation && !initialStationIsPickUpStation && station.getId() != vehicle.getNextStation()) {
+                        newStation = station.getId();
+                        break;
+                    }
+                }
+                vehicle.setNextStation(newStation);
+
+            } else {
+                initialStationIds.add(initialStationId);
+            }
+        }
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
