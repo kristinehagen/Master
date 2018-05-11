@@ -65,13 +65,6 @@ public class Run {
 
     }
 
-    private static boolean checkIfFileExcist(String xpressOutputFile) {
-
-        File f = new File(xpressOutputFile);
-        return (f.exists() && !f.isDirectory());
-
-    }
-
     private static void runSimulation(Input input) throws IOException, XPRMCompileException, InterruptedException {
 
 
@@ -85,7 +78,9 @@ public class Run {
             ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
             ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
             ArrayList<Double> computationalTimeXpress = new ArrayList<>();
-            ArrayList<Double> computationalTimeXpressPlussInitialization = new ArrayList<>();
+            ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
+            double maxComputationalTimeIncludingInitialization = -1;
+            double minComputationalTimeIncludingInitialization = -1;
 
 
             for (int i = 1; i <= input.getNumberOfRuns(); i++) {
@@ -99,14 +94,26 @@ public class Run {
                 simulation.run(simulationFile, input);
 
                 double totalViolations = simulation.getCongestions() + simulation.getStarvations();
-
                 totalViolationList.add(totalViolations);
                 percentageViolationsList.add((double) totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
                 numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
                 averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
                 computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
-                computationalTimeXpressPlussInitialization.add(average(simulation.getComputationalTimesXpressPlussInitialization()));
+                computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
+
+                double maxTime = simulation.getMaxComputationalTimeIncludingInitialization();
+                double minTime = simulation.getMinComputationalTimeIncludingInitialization();
+
+                if (maxComputationalTimeIncludingInitialization == -1 || maxTime > maxComputationalTimeIncludingInitialization) {
+                    maxComputationalTimeIncludingInitialization = maxTime;
+                }
+                if (minComputationalTimeIncludingInitialization == -1 || minTime < minComputationalTimeIncludingInitialization) {
+                    minComputationalTimeIncludingInitialization = minTime;
+                }
             }
+
+            System.out.println("Min time: " + minComputationalTimeIncludingInitialization);
+            System.out.println("Max time: " + maxComputationalTimeIncludingInitialization);
 
             double averageViolation = average(totalViolationList);
             double averagePercentageViolations = average(percentageViolationsList);
@@ -115,10 +122,10 @@ public class Run {
             double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
             double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
             double averageComputationalTimeXpress = average(computationalTimeXpress);
-            double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlussInitialization);
+            double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlusInitialization);
 
-            PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations, averageNumberOfTimesVehicleRouteGenerated,
-                    averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlusInitialization, input);
+            PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
+                    averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlusInitialization, input);
 
         //}
     }
@@ -129,8 +136,8 @@ public class Run {
 
         input.updateVehiclesAndStationsToInitialState();
 
-        double computationalTimeXpress = 0;
-        double computationalTimeIncludingInitialization = 0;
+        double computationalTimeXpress;
+        double computationalTimeIncludingInitialization;
         double objectiveValue;
 
         switch (input.getSolutionMethod()) {
@@ -160,10 +167,9 @@ public class Run {
 
             case EXACT_METHOD:
                 ExactMethod exactMethod = new ExactMethod(input);
-                computationalTimeXpress = exactMethod.getComputationalTimeXpress();
-                computationalTimeIncludingInitialization = exactMethod.getComputationalTimeIncludingInitialization();
+                computationalTimeXpress = exactMethod.getComputationalTime();
                 objectiveValue = ReadXpressResult.readObjectiveValue();
-                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeXpress);
                 break;
 
             case CURRENT_SOLUTION_IN_OSLO:

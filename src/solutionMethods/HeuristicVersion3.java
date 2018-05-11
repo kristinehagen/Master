@@ -60,14 +60,12 @@ public class HeuristicVersion3 {
 
         this.computationalTimeXpress = stopWatchXpress.getElapsedTimeSecs();
         this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
-        this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
     }
 
 
     private void runPricingProblem(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException {
         PricingProblem pricingProblem = new PricingProblem();
         pricingProblem.setPricingProblemScore(input, pricingProblemScores);
-        System.out.println("Pricing problem executed");
     }
 
     private static void initiateRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException, UnsupportedEncodingException {

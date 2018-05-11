@@ -60,7 +60,6 @@ public class HeuristicVersion1 {
 
         this.computationalTimeXpress = stopWatchXpress.getElapsedTimeSecs();
         this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
-        this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
     }
 
 
