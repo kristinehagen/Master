@@ -3,6 +3,7 @@ package classes;
 import com.dashoptimization.XPRMCompileException;
 import enums.SolutionMethod;
 import functions.ReadClusterList;
+import functions.TimeConverter;
 import solutionMethods.*;
 import enums.NextEvent;
 import functions.NextSimulation;
@@ -25,7 +26,9 @@ public class Simulation {
     private int happyCustomers = 0;
     private ArrayList<Double> timeToNextSimulationList = new ArrayList<>();
     private ArrayList<Double> computationalTimesXpress = new ArrayList<>();
-    private ArrayList<Double> computationalTimesXpressPlussInitialization = new ArrayList<>();
+    private ArrayList<Double> computationalTimesXpressPlusInitialization = new ArrayList<>();
+    private double maxComputationalTimeIncludingInitialization = -1;
+    private double minComputationalTimeIncludingInitialization = -1;
     private ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
 
     //Constructor
@@ -50,16 +53,9 @@ public class Simulation {
 
         //If vehicle routes are to be generated
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
-            //Start timer
-            StopWatch stopWatchTotalComputationTime = new StopWatch();
-            stopWatchTotalComputationTime.start();
 
             //Generate routes for service vehicles
             generateVehicleRoute(input);
-
-            //Stop timer
-            stopWatchTotalComputationTime.stop();
-            computationalTimesXpressPlussInitialization.add(stopWatchTotalComputationTime.getElapsedTimeSecs());
 
             //Determine time to generate new vehicle routes
             timeToNewVehicleRoutes = NextSimulation.determineTimeToNextSimulation(vehicleArrivals, input.getTimeHorizon(), input.getReOptimizationMethod(), input.getCurrentMinute());      //Actual time minutes
@@ -136,19 +132,11 @@ public class Simulation {
                     }
 
                     //Generate new routes
-                    determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles(), vehicleArrivals );
+                    determineRemainingDrivingTimeAndStation(timeToNewVehicleRoutes, input.getVehicles(), vehicleArrivals, input.getStations(), input.getCurrentMinute() );
                     input.setCurrentMinute(timeToNewVehicleRoutes);
-
-                    //Start timer
-                    StopWatch stopWatchTotalComputationTime = new StopWatch();
-                    stopWatchTotalComputationTime.start();
 
                     generateVehicleRoute(input);
 
-
-                    //Stop timer
-                    stopWatchTotalComputationTime.stop();
-                    computationalTimesXpressPlussInitialization.add(stopWatchTotalComputationTime.getElapsedTimeSecs());
 
                     //Update nextVehicleArrival
                     vehicleArrivalCounter = 0;
@@ -253,48 +241,69 @@ public class Simulation {
     //Generate new vehicle routes
     private void generateVehicleRoute(Input input) throws IOException, XPRMCompileException {
         numberOfTimesVehicleRouteGenerated ++;
-        double computationalTimeXpress;
         vehicleArrivals.clear();
+
+        double totalTime = 0;
 
 
         switch (input.getSolutionMethod()) {
             case HEURISTIC_VERSION_1:
                 HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
-                computationalTimeXpress = heuristicVersion1.getComputationalTimeXpress();
+                computationalTimesXpress.add(heuristicVersion1.getComputationalTimeXpress());
+                computationalTimesXpressPlusInitialization.add(heuristicVersion1.getComputationalTimeIncludingInitialization());
+                totalTime = heuristicVersion1.getComputationalTimeIncludingInitialization();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
             case HEURISTIC_VERSION_2:
                 HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
-                computationalTimeXpress = heuristicVersion2.getComputationalTimeXpress();
+                computationalTimesXpress.add(heuristicVersion2.getComputationalTimeXpress());
+                computationalTimesXpressPlusInitialization.add(heuristicVersion2.getComputationalTimeIncludingInitialization());
+                totalTime = heuristicVersion2.getComputationalTimeIncludingInitialization();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
             case HEURISTIC_VERSION_3:
                 HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
-                computationalTimeXpress = heuristicVersion3.getComputationalTimeXpress();
+                computationalTimesXpress.add(heuristicVersion3.getComputationalTimeXpress());
+                computationalTimesXpressPlusInitialization.add(heuristicVersion3.getComputationalTimeIncludingInitialization());
+                totalTime = heuristicVersion3.getComputationalTimeIncludingInitialization();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
                 break;
             case EXACT_METHOD:
                 ExactMethod exactMethod = new ExactMethod(input);
-                computationalTimeXpress = exactMethod.getComputationalTimeXpress();
+                computationalTimesXpress.add(exactMethod.getComputationalTime());
+                computationalTimesXpressPlusInitialization.add(exactMethod.getComputationalTime());
+                totalTime = exactMethod.getComputationalTime();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
             case CURRENT_SOLUTION_IN_OSLO:
                 CurrentSolutionInOslo currentSolutionInOslo = new CurrentSolutionInOslo(input);
                 this.vehicleArrivals = currentSolutionInOslo.getVehicleArrivals();
-                computationalTimeXpress = 0;                                                                //Foreløpig
+                computationalTimesXpress.add(0.0);
+                computationalTimesXpressPlusInitialization.add(0.0);
                 break;
-            case NO_VEHICLES:                                                                               //Kan muligens droppe denne
+            case NO_VEHICLES:
                 NoVehicles noVehicles = new NoVehicles(input);
-                computationalTimeXpress = 0;
+                computationalTimesXpress.add(0.0);
+                computationalTimesXpressPlusInitialization.add(0.0);
                 break;
             default:
-                computationalTimeXpress = 0;
+                computationalTimesXpress.add(0.0);
+                computationalTimesXpressPlusInitialization.add(0.0);
+
         }
-        computationalTimesXpress.add(computationalTimeXpress);
+
+        if (maxComputationalTimeIncludingInitialization == -1 || totalTime > maxComputationalTimeIncludingInitialization) {
+            maxComputationalTimeIncludingInitialization = totalTime;
+        }
+        if (minComputationalTimeIncludingInitialization == -1 || totalTime < minComputationalTimeIncludingInitialization) {
+            minComputationalTimeIncludingInitialization = totalTime;
+        }
     }
 
     //Determine time to next station, works as input to next vehicle route generation
-    private void determineRemainingDrivingTimeAndStation(double timeForNewVehicleRoutes, HashMap<Integer, Vehicle> vehicles, ArrayList<VehicleArrival> vehicleArrivals) {
+    private void determineRemainingDrivingTimeAndStation(double timeForNewVehicleRoutes, HashMap<Integer, Vehicle> vehicles,
+                                                         ArrayList<VehicleArrival> vehicleArrivals, HashMap<Integer, Station> stations, double currentMinute) {
+
         for (VehicleArrival vehicleArrival : vehicleArrivals) {
 
             boolean vehicleArrivalBeforeGeneratingNewRoutes = vehicleArrival.getTime() < timeForNewVehicleRoutes;
@@ -324,7 +333,47 @@ public class Simulation {
                 vehicle.setNextStation(vehicleArrival.getStationId());
             }
         }
+
+        //Find out if multiple vehicles have same initial station
+        ArrayList<Integer> initialStationIds = new ArrayList<>();
+
+        for (Vehicle vehicle : vehicles.values()) {
+            int initialStationId = vehicle.getNextStation();
+
+            if (initialStationIds.contains(initialStationId)) {
+                //Change initial station
+                boolean initialStationIsPickUpStation = stations.get(initialStationId).getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute)) > 0;
+                int newStation = vehicle.getNextStationInitial();
+                for (Station station : stations.values()) {
+                    boolean stationIsPickUpStation = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute)) > 0;
+                    if (stationIsPickUpStation && initialStationIsPickUpStation && station.getId() != vehicle.getNextStation()) {
+                        newStation = station.getId();
+                        break;
+                    } else if (!stationIsPickUpStation && !initialStationIsPickUpStation && station.getId() != vehicle.getNextStation()) {
+                        newStation = station.getId();
+                        break;
+                    }
+                }
+                vehicle.setNextStation(newStation);
+
+            } else {
+                initialStationIds.add(initialStationId);
+            }
+        }
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -387,12 +436,28 @@ public class Simulation {
         this.computationalTimesXpress = computationalTimesXpress;
     }
 
-    public ArrayList<Double> getComputationalTimesXpressPlussInitialization() {
-        return computationalTimesXpressPlussInitialization;
+    public ArrayList<Double> getComputationalTimesXpressPlusInitialization() {
+        return computationalTimesXpressPlusInitialization;
     }
 
-    public void setComputationalTimesXpressPlussInitialization(ArrayList<Double> computationalTimesXpressPlussInitialization) {
-        this.computationalTimesXpressPlussInitialization = computationalTimesXpressPlussInitialization;
+    public void setComputationalTimesXpressPlusInitialization(ArrayList<Double> computationalTimesXpressPlusInitialization) {
+        this.computationalTimesXpressPlusInitialization = computationalTimesXpressPlusInitialization;
+    }
+
+    public double getMaxComputationalTimeIncludingInitialization() {
+        return maxComputationalTimeIncludingInitialization;
+    }
+
+    public void setMaxComputationalTimeIncludingInitialization(double maxComputationalTimeIncludingInitialization) {
+        this.maxComputationalTimeIncludingInitialization = maxComputationalTimeIncludingInitialization;
+    }
+
+    public double getMinComputationalTimeIncludingInitialization() {
+        return minComputationalTimeIncludingInitialization;
+    }
+
+    public void setMinComputationalTimeIncludingInitialization(double minComputationalTimeIncludingInitialization) {
+        this.minComputationalTimeIncludingInitialization = minComputationalTimeIncludingInitialization;
     }
 }
 

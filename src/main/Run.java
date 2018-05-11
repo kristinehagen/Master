@@ -65,50 +65,69 @@ public class Run {
 
     }
 
-
     private static void runSimulation(Input input) throws IOException, XPRMCompileException, InterruptedException {
 
-        ArrayList<Double> totalViolationList = new ArrayList<>();
-        ArrayList<Double> percentageViolationsList = new ArrayList<>();
-        ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
-        ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
-        ArrayList<Double> computationalTimeXpress = new ArrayList<>();
-        ArrayList<Double> computationalTimeXpressPlussInitialization = new ArrayList<>();
 
 
-        for (int i = 1; i <= input.getNumberOfRuns(); i++) {
-
-            String simulationFile = "simulation_Instance" + input.getTestInstance() + "_Nr" + i + ".txt";
-            System.out.println("Run number: " + i);
-
-            //Run simulation
-            input.updateVehiclesAndStationsToInitialState();
-            Simulation simulation = new Simulation();
-            simulation.run(simulationFile, input);
-
-            double totalViolations = simulation.getCongestions() + simulation.getStarvations();
-
-            totalViolationList.add(totalViolations);
-            percentageViolationsList.add((double) totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
-            numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
-            averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
-            computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
-            computationalTimeXpressPlussInitialization.add(average(simulation.getComputationalTimesXpressPlussInitialization()));
-        }
-
-        double averageViolation = average(totalViolationList);
-        double averagePercentageViolations = average(percentageViolationsList);
-        double sdViolation = sd(totalViolationList, averageViolation);
-        double sdPercentageViolations = sd(percentageViolationsList, averagePercentageViolations);
-        double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
-        double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
-        double averageComputationalTimeXpress = average(computationalTimeXpress);
-        double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlussInitialization);
-
-        PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations, averageNumberOfTimesVehicleRouteGenerated,
-                averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlusInitialization, input);
+        //for (int j = 1; j < 2; j++) {
 
 
+
+            ArrayList<Double> totalViolationList = new ArrayList<>();
+            ArrayList<Double> percentageViolationsList = new ArrayList<>();
+            ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
+            ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
+            ArrayList<Double> computationalTimeXpress = new ArrayList<>();
+            ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
+            double maxComputationalTimeIncludingInitialization = -1;
+            double minComputationalTimeIncludingInitialization = -1;
+
+
+            for (int i = 1; i <= input.getNumberOfRuns(); i++) {
+
+                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_Nr" + i + ".txt";
+                System.out.println("Run number: " + i);
+
+                //Run simulation
+                input.updateVehiclesAndStationsToInitialState();
+                Simulation simulation = new Simulation();
+                simulation.run(simulationFile, input);
+
+                double totalViolations = simulation.getCongestions() + simulation.getStarvations();
+                totalViolationList.add(totalViolations);
+                percentageViolationsList.add((double) totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
+                numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
+                averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
+                computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
+                computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
+
+                double maxTime = simulation.getMaxComputationalTimeIncludingInitialization();
+                double minTime = simulation.getMinComputationalTimeIncludingInitialization();
+
+                if (maxComputationalTimeIncludingInitialization == -1 || maxTime > maxComputationalTimeIncludingInitialization) {
+                    maxComputationalTimeIncludingInitialization = maxTime;
+                }
+                if (minComputationalTimeIncludingInitialization == -1 || minTime < minComputationalTimeIncludingInitialization) {
+                    minComputationalTimeIncludingInitialization = minTime;
+                }
+            }
+
+            System.out.println("Min time: " + minComputationalTimeIncludingInitialization);
+            System.out.println("Max time: " + maxComputationalTimeIncludingInitialization);
+
+            double averageViolation = average(totalViolationList);
+            double averagePercentageViolations = average(percentageViolationsList);
+            double sdViolation = sd(totalViolationList, averageViolation);
+            double sdPercentageViolations = sd(percentageViolationsList, averagePercentageViolations);
+            double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
+            double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
+            double averageComputationalTimeXpress = average(computationalTimeXpress);
+            double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlusInitialization);
+
+            PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
+                    averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlusInitialization, input);
+
+        //}
     }
 
 
@@ -117,8 +136,8 @@ public class Run {
 
         input.updateVehiclesAndStationsToInitialState();
 
-        double computationalTimeXpress = 0;
-        double computationalTimeIncludingInitialization = 0;
+        double computationalTimeXpress;
+        double computationalTimeIncludingInitialization;
         double objectiveValue;
 
         switch (input.getSolutionMethod()) {
@@ -148,10 +167,9 @@ public class Run {
 
             case EXACT_METHOD:
                 ExactMethod exactMethod = new ExactMethod(input);
-                computationalTimeXpress = exactMethod.getComputationalTimeXpress();
-                computationalTimeIncludingInitialization = exactMethod.getComputationalTimeIncludingInitialization();
+                computationalTimeXpress = exactMethod.getComputationalTime();
                 objectiveValue = ReadXpressResult.readObjectiveValue();
-                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeXpress);
                 break;
 
             case CURRENT_SOLUTION_IN_OSLO:

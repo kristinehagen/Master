@@ -175,11 +175,13 @@ fclose(F_OUTPUT);
 
 
 
-end-model
 
 
 
 
+forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
+	writeln("Vehicle " + vv + " drives route: " + rr);
+end-do
 
 !PRINT
 
@@ -199,9 +201,7 @@ writeln;
 writeln("Deviations: " + (getsol(totalDeviationIfNoVisit) - getsol(totalDeviationImproved)));
 writeln("Reward: " + getsol(totalReward));
 
-forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
-	writeln("Vehicle " + vv + " drives route: " + rr);
-end-do
+
 
 
 

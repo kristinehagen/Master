@@ -319,28 +319,37 @@ end-do
 ! Hver bil kan bare kjøre én rute
 forall (vv in Vehicles) do
 	maxRoutes(vv) := 
-		sum(rr in Routes) intRepLambda(vv,rr) <= 1;
+		sum(rr in Routes) intRepLambda(vv,rr) = 1;
 end-do
 
 
 
 ! Besøk til en node = besøk ut av en node (for å ha kontroll på visitnummer) 
 forall (vv in Vehicles, jj in Stations, nn in Visits | jj <> artificialStation) do
-	if(jj=vehicleInitialStation(vv) and nn<>1) then
-		!(5.3)
-		flowCon(vv,jj,nn) :=
-			sum(ii in Stations, mm in Visits) flow(ii,mm,jj,nn,vv) - sum(ii in Stations, mm in Visits) flow(jj,nn,ii,mm,vv) = 0;
-	elif (jj <> vehicleInitialStation(vv)) then 
+	if(jj <> vehicleInitialStation(vv)) then 
 		flowCon(vv,jj,nn) :=
 			sum(ii in Stations, mm in Visits) flow(ii,mm,jj,nn,vv) - sum(ii in Stations, mm in Visits) flow(jj,nn,ii,mm,vv) = 0;
 	end-if
 end-do
+
+! Besøk til en node = besøk ut av en node (for å ha kontroll på visitnummer) 
+!forall (vv in Vehicles, jj in Stations, nn in Visits | jj <> artificialStation) do
+!	if(jj=vehicleInitialStation(vv) and nn<>1) then
+!		!(5.3)
+!		flowCon(vv,jj,nn) :=
+!			sum(ii in Stations, mm in Visits) flow(ii,mm,jj,nn,vv) - sum(ii in Stations, mm in Visits) flow(jj,nn,ii,mm,vv) = 0;
+!	elif (jj <> vehicleInitialStation(vv)) then 
+!		flowCon(vv,jj,nn) :=
+!			sum(ii in Stations, mm in Visits) flow(ii,mm,jj,nn,vv) - sum(ii in Stations, mm in Visits) flow(jj,nn,ii,mm,vv) = 0;
+!	end-if
+!end-do
 
 !Hvert visitnummer kan bare brukes én gang
 forall (ii in Stations, mm in Visits) do
 	onevisit(ii,mm) := 
 		sum(jj in Stations, nn in Visits, vv in Vehicles) flow(ii,mm,jj,nn,vv) <= 1;
 end-do
+
 
 !-----REWARD FUNCTIONS-----------
 
@@ -368,33 +377,33 @@ forall (vv in Vehicles) do
 		 timePenalty(vv) >= remainingTimeToFinalStation(vv);
 end-do
 
-!Restrictions saying that last visit can olny be to positive station if vehicle load is below visitInterval 
+!Restrictions saying that last visit can only be to positive station if vehicle load is below visitInterval 
 !Same for opposite restriction
 
 
-forall (vv in Vehicles) do
+!forall (vv in Vehicles) do
 	!SigmaLow is 1 if inventory level at vehicle v is below visitInterval at time horizon
-	SigmaL(vv) :=
-		inventoryAtHorizonVehicle(vv) >= visitInterval-visitInterval*sigmaLow(vv);
+!	SigmaL(vv) :=
+!		inventoryAtHorizonVehicle(vv) >= visitInterval-visitInterval*sigmaLow(vv);
 	!SigmaHigh is 1 if inventory level at vehicle v is above (capacity-visitInterval) at time horizon
-	SigmaH(vv) :=
-		inventoryAtHorizonVehicle(vv) <= vehicleCapacity(vv)-visitInterval+visitInterval*sigmaHigh(vv);
+!	SigmaH(vv) :=
+!		inventoryAtHorizonVehicle(vv) <= vehicleCapacity(vv)-visitInterval+visitInterval*sigmaHigh(vv);
 	!only penalty if after timehorizon
-	penalty(vv) :=
-		 timePenalty(vv) >= remainingTimeToFinalStation(vv);
-end-do
+!	penalty(vv) :=
+!		 timePenalty(vv) >= remainingTimeToFinalStation(vv);
+!end-do
 
 !Restrictions saying that last visit can olny be to positive station if vehicle load is below visitInterval 
 !Same for opposite restriction
-forall(ii in StarvationStations, mm in Visits, vv in Vehicles) do
-	lowVisit(ii,mm,vv) :=
-		flow(ii,mm,artificialStation,1,vv) <= (1-sigmaLow(vv)) + (1-delta(ii,mm));
-end-do
-
-forall(ii in CongestionStations, mm in Visits, vv in Vehicles) do
-	highVisit(ii,mm,vv) :=
-		flow(ii,mm,artificialStation,1,vv) <= (1-sigmaHigh(vv)) + (1-delta(ii,mm));
-end-do
+!forall(ii in StarvationStations, mm in Visits, vv in Vehicles) do
+!	lowVisit(ii,mm,vv) :=
+!		flow(ii,mm,artificialStation,1,vv) <= (1-sigmaLow(vv)) + (1-delta(ii,mm));
+!end-do
+!
+!forall(ii in CongestionStations, mm in Visits, vv in Vehicles) do
+!	highVisit(ii,mm,vv) :=
+!		flow(ii,mm,artificialStation,1,vv) <= (1-sigmaHigh(vv)) + (1-delta(ii,mm));
+!end-do
 
 
 

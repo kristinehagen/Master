@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -21,8 +21,8 @@ public class Input {
     private double simulationStopTime = 11*60;
     private int testInstance = 5;
     private int nrOfVehicles = 2;
-    private int nrStationBranching = 9;             //Create n new routes in each branching
-    private int loadInterval = 0;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
+    private int nrStationBranching = 4;             //Create n new routes in each branching
+    private int loadInterval = 5;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                   //Vanlig med 15
     private boolean simulation = true;
 
@@ -37,12 +37,9 @@ public class Input {
 
     //--------PRICING PROBLEM---------------
 
-    private boolean runPricingProblem = true;
-    private int nrOfRunsPricingProblem = 3;         //OBS! Have to be 1 or larger
-
-
-
-    private int nrOfBranchingPricingProblem = 3;
+    private boolean runPricingProblem = false;
+    private int nrOfRunsPricingProblem = 5;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 5;
     private int probabilityOfChoosingUnvisitedStation = 50;     //40%
 
 
@@ -54,8 +51,8 @@ public class Input {
     //Criticality score
     private double weightCritScTimeToViolation = 0.0;
     private double weightCritScViolationRate = 0.7;
-    private double weightCritScDrivingTime = 0.0;
-    private double weightCritScOptimalState = 0.3;
+    private double weightCritScDrivingTime = 0.2;
+    private double weightCritScOptimalState = 0.1;
     private double weightPricingProblemScore = 8;
 
     //Criticality score Current solution in Oslo
@@ -108,9 +105,6 @@ public class Input {
 
 
 
-
-
-
     private ArrayList<Integer> stationIdList;
     private HashMap<Integer, Station> stations;
     private HashMap<Integer, Vehicle> vehicles;
@@ -145,7 +139,6 @@ public class Input {
 
     }
 
-
     //Generate test instance
     public Input(double hour) throws FileNotFoundException {
         this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
@@ -159,7 +152,7 @@ public class Input {
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
 
-    public String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
+    private String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
         switch (nrOfVehicles) {
             case 1:
                 return "vehicleInitial1.txt";

@@ -13,10 +13,10 @@ public class PrintResults {
 
     public static void printSimulationResultsToExcelFile(double averageViolation, double averagePercentageViolation, ArrayList<Double> percentageViolationsList, double sdViolations, double sdPercentageViolation,
                                                          double averageNumberOfTimesVehicleRouteGenerated, double avergageTimeToVehicleRouteGenerated,
-                                                         double avergaeComputationalTimeXpress, double averageComputationalTimeXpressPlussInitialization, Input input) throws IOException {
+                                                         double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input) throws IOException {
 
-        System.out.println("avergaeComputationalTimeXpress: " + avergaeComputationalTimeXpress);
-        System.out.println("averageComputationalTimeXpressPlussInitialization" + averageComputationalTimeXpressPlussInitialization);
+        System.out.println("averageComputationalTimeXpress: " + averageComputationalTimeXpress);
+        System.out.println("averageComputationalTimeXpressPlusInitialization" + averageComputationalTimeXpressPlusInitialization);
 
 
         //Read the spreadsheet that needs to be updated
@@ -51,8 +51,8 @@ public class PrintResults {
 
         //Results
         if (exact || allHeuristics) {
-            rowOutput.createCell(0).setCellValue(avergaeComputationalTimeXpress);
-            rowOutput.createCell(1).setCellValue(averageComputationalTimeXpressPlussInitialization);
+            rowOutput.createCell(0).setCellValue(averageComputationalTimeXpress);
+            rowOutput.createCell(1).setCellValue(averageComputationalTimeXpressPlusInitialization);
             rowOutput.createCell(3).setCellValue(averageNumberOfTimesVehicleRouteGenerated);
             rowOutput.createCell(4).setCellValue(avergageTimeToVehicleRouteGenerated);
         }
@@ -165,7 +165,7 @@ public class PrintResults {
     public static void printOneRouteResultsToExcelFile(Input input, double objectiveValue, double computationalTimeXpress, double computationalTimeIncludingInitialization) throws IOException {
 
         System.out.println("Objective value: " + objectiveValue);
-        System.out.println("Computational time: " + computationalTimeXpress);
+        System.out.println("Computational time Xpress: " + computationalTimeXpress);
         System.out.println("Computational time including initialization: " + computationalTimeIncludingInitialization);
         System.out.println();
 
