@@ -37,13 +37,28 @@ public class ReadClusterList {
             String line = in.nextLine();
             Scanner element = new Scanner(line);
             if (element.hasNextInt()) {
-                int vehicleId = element.nextInt();
-                int stationId = element.nextInt();
+                int vehicleId = roundToInteger(Double.parseDouble(element.next()));
+                int stationId = roundToInteger(Double.parseDouble(element.next()));
                 input.getVehicles().get(vehicleId).addStationToClusterList(input.getStations().get(stationId));
             }
         }
         in.close();
 
+    }
+
+    private static int roundToInteger(double valueToBeRounded) {
+
+        int rounded;
+        double leftOver = valueToBeRounded % 1;
+        boolean roundUp = leftOver > 0.5;
+
+        if (roundUp) {
+            rounded = (int) Math.ceil(valueToBeRounded);
+        } else {
+            rounded = (int) Math.floor(valueToBeRounded);
+        }
+
+        return rounded;
     }
 
 }

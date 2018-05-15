@@ -84,7 +84,7 @@ public class GraphViewer {
             }else {
                 node.addAttribute("ui.style", "fill-color: grey; size: 5px;");
             }
-/*
+
 
             if (numberOfVehiclesWithStation == 1 && vehicleId == 0) {
                 node.addAttribute("ui.style", "fill-color: red; size: 5px;");
@@ -99,7 +99,7 @@ public class GraphViewer {
             } else {
                 node.addAttribute("ui.style", "fill-color: black; size: 5px;");
             }
-*/
+
 
 
         }
@@ -247,3 +247,4 @@ public class GraphViewer {
         return color;
     }
 }
+

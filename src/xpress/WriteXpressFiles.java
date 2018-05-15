@@ -756,8 +756,8 @@ public class WriteXpressFiles {
         String filename = "clusterInput.txt";
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
-        writer.println("weightNetDemand: " + input.getWeightClusterNetDemand());
         writer.println("weightDrivingTime: " + input.getWeightClusterDrivingTime());
+        writer.println("weightNetDemand: " + input.getWeightClusterNetDemand());
         writer.println("weightEqualSize: " + input.getWeightClusterEqualSize());
         writer.println("instance: " + input.getTestInstance());
         writer.println("vehicleNr: " + input.getVehicles().size());
@@ -818,6 +818,7 @@ public class WriteXpressFiles {
             for (Station stationDestination : input.getStations().values()) {
                 writer.print(stationOrigin.getDrivingTimeToStation(stationDestination.getId()) + " ");
             }
+            writer.println();
         }
         writer.println("]");
 

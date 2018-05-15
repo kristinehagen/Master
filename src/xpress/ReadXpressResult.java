@@ -22,13 +22,15 @@ public class ReadXpressResult {
             Scanner element = new Scanner(line);
             if (element.hasNextInt()) {
 
-                int stationId = element.nextInt();
-                int stationLoad = element.nextInt();
+                int stationId = roundToInteger(Double.parseDouble(element.next()));
+                int stationLoad = roundToInteger(Double.parseDouble(element.next()));
                 double time = Double.parseDouble(element.next());
-                int vehicle = element.nextInt();
-                int nextStationId = element.nextInt();
+                int vehicle = roundToInteger(Double.parseDouble(element.next()));
+                int nextStationId = roundToInteger(Double.parseDouble(element.next()));
                 double TimeNextStation = Double.parseDouble(element.next());
                 boolean firstVisit = ((element.nextInt()) == 1);
+
+
 
                 VehicleArrival vehicleArrival = new VehicleArrival(stationId, stationLoad, time + currentTime, vehicle, nextStationId, TimeNextStation+currentTime, firstVisit);
 
@@ -36,6 +38,7 @@ public class ReadXpressResult {
             }
         }
         in.close();
+
 
         //Sort list by arrival time
         Collections.sort(vehicleArrivals, new Comparator<VehicleArrival>() {
@@ -55,6 +58,21 @@ public class ReadXpressResult {
         return vehicleArrivals;
     }
 
+    private static int roundToInteger(double valueToBeRounded) {
+
+        int rounded;
+        double leftOver = valueToBeRounded % 1;
+        boolean roundUp = leftOver > 0.5;
+
+        if (roundUp) {
+            rounded = (int) Math.ceil(valueToBeRounded);
+        } else {
+            rounded = (int) Math.floor(valueToBeRounded);
+        }
+
+        return rounded;
+    }
+
     public static ArrayList<VehicleArrival> readVehicleArrivalsVersion3(HashMap<Integer, Vehicle> vehicles, double currentTime) throws FileNotFoundException {
 
         ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
@@ -66,8 +84,8 @@ public class ReadXpressResult {
             Scanner element = new Scanner(line);
             if (element.hasNextInt()) {
 
-                int vehicleId = element.nextInt();
-                int routeNumber = element.nextInt()-1;
+                int vehicleId = roundToInteger(Double.parseDouble(element.next()));
+                int routeNumber = roundToInteger(Double.parseDouble(element.next()))-1;
 
                 ArrayList<ArrayList<StationVisit>> initializedRoutes = vehicles.get(vehicleId).getInitializedRoutes();
                 ArrayList<StationVisit> stationVisitsInRoute = initializedRoutes.get(routeNumber);

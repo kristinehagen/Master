@@ -85,8 +85,8 @@ public class PrintResults {
 
         //Weights - Clustering
         if (allHeuristics && input.isClustering()) {
-            rowOutput.createCell(15).setCellValue(input.getWeightClusterNetDemand());
-            rowOutput.createCell(16).setCellValue(input.getWeightClusterDrivingTime());
+            rowOutput.createCell(15).setCellValue(input.getWeightClusterDrivingTime());
+            rowOutput.createCell(16).setCellValue(input.getWeightClusterNetDemand());
             rowOutput.createCell(17).setCellValue(input.getWeightClusterEqualSize());
         }
 

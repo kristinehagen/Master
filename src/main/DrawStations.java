@@ -1,3 +1,4 @@
+
 package main;
 
 
@@ -15,8 +16,8 @@ public class DrawStations {
         Input input = new Input();
 
         //Low : 0-mediumDemand, Medium: mediumDemand-highDemand, High: highDemand++
-        double highDemand = input.getHighDemand();     //Gir 15% i high
-        double mediumDemand = input.getMediumDemand();    // 3/5 i medium, og 1/5 i low
+        double highDemand = input.getHighDemand();
+        double mediumDemand = input.getMediumDemand();
 
         GraphViewer graph = new GraphViewer();
         graph.drawStationDemand(input, mediumDemand, highDemand);
@@ -42,3 +43,4 @@ public class DrawStations {
         System.out.println("Number of stations with low demand: " + nrOfLowCriticalStations);
     }
 }
+

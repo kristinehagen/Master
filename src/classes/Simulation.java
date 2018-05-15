@@ -342,15 +342,17 @@ public class Simulation {
 
             if (initialStationIds.contains(initialStationId)) {
                 //Change initial station
-                boolean initialStationIsPickUpStation = stations.get(initialStationId).getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute)) > 0;
+                boolean visitAPickUpStation = stations.get(initialStationId).getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute)) > 0;
                 int newStation = vehicle.getNextStationInitial();
                 for (Station station : stations.values()) {
                     boolean stationIsPickUpStation = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(currentMinute)) > 0;
-                    if (stationIsPickUpStation && initialStationIsPickUpStation && station.getId() != vehicle.getNextStation()) {
+                    if (stationIsPickUpStation && visitAPickUpStation && !initialStationIds.contains(station.getId())) {
                         newStation = station.getId();
+                        initialStationIds.add(newStation);
                         break;
-                    } else if (!stationIsPickUpStation && !initialStationIsPickUpStation && station.getId() != vehicle.getNextStation()) {
+                    } else if (!stationIsPickUpStation && !visitAPickUpStation && !initialStationIds.contains(station.getId())) {
                         newStation = station.getId();
+                        initialStationIds.add(newStation);
                         break;
                     }
                 }

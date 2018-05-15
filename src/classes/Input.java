@@ -13,26 +13,26 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
     private int testInstance = 5;
-    private int nrOfVehicles = 2;
-    private int nrStationBranching = 4;             //Create n new routes in each branching
-    private int loadInterval = 5;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
+    private int nrOfVehicles = 5;
+    private int nrStationBranching = 20;             //Create n new routes in each branching
+    private int loadInterval = 12;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                   //Vanlig med 15
     private boolean simulation = true;
 
 
     //--------CLUSTER-----------
 
-    private  boolean clustering = false;
+    private  boolean clustering = true;
     private boolean dynamicClustering = false;
-    private double highDemand = 35;
-    private double mediumDemand = 11.5;
+    private double highDemand = 35;     // 10%
+    private double mediumDemand = 4.5;  // 25%
 
 
     //--------PRICING PROBLEM---------------
@@ -51,8 +51,8 @@ public class Input {
     //Criticality score
     private double weightCritScTimeToViolation = 0.0;
     private double weightCritScViolationRate = 0.7;
-    private double weightCritScDrivingTime = 0.2;
-    private double weightCritScOptimalState = 0.1;
+    private double weightCritScDrivingTime = 0.0;
+    private double weightCritScOptimalState = 0.3;
     private double weightPricingProblemScore = 8;
 
     //Criticality score Current solution in Oslo
@@ -70,9 +70,9 @@ public class Input {
     private double weightDrivingTimePenalty = 0.4;
 
     //Cluster
-    private double weightClusterNetDemand = 0.1;
-    private double weightClusterDrivingTime = 0.3;
-    private double weightClusterEqualSize = 0.4;
+    private double weightClusterDrivingTime = 0.0;
+    private double weightClusterNetDemand = 0.7;
+    private double weightClusterEqualSize = 0.3;
 
 
 
@@ -117,7 +117,7 @@ public class Input {
         //Station file
         String initialStationFile = getStationFile(this.testInstance);
         String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
-        this.xpressFile = determineXpressFile();
+        this.xpressFile = determineXpressFile(this.solutionMethod);
         currentMinute = simulationStartTime;
 
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
@@ -152,7 +152,7 @@ public class Input {
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
 
-    private String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
+    public String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
         switch (nrOfVehicles) {
             case 1:
                 return "vehicleInitial1.txt";
@@ -186,7 +186,7 @@ public class Input {
         }
     }
 
-    private String determineXpressFile() {
+    public String determineXpressFile(SolutionMethod solutionMethod) {
         switch (solutionMethod) {
             case HEURISTIC_VERSION_1:
                 return "heuristicVersion1";
@@ -630,5 +630,9 @@ public class Input {
 
     public void setNrOfBranchingPricingProblem(int nrOfBranchingPricingProblem) {
         this.nrOfBranchingPricingProblem = nrOfBranchingPricingProblem;
+    }
+
+    public void setVehicles(HashMap<Integer, Vehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 }
