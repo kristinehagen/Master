@@ -13,18 +13,19 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
-    private double simulationStopTime = 7.5*60;
-    private int testInstance = 5;
-    private int nrOfVehicles = 5;
-    private int nrStationBranching = 5;             //Create n new routes in each branching
+    private double simulationStopTime = 11*60;
+    private int testInstance = 1;
+    private int nrOfVehicles = 2;
+    private int nrStationBranching = 3;             //Create n new routes in each branching
     private int loadInterval = 12;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
-    private int numberOfRuns = 2;                   //Vanlig med 15
-    private boolean simulation = true;
+    private int numberOfRuns = 10;                   //Vanlig med 15
+    private boolean simulation = false;
+
 
 
     //--------CLUSTER-----------
@@ -38,9 +39,9 @@ public class Input {
     //--------PRICING PROBLEM---------------
 
     private boolean runPricingProblem = false;
-    private int nrOfRunsPricingProblem = 5;         //OBS! Have to be 1 or larger
-    private int nrOfBranchingPricingProblem = 5;
-    private int probabilityOfChoosingUnvisitedStation = 50;     //40%
+    private int nrOfRunsPricingProblem = 0;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 0;
+    private int probabilityOfChoosingUnvisitedStation = 60;     //40%
 
 
 
@@ -53,7 +54,7 @@ public class Input {
     private double weightCritScViolationRate = 0.7;
     private double weightCritScDrivingTime = 0.0;
     private double weightCritScOptimalState = 0.3;
-    private double weightPricingProblemScore = 8;
+    private double weightPricingProblemScore = 5;
 
     //Criticality score Current solution in Oslo
     private double weightCritScTimeToViolationCurrent = 0.7;
@@ -117,7 +118,7 @@ public class Input {
         //Station file
         String initialStationFile = getStationFile(this.testInstance);
         String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
-        this.xpressFile = determineXpressFile();
+        this.xpressFile = determineXpressFile(this.solutionMethod);
         currentMinute = simulationStartTime;
 
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
@@ -152,6 +153,38 @@ public class Input {
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
 
+    //Run loop
+    public Input(int testInstance, int branchingConstant, int time, SolutionMethod solutionMethod) throws IOException {
+
+        this.testInstance = testInstance;
+        this.nrStationBranching = branchingConstant;
+        this.currentMinute = time*60;
+        this.solutionMethod = solutionMethod;
+
+        //Station file
+        String initialStationFile = getStationFile(this.testInstance);
+        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
+        this.xpressFile = determineXpressFile(this.solutionMethod);
+
+        this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
+        this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
+        ReadCoordinates.lookUpCoordinates(stations, stationIdList);
+        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
+        ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
+
+        if (solutionMethod.equals(SolutionMethod.HEURISTIC_VERSION_3)) {
+            this.maxVisit = 1;}
+
+        //Update to initial values
+        updateVehiclesAndStationsToInitialState();
+
+        //No cluster if only one vehicle
+        if (nrOfVehicles == 1) {
+            clustering = false;
+        }
+
+    }
+
     private String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
         switch (nrOfVehicles) {
             case 1:
@@ -169,24 +202,24 @@ public class Input {
         }
     }
 
-    private String getStationFile(int testInstance) throws IllegalArgumentException {
+    public String getStationFile(int testInstance) throws IllegalArgumentException {
         switch (testInstance) {
             case 1:
                 return "stationInitialInstance1.txt";
             case 2:
-                return "stationInitialInstance2.txt";
-            case 3:
                 return "stationInitialInstance3.txt";
-            case 4:
+            case 3:
                 return "stationInitialInstance4.txt";
-            case 5:
+            case 4:
                 return "stationInitialInstance5.txt";
+            case 5:
+                throw new IllegalArgumentException("Ugyldig testinstanse");
             default:
                 throw new IllegalArgumentException("Ugyldig testinstanse");
         }
     }
 
-    private String determineXpressFile() {
+    public String determineXpressFile(SolutionMethod solutionMethod) {
         switch (solutionMethod) {
             case HEURISTIC_VERSION_1:
                 return "heuristicVersion1";

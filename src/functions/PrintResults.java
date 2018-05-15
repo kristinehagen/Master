@@ -13,7 +13,8 @@ public class PrintResults {
 
     public static void printSimulationResultsToExcelFile(double averageViolation, double averagePercentageViolation, ArrayList<Double> percentageViolationsList, double sdViolations, double sdPercentageViolation,
                                                          double averageNumberOfTimesVehicleRouteGenerated, double avergageTimeToVehicleRouteGenerated,
-                                                         double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input) throws IOException {
+                                                         double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input,
+                                                         double averageTimePPImprovement) throws IOException {
 
         System.out.println("averageComputationalTimeXpress: " + averageComputationalTimeXpress);
         System.out.println("averageComputationalTimeXpressPlusInitialization" + averageComputationalTimeXpressPlusInitialization);
@@ -143,6 +144,9 @@ public class PrintResults {
             rowOutput.createCell(i).setCellValue(percentageViolationsList.get(i-40));
         }
 
+        if (heuristic3 && input.isRunPricingProblem()) {
+            rowOutput.createCell(50).setCellValue(averageTimePPImprovement);
+        }
 
 
         fileInputStream.close();
@@ -270,6 +274,8 @@ public class PrintResults {
                 rowOutput.createCell(32).setCellValue(input.getProbabilityOfChoosingUnvisitedStation());
             }
         }
+
+        rowOutput.createCell(33).setCellValue(input.getCurrentMinute()/60);
 
         fileInputStream.close();
 

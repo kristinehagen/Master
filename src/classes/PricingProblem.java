@@ -55,12 +55,10 @@ public class PricingProblem {
                     ViolationsIfNoVisit = -loadAtHorizon;
                     loadAtHorizon = 0;
                 }
-                double diffFromOptimalState = Math.abs(optimalState-loadAtHorizon);
-                DeviationsIfNoVisit = diffFromOptimalState;
+                DeviationsIfNoVisit = Math.abs(optimalState-loadAtHorizon);
 
                 pricingProblemScores.put(station.getId(), ViolationsIfNoVisit + DeviationsIfNoVisit);
             }
-
 
         }
     }
