@@ -10,9 +10,6 @@ gen
 .idea/vcs.xml
 
 demand.txt
-stationInitial.txt
-vehicleInitial.txt
 outputXpress.txt
 timeDependentInput.txt
 fixedInput.txt
-*.txt

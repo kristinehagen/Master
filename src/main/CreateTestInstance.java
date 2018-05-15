@@ -17,10 +17,10 @@ public class CreateTestInstance {
     static ArrayList<Station> highStarvation = new ArrayList<>();
     static ArrayList<Station> lowStarvation = new ArrayList<>();
     static ArrayList<Station> allStations;
-    static double startHour = 8.0;
-    static int instanceSize = 158;
+    static double startHour = 17.0;
+    static int instanceSize = 50;
     static HashMap<Station, Integer> testInstance = new HashMap<>();
-    static String filename = "stationInitialInstance6.txt";
+    static String filename = "stationInitialInstance2-17.txt";
 
     private static void divideStations(Input input) throws FileNotFoundException {
         allStations = input.getStationListWithDemand();

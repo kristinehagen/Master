@@ -853,7 +853,7 @@ fclose(F_OUTPUT);
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
 
-!end-model
+end-model
 
 
 !PRINT

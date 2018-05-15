@@ -29,7 +29,7 @@ public class Run {
         if (input.isSimulation()) {
             runSimulation(input);
         } else {
-            runOneVehicleRouteGeneration();
+            runOneVehicleRouteGeneration(input);
         }
 
         System.out.println("algorithm successfully terminated");
@@ -131,12 +131,12 @@ public class Run {
 
 
 
-    private static void runOneVehicleRouteGeneration() throws IOException, XPRMCompileException, IllegalArgumentException {
+    private static void runOneVehicleRouteGeneration(Input input) throws IOException, XPRMCompileException, IllegalArgumentException {
 
 
-        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
-        int testInstance = 1;
-        int time = 7;
+        /*SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+        int testInstance = 4;
+        int time = 17;
         int branchingConstant = 3;
 
         Input input = new Input(testInstance, branchingConstant, time, solutionMethod);
@@ -159,7 +159,7 @@ public class Run {
                     System.out.println("weightViolationRate: " + weightViolationRate);
                     System.out.println("weightDrivingTime: " + weightDrivingTime);
                     System.out.println("weightOptimalState: " + weightOptimalState);
-
+*/
 
                     //createClusters(input);
                     WriteXpressFiles.printFixedInput(input);
@@ -208,12 +208,8 @@ public class Run {
                             calculateObjectiveFunction(input);
                             break;
 
+
                     }
-
-                }
-            }
-        }
-
 
 
 
