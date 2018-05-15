@@ -22,6 +22,8 @@ public class CreateDemandScenario {
     private ArrayList<ArrayList<Double>> arrivalTimes;
     private String outPutFileName;
     private int testInstance = 3;
+    private double startTime = 7;
+    private double stopTime = 11;
 
 
     public static void main(String[] args) throws IOException, JSONException {
@@ -31,9 +33,9 @@ public class CreateDemandScenario {
 
     private void CreateScenarios(CreateDemandScenario simulation) throws FileNotFoundException, UnsupportedEncodingException {
 
-        for (int i = 1; i <= 15; i ++) {
+        for (int i = 1; i <= 10; i ++) {
             outPutFileName = "simulation_Instance"+ testInstance + "_Nr" + i + ".txt";
-            simulation.run(7, 11);
+            simulation.run(this.startTime, this.stopTime);
             simulation.printArrivalTimes();
 
         }
@@ -43,7 +45,7 @@ public class CreateDemandScenario {
 
     //Constructor
     private CreateDemandScenario() throws IOException, JSONException {
-        Input input = new Input(this.testInstance);
+        Input input = new Input(this.testInstance, this.startTime);
         stationIdList = input.getStationIdList();
         stations = input.getStations();
         arrivalTimes = new ArrayList<>();

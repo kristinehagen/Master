@@ -6,6 +6,7 @@ import classes.StopWatch;
 import classes.Vehicle;
 import enums.SolutionMethod;
 import com.dashoptimization.XPRMCompileException;
+import xpress.ReadXpressResult;
 import xpress.RunXpress;
 import xpress.WriteXpressFiles;
 
@@ -18,6 +19,8 @@ public class HeuristicVersion3 {
 
     private double computationalTimeXpress;
     private double computationalTimeIncludingInitialization;
+    private double numberOfTimesObjectiveImproved = 0;
+
 
     //Constructor
     public HeuristicVersion3(Input input) throws IOException, XPRMCompileException {
@@ -36,19 +39,27 @@ public class HeuristicVersion3 {
 
         RunXpress.runXpress(input.getXpressFile());
 
+        double objectiveValue = ReadXpressResult.readObjectiveValue();
+
 
         //Run pricing problem
         if (input.isRunPricingProblem()) {
             input.setNowRunningPricingProblem(true);
             int initialBranchingConstant = input.getNrStationBranching();
+            input.setNrStationBranching(input.getNrOfBranchingPricingProblem());
 
             for (int i = 0; i < input.getNrOfRunsPricingProblem(); i ++) {
 
                 runPricingProblem(input, pricingProblemScores);
-                input.setNrStationBranching(input.getNrOfBranchingPricingProblem());
                 initiateRoutes(input, pricingProblemScores);
                 WriteXpressFiles.printTimeDependentInput(input, SolutionMethod.HEURISTIC_VERSION_3);
                 RunXpress.runXpress(input.getXpressFile());
+
+                double objectiveValueAfterPricingProblem = ReadXpressResult.readObjectiveValue();
+                if (objectiveValueAfterPricingProblem <= objectiveValue) {
+                    objectiveValue = objectiveValueAfterPricingProblem;
+                    this.numberOfTimesObjectiveImproved ++;
+                }
             }
 
             input.setNrStationBranching(initialBranchingConstant);
@@ -60,6 +71,7 @@ public class HeuristicVersion3 {
 
         this.computationalTimeXpress = stopWatchXpress.getElapsedTimeSecs();
         this.computationalTimeIncludingInitialization = stopWatchIncludingInitialization.getElapsedTimeSecs();
+
     }
 
 
@@ -92,5 +104,13 @@ public class HeuristicVersion3 {
 
     public void setComputationalTimeIncludingInitialization(double computationalTimeIncludingInitialization) {
         this.computationalTimeIncludingInitialization = computationalTimeIncludingInitialization;
+    }
+
+    public double getNumberOfTimesObjectiveImproved() {
+        return numberOfTimesObjectiveImproved;
+    }
+
+    public void setNumberOfTimesObjectiveImproved(double numberOfTimesObjectiveImproved) {
+        this.numberOfTimesObjectiveImproved = numberOfTimesObjectiveImproved;
     }
 }

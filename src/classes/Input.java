@@ -13,18 +13,19 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+    private SolutionMethod solutionMethod = SolutionMethod.EXACT_METHOD;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
-    private double simulationStartTime = 7*60;              //Minutes
+    private double simulationStartTime = 17*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 5;
-    private int nrOfVehicles = 5;
-    private int nrStationBranching = 20;             //Create n new routes in each branching
+    private int testInstance = 2;
+    private int nrOfVehicles = 2;
+    private int nrStationBranching = 3;             //Create n new routes in each branching
     private int loadInterval = 12;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                   //Vanlig med 15
-    private boolean simulation = true;
+    private boolean simulation = false;
+
 
 
     //--------CLUSTER-----------
@@ -38,9 +39,9 @@ public class Input {
     //--------PRICING PROBLEM---------------
 
     private boolean runPricingProblem = false;
-    private int nrOfRunsPricingProblem = 5;         //OBS! Have to be 1 or larger
-    private int nrOfBranchingPricingProblem = 5;
-    private int probabilityOfChoosingUnvisitedStation = 50;     //40%
+    private int nrOfRunsPricingProblem = 0;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 0;
+    private int probabilityOfChoosingUnvisitedStation = 60;     //40%
 
 
 
@@ -49,11 +50,11 @@ public class Input {
 
     //----------WEIGHTS-----------
     //Criticality score
-    private double weightCritScTimeToViolation = 0.0;
-    private double weightCritScViolationRate = 0.7;
-    private double weightCritScDrivingTime = 0.0;
-    private double weightCritScOptimalState = 0.3;
-    private double weightPricingProblemScore = 8;
+    private double weightCritScTimeToViolation = 0.2;
+    private double weightCritScViolationRate = 0.3;
+    private double weightCritScDrivingTime = 0.3;
+    private double weightCritScOptimalState = 0.2;
+    private double weightPricingProblemScore = 5;
 
     //Criticality score Current solution in Oslo
     private double weightCritScTimeToViolationCurrent = 0.7;
@@ -114,11 +115,12 @@ public class Input {
     //Constructor
     public Input() throws IOException {
 
-        //Station file
-        String initialStationFile = getStationFile(this.testInstance);
-        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles);
-        this.xpressFile = determineXpressFile(this.solutionMethod);
         currentMinute = simulationStartTime;
+
+        //Station file
+        String initialStationFile = getStationFile(this.testInstance, this.currentMinute);
+        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles, this.currentMinute);
+        this.xpressFile = determineXpressFile(this.solutionMethod);
 
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
@@ -145,42 +147,102 @@ public class Input {
     }
 
     //Create demand scenario
-    public Input(int testInstance) throws FileNotFoundException {
+    public Input(int testInstance, double time) throws FileNotFoundException {
         this.testInstance = testInstance;
-        String initialStationFile = getStationFile(this.testInstance);
+        String initialStationFile = getStationFile(this.testInstance, time);
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
 
-    public String getVehicleFile(int nrOfVehicles) throws IllegalArgumentException {
+    //Run loop
+    public Input(int testInstance, int branchingConstant, int time, SolutionMethod solutionMethod) throws IOException {
+
+        this.testInstance = testInstance;
+        this.nrStationBranching = branchingConstant;
+        this.currentMinute = time*60;
+        this.solutionMethod = solutionMethod;
+
+        //Station file
+        String initialStationFile = getStationFile(this.testInstance, this.currentMinute);
+        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles, this.currentMinute);
+        this.xpressFile = determineXpressFile(this.solutionMethod);
+
+        this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
+        this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
+        ReadCoordinates.lookUpCoordinates(stations, stationIdList);
+        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
+        ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
+
+        if (solutionMethod.equals(SolutionMethod.HEURISTIC_VERSION_3)) {
+            this.maxVisit = 1;}
+
+        //Update to initial values
+        updateVehiclesAndStationsToInitialState();
+
+        //No cluster if only one vehicle
+        if (nrOfVehicles == 1) {
+            clustering = false;
+        }
+
+    }
+
+    private String getVehicleFile(int nrOfVehicles, double time) throws IllegalArgumentException {
         switch (nrOfVehicles) {
             case 1:
-                return "vehicleInitial1.txt";
+                if (time == 17*60) {
+                    return "vehicleInitial1-17.txt";
+                } else {
+                    return "vehicleInitial1.txt";
+                }
             case 2:
-                return "vehicleInitial2.txt";
+                if (time == 17*60) {
+                    return "vehicleInitial2-17.txt";
+                } else {
+                    return "vehicleInitial2.txt";
+                }
             case 3:
-                return "vehicleInitial3.txt";
+                if (time == 17*60) {
+                    return "vehicleInitial3-17.txt";
+                } else {
+                    return "vehicleInitial3.txt";
+                }
             case 4:
-                return "vehicleInitial4.txt";
+                if (time == 17*60) {
+                    return "vehicleInitial4-17.txt";
+                } else {
+                    return "vehicleInitial4.txt";
+                }
             case 5:
-                return "vehicleInitial5.txt";
+                if (time == 17*60) {
+                    return "vehicleInitial5-17.txt";
+                } else {
+                    return "vehicleInitial5.txt";
+                }
             default:
                 throw new IllegalArgumentException("Ugyldig antall vehicles");
         }
     }
 
-    private String getStationFile(int testInstance) throws IllegalArgumentException {
+    public String getStationFile(int testInstance, double time) throws IllegalArgumentException {
         switch (testInstance) {
             case 1:
-                return "stationInitialInstance1.txt";
+                if (time == 17*60) {
+                    return "stationInitialInstance1-17.txt";
+                } else {
+                    return "stationInitialInstance1.txt";
+                }
             case 2:
-                return "stationInitialInstance2.txt";
+                if (time == 17*60) {
+                    return "stationInitialInstance2-17.txt";
+                } else {
+                    return "stationInitialInstance2.txt";
+                }
             case 3:
                 return "stationInitialInstance3.txt";
             case 4:
                 return "stationInitialInstance4.txt";
             case 5:
-                return "stationInitialInstance5.txt";
+                throw new IllegalArgumentException("Ugyldig testinstanse");
             default:
                 throw new IllegalArgumentException("Ugyldig testinstanse");
         }

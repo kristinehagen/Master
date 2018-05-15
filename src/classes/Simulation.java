@@ -30,6 +30,7 @@ public class Simulation {
     private double maxComputationalTimeIncludingInitialization = -1;
     private double minComputationalTimeIncludingInitialization = -1;
     private ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
+    private ArrayList<Double> numberOfTimesPPImproved = new ArrayList<>();
 
     //Constructor
     public Simulation() {
@@ -254,6 +255,7 @@ public class Simulation {
                 totalTime = heuristicVersion1.getComputationalTimeIncludingInitialization();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
+
             case HEURISTIC_VERSION_2:
                 HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
                 computationalTimesXpress.add(heuristicVersion2.getComputationalTimeXpress());
@@ -261,13 +263,16 @@ public class Simulation {
                 totalTime = heuristicVersion2.getComputationalTimeIncludingInitialization();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
+
             case HEURISTIC_VERSION_3:
                 HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
                 computationalTimesXpress.add(heuristicVersion3.getComputationalTimeXpress());
                 computationalTimesXpressPlusInitialization.add(heuristicVersion3.getComputationalTimeIncludingInitialization());
                 totalTime = heuristicVersion3.getComputationalTimeIncludingInitialization();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivalsVersion3(input.getVehicles(), input.getCurrentMinute());
+                this.numberOfTimesPPImproved.add(heuristicVersion3.getNumberOfTimesObjectiveImproved());
                 break;
+
             case EXACT_METHOD:
                 ExactMethod exactMethod = new ExactMethod(input);
                 computationalTimesXpress.add(exactMethod.getComputationalTime());
@@ -275,12 +280,14 @@ public class Simulation {
                 totalTime = exactMethod.getComputationalTime();
                 this.vehicleArrivals = ReadXpressResult.readVehicleArrivals(input.getCurrentMinute());
                 break;
+
             case CURRENT_SOLUTION_IN_OSLO:
                 CurrentSolutionInOslo currentSolutionInOslo = new CurrentSolutionInOslo(input);
                 this.vehicleArrivals = currentSolutionInOslo.getVehicleArrivals();
                 computationalTimesXpress.add(0.0);
                 computationalTimesXpressPlusInitialization.add(0.0);
                 break;
+
             case NO_VEHICLES:
                 NoVehicles noVehicles = new NoVehicles(input);
                 computationalTimesXpress.add(0.0);
@@ -460,6 +467,14 @@ public class Simulation {
 
     public void setMinComputationalTimeIncludingInitialization(double minComputationalTimeIncludingInitialization) {
         this.minComputationalTimeIncludingInitialization = minComputationalTimeIncludingInitialization;
+    }
+
+    public ArrayList<Double> getNumberOfTimesPPImproved() {
+        return numberOfTimesPPImproved;
+    }
+
+    public void setNumberOfTimesPPImproved(ArrayList<Double> numberOfTimesPPImproved) {
+        this.numberOfTimesPPImproved = numberOfTimesPPImproved;
     }
 }
 

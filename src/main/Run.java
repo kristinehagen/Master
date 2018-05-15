@@ -3,6 +3,7 @@ package main;
 import classes.*;
 import com.dashoptimization.XPRMCompileException;
 import enums.SolutionMethod;
+
 import functions.PrintResults;
 import functions.ReadClusterList;
 import functions.ReadVehicleInput;
@@ -47,7 +48,7 @@ public class Run {
         } else if (input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_1 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_2 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_3) {
 
             if (input.isClustering()) {
-                String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
+                String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size() + ".txt";
                 WriteXpressFiles.writeClusterInformation(input);
                 RunXpress.runXpress("createCluster");
                 ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
@@ -66,132 +67,154 @@ public class Run {
 
     }
 
+
     private static void runSimulation(Input input) throws IOException, XPRMCompileException, InterruptedException {
 
 
-        for (double weightDistance = 0.0; weightDistance <= 1.01; weightDistance += 0.10) {
-            input.setWeightClusterDrivingTime(weightDistance);
-            for (double weightDemand = 0.0; weightDemand <= 1.01 - weightDistance; weightDemand += 0.10) {
-                input.setWeightClusterNetDemand(weightDemand);
-                input.setWeightClusterEqualSize(1-weightDistance-weightDemand);
-
-                if (!(weightDistance == 0.0 && weightDemand == 0.0)) {
-
-                    input.updateVehiclesAndStationsToInitialState();
-                    createClusters(input);
-
-                    WriteXpressFiles.printFixedInput(input);
-
-                    ArrayList<Double> totalViolationList = new ArrayList<>();
-                    ArrayList<Double> percentageViolationsList = new ArrayList<>();
-                    ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
-                    ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
-                    ArrayList<Double> computationalTimeXpress = new ArrayList<>();
-                    ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
-                    double maxComputationalTimeIncludingInitialization = -1;
-                    double minComputationalTimeIncludingInitialization = -1;
+        ArrayList<Double> totalViolationList = new ArrayList<>();
+        ArrayList<Double> percentageViolationsList = new ArrayList<>();
+        ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
+        ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
+        ArrayList<Double> computationalTimeXpress = new ArrayList<>();
+        ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
+        double maxComputationalTimeIncludingInitialization = -1;
+        double minComputationalTimeIncludingInitialization = -1;
+        ArrayList<Double> numberOfTimesPPImprovement = new ArrayList<>();
 
 
-                    for (int i = 1; i <= input.getNumberOfRuns(); i++) {
+        for (int i = 1; i <= input.getNumberOfRuns(); i++) {
 
-                        String simulationFile = "simulation_Instance" + input.getTestInstance() + "_Nr" + i + ".txt";
-                        System.out.println("Run number: " + i);
+            String simulationFile = "simulation_Instance" + input.getTestInstance() + "_Nr" + i + ".txt";
+            System.out.println("Run number: " + i);
 
-                        //Run simulation
-                        input.updateVehiclesAndStationsToInitialState();
-                        Simulation simulation = new Simulation();
-                        simulation.run(simulationFile, input);
+            //Run simulation
+            input.updateVehiclesAndStationsToInitialState();
+            Simulation simulation = new Simulation();
+            simulation.run(simulationFile, input);
 
-                        double totalViolations = simulation.getCongestions() + simulation.getStarvations();
-                        totalViolationList.add(totalViolations);
-                        percentageViolationsList.add((double) totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
-                        numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
-                        averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
-                        computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
-                        computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
+            double totalViolations = simulation.getCongestions() + simulation.getStarvations();
+            totalViolationList.add(totalViolations);
+            percentageViolationsList.add((double) totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
+            numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
+            averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
+            computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
+            computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
+            numberOfTimesPPImprovement.add(average(simulation.getNumberOfTimesPPImproved()));
 
-                        double maxTime = simulation.getMaxComputationalTimeIncludingInitialization();
-                        double minTime = simulation.getMinComputationalTimeIncludingInitialization();
+            double maxTime = simulation.getMaxComputationalTimeIncludingInitialization();
+            double minTime = simulation.getMinComputationalTimeIncludingInitialization();
 
-                        if (maxComputationalTimeIncludingInitialization == -1 || maxTime > maxComputationalTimeIncludingInitialization) {
-                            maxComputationalTimeIncludingInitialization = maxTime;
-                        }
-                        if (minComputationalTimeIncludingInitialization == -1 || minTime < minComputationalTimeIncludingInitialization) {
-                            minComputationalTimeIncludingInitialization = minTime;
-                        }
-                    }
-
-                    System.out.println("Min time: " + minComputationalTimeIncludingInitialization);
-                    System.out.println("Max time: " + maxComputationalTimeIncludingInitialization);
-
-                    double averageViolation = average(totalViolationList);
-                    double averagePercentageViolations = average(percentageViolationsList);
-                    double sdViolation = sd(totalViolationList, averageViolation);
-                    double sdPercentageViolations = sd(percentageViolationsList, averagePercentageViolations);
-                    double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
-                    double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
-                    double averageComputationalTimeXpress = average(computationalTimeXpress);
-                    double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlusInitialization);
-
-                    PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
-                            averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress, averageComputationalTimeXpressPlusInitialization, input);
-                }
+            if (maxComputationalTimeIncludingInitialization == -1 || maxTime > maxComputationalTimeIncludingInitialization) {
+                maxComputationalTimeIncludingInitialization = maxTime;
+            }
+            if (minComputationalTimeIncludingInitialization == -1 || minTime < minComputationalTimeIncludingInitialization) {
+                minComputationalTimeIncludingInitialization = minTime;
             }
         }
+
+        System.out.println("Min time: " + minComputationalTimeIncludingInitialization);
+        System.out.println("Max time: " + maxComputationalTimeIncludingInitialization);
+
+        double averageViolation = average(totalViolationList);
+        double averagePercentageViolations = average(percentageViolationsList);
+        double sdViolation = sd(totalViolationList, averageViolation);
+        double sdPercentageViolations = sd(percentageViolationsList, averagePercentageViolations);
+        double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
+        double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
+        double averageComputationalTimeXpress = average(computationalTimeXpress);
+        double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlusInitialization);
+        double averageTimePPImprovement = average(numberOfTimesPPImprovement);
+
+        PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
+            averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
+            averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement);
 
     }
 
 
 
+
     private static void runOneVehicleRouteGeneration(Input input) throws IOException, XPRMCompileException, IllegalArgumentException {
 
-        input.updateVehiclesAndStationsToInitialState();
 
-        double computationalTimeXpress;
-        double computationalTimeIncludingInitialization;
-        double objectiveValue;
+        /*SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+        int testInstance = 4;
+        int time = 17;
+        int branchingConstant = 3;
 
-        switch (input.getSolutionMethod()) {
-            case HEURISTIC_VERSION_1:
-                HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
-                computationalTimeXpress = heuristicVersion1.getComputationalTimeXpress();
-                computationalTimeIncludingInitialization = heuristicVersion1.getComputationalTimeIncludingInitialization();
-                objectiveValue = ReadXpressResult.readObjectiveValue();
-                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
-                break;
+        Input input = new Input(testInstance, branchingConstant, time, solutionMethod);
+        createClusters(input);
 
-            case HEURISTIC_VERSION_2:
-                HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
-                computationalTimeXpress = heuristicVersion2.getComputationalTimeXpress();
-                computationalTimeIncludingInitialization = heuristicVersion2.getComputationalTimeIncludingInitialization();
-                objectiveValue = ReadXpressResult.readObjectiveValue();
-                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
-                break;
+        for (double weightTimeToViolation = 0; weightTimeToViolation <= 1; weightTimeToViolation += 0.1) {
+            input.setWeightCritScTimeToViolation(weightTimeToViolation);
 
-            case HEURISTIC_VERSION_3:
-                HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
-                computationalTimeXpress = heuristicVersion3.getComputationalTimeXpress();
-                computationalTimeIncludingInitialization = heuristicVersion3.getComputationalTimeIncludingInitialization();
-                objectiveValue = ReadXpressResult.readObjectiveValue();
-                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
-                break;
+            for (double weightViolationRate = 0; weightViolationRate <= 1 - weightTimeToViolation; weightViolationRate += 0.1 ) {
+                input.setWeightCritScViolationRate(weightViolationRate);
 
-            case EXACT_METHOD:
-                ExactMethod exactMethod = new ExactMethod(input);
-                computationalTimeXpress = exactMethod.getComputationalTime();
-                objectiveValue = ReadXpressResult.readObjectiveValue();
-                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeXpress);
-                break;
+                for (double weightDrivingTime = 0; weightDrivingTime <= 1 - weightTimeToViolation- weightViolationRate; weightDrivingTime += 0.1) {
+                    input.setWeightCritScDrivingTime(weightDrivingTime);
 
-            case CURRENT_SOLUTION_IN_OSLO:
-                throw new IllegalArgumentException("Kan ikke kjøre CURRENT_SOLUTION_IN_OSLO i Xpress");
-
-            case NO_VEHICLES:
-                calculateObjectiveFunction(input);
-                break;
+                    double weightOptimalState = 1 - weightTimeToViolation - weightViolationRate - weightDrivingTime;
+                    input.setWeightCritScOptimalState(weightOptimalState);
 
 
-        }
+                    System.out.println("weightTimeToViolation: " + weightTimeToViolation);
+                    System.out.println("weightViolationRate: " + weightViolationRate);
+                    System.out.println("weightDrivingTime: " + weightDrivingTime);
+                    System.out.println("weightOptimalState: " + weightOptimalState);
+*/
+
+                    //createClusters(input);
+                    WriteXpressFiles.printFixedInput(input);
+                    input.updateVehiclesAndStationsToInitialState();
+
+                    double computationalTimeXpress;
+                    double computationalTimeIncludingInitialization;
+                    double objectiveValue;
+
+                    switch (input.getSolutionMethod()) {
+                        case HEURISTIC_VERSION_1:
+                            HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
+                            computationalTimeXpress = heuristicVersion1.getComputationalTimeXpress();
+                            computationalTimeIncludingInitialization = heuristicVersion1.getComputationalTimeIncludingInitialization();
+                            objectiveValue = ReadXpressResult.readObjectiveValue();
+                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                            break;
+
+                        case HEURISTIC_VERSION_2:
+                            HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
+                            computationalTimeXpress = heuristicVersion2.getComputationalTimeXpress();
+                            computationalTimeIncludingInitialization = heuristicVersion2.getComputationalTimeIncludingInitialization();
+                            objectiveValue = ReadXpressResult.readObjectiveValue();
+                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                            break;
+
+                        case HEURISTIC_VERSION_3:
+                            HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
+                            computationalTimeXpress = heuristicVersion3.getComputationalTimeXpress();
+                            computationalTimeIncludingInitialization = heuristicVersion3.getComputationalTimeIncludingInitialization();
+                            objectiveValue = ReadXpressResult.readObjectiveValue();
+                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                            break;
+
+                        case EXACT_METHOD:
+                            ExactMethod exactMethod = new ExactMethod(input);
+                            computationalTimeXpress = exactMethod.getComputationalTime();
+                            objectiveValue = ReadXpressResult.readObjectiveValue();
+                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeXpress);
+                            break;
+
+                        case CURRENT_SOLUTION_IN_OSLO:
+                            throw new IllegalArgumentException("Kan ikke kjøre CURRENT_SOLUTION_IN_OSLO i Xpress");
+
+                        case NO_VEHICLES:
+                            calculateObjectiveFunction(input);
+                            break;
+
+
+                    }
+
+
 
     }
 
