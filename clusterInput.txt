@@ -1,6 +1,6 @@
 weightDrivingTime: 0.9999999999999999
 weightNetDemand: 0.0
-weightEqualSize: 1.1102230246251565E-16
+weightEqualSize: 1.9984014443252818E-15
 instance: 4
 vehicleNr: 2
 

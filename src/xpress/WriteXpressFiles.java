@@ -755,8 +755,8 @@ public class WriteXpressFiles {
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
         writer.println("weightDrivingTime: " + input.getWeightClusterDrivingTime());
-        writer.println("weightNetDemand: " + input.getWeightClusterNetDemand());
-        writer.println("weightEqualSize: " + input.getWeightClusterEqualSize());
+        writer.println("weightNetDemand: " + input.getWeightClusterNetDemand()*6);
+        writer.println("weightEqualSize: " + input.getWeightClusterEqualSize()*18);
         writer.println("instance: " + input.getTestInstance());
         writer.println("vehicleNr: " + input.getVehicles().size());
 
