@@ -15,7 +15,7 @@ public class Input {
     //Input
     private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
-    private int maxVisit = 1;
+    private int maxVisit = 2;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;

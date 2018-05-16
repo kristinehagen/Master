@@ -142,16 +142,14 @@ public class Run {
         SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
 
 
-        for (int j = 1; j<= 4; j++) {
+        for (int j = 1; j<= 3; j++) {
 
             if (j == 1)
                 branchingConstant = 3;
             else if (j == 2) {
                 branchingConstant = 5;
-            } else if (j==3){
+            } else{
                 branchingConstant = 7;
-            } else {
-                branchingConstant = 9;
             }
 
 
