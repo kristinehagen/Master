@@ -33,7 +33,7 @@ public class Run {
         if (input.isSimulation()) {
             runSimulation(input);
         } else {
-            runOneVehicleRouteGeneration(input);
+            runOneVehicleRouteGeneration();
         }
 
         System.out.println("algorithm successfully terminated");
@@ -134,37 +134,23 @@ public class Run {
 
 
 
-    private static void runOneVehicleRouteGeneration(Input input) throws IOException, XPRMCompileException, IllegalArgumentException {
+    private static void runOneVehicleRouteGeneration() throws IOException, XPRMCompileException, IllegalArgumentException {
+
+        int testInstance;
+        int time;
+        int branchingConstant;
+        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
 
 
-        /*SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
-        int testInstance = 4;
-        int time = 17;
-        int branchingConstant = 3;
+        for (int branch = 3; branch <= 7; branch +=2) {
+            branchingConstant = branch;
+            for (int instance = 1; instance <= 4; instance ++) {
+                testInstance = instance;
+                for (int t = 7; t <= 17; t+=10) {
+                    time = t;
 
-        Input input = new Input(testInstance, branchingConstant, time, solutionMethod);
-        createClusters(input);
-
-        for (double weightTimeToViolation = 0; weightTimeToViolation <= 1; weightTimeToViolation += 0.1) {
-            input.setWeightCritScTimeToViolation(weightTimeToViolation);
-
-            for (double weightViolationRate = 0; weightViolationRate <= 1 - weightTimeToViolation; weightViolationRate += 0.1 ) {
-                input.setWeightCritScViolationRate(weightViolationRate);
-
-                for (double weightDrivingTime = 0; weightDrivingTime <= 1 - weightTimeToViolation- weightViolationRate; weightDrivingTime += 0.1) {
-                    input.setWeightCritScDrivingTime(weightDrivingTime);
-
-                    double weightOptimalState = 1 - weightTimeToViolation - weightViolationRate - weightDrivingTime;
-                    input.setWeightCritScOptimalState(weightOptimalState);
-
-
-                    System.out.println("weightTimeToViolation: " + weightTimeToViolation);
-                    System.out.println("weightViolationRate: " + weightViolationRate);
-                    System.out.println("weightDrivingTime: " + weightDrivingTime);
-                    System.out.println("weightOptimalState: " + weightOptimalState);
-*/
-
-                    //createClusters(input);
+                    Input input = new Input(testInstance, branchingConstant, time, solutionMethod);
+                    createClusters(input);
                     WriteXpressFiles.printFixedInput(input);
                     input.updateVehiclesAndStationsToInitialState();
 
@@ -214,7 +200,9 @@ public class Run {
 
                     }
 
-
+                }
+            }
+        }
 
     }
 
