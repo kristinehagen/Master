@@ -141,20 +141,20 @@ public class Run {
 
         for (int instance = 2; instance <= 4; instance ++) {
             testInstance = instance;
-            for (int t = 7; t <= 17; t+=10) {
+            for (int t = 7; t <= 17; t += 10) {
                 time = t;
 
                 Input input = new Input(testInstance, time);
 
-                for (double weightDT = 0; weightDT <= 1; weightDT += 0.10) {
-                    input.setWeightClusterDrivingTime(weightDT);
-                    for (double weightND = 0; weightND <= 1 - weightDT; weightND += 0.10) {
-                        input.setWeightClusterNetDemand(weightND);
-                        input.setWeightClusterEqualSize(1 - weightDT - weightND);
+
+                for (int lowDemand = 0; lowDemand <= 50; lowDemand += 10) {
+                    input.setMediumDemand(lowDemand);
+                    for (int highDemand = 50; highDemand <= 100; highDemand += 10) {
+                        input.setHighDemand(highDemand);
 
                         System.out.println("Instance: " + instance);
                         System.out.println("Time: " + time);
-                        System.out.println("Weights: " + weightDT + ", " + weightND + ", " + (1-weightDT-weightND));
+                        System.out.println("Low demand: " + lowDemand + ", high demand: " + highDemand);
 
                         createClusters(input);
                         WriteXpressFiles.printFixedInput(input);
@@ -205,12 +205,9 @@ public class Run {
 
                         }
                     }
-
-
                 }
             }
         }
-
     }
 
     private static void calculateObjectiveFunction(Input input) throws IOException {
