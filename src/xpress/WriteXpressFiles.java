@@ -8,9 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 
 public class WriteXpressFiles {
@@ -794,19 +792,61 @@ public class WriteXpressFiles {
         }
         writer.println("]");
 
+
+
+
+
         //ClusterNr
         writer.println();
         writer.println("clusterNr : [");
+
+        ArrayList<Station> stations = new ArrayList<>();
+        stations.addAll(input.getStations().values());
+        double time = TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute());
+        //Sort list by arrival time
+        stations.sort(new Comparator<Station>() {
+            @Override
+            public int compare(Station station1, Station station2) {
+                double diff = Math.abs(station1.getNetDemand(time)) - Math.abs(station2.getNetDemand(time));
+
+                if (diff < 0) {
+                    return -1;
+                } else if (diff > 0) {
+                    return 1;
+                }
+                return 0;
+            }
+        });
+
+        int numberOfStations = stations.size();
+
+        double demandLimitHigh = Math.abs(stations.get((int) Math.floor(input.getHighDemand()*numberOfStations/100)-1).getNetDemand(time));
+        double demandLimitMedium = Math.abs(stations.get((int) Math.floor(input.getMediumDemand()*numberOfStations/100)-1).getNetDemand(time));
+
         for (Station station : input.getStations().values()) {
-            double netDemand = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
-            double highDemand = input.getHighDemand();
-            double mediumDemand = input.getMediumDemand();
-            if (netDemand >= highDemand || netDemand <= -highDemand) {
+            double netDemand = station.getNetDemand(time);
+
+            if (netDemand >= demandLimitHigh || netDemand <= -demandLimitHigh) {
                 writer.println(2);
-            } else if (netDemand >= mediumDemand || netDemand <= -mediumDemand) {
+            } else if (netDemand >= demandLimitMedium || netDemand <= -demandLimitMedium) {
                 writer.println(1);
             } else {
-                writer.println(0);
+
+                //Check if initial station
+                boolean initialStation = false;
+                for (Vehicle vehicle : input.getVehicles().values()) {
+                    if (vehicle.getNextStation() == station.getId()) {
+                        initialStation = true;
+                        break;
+                    }
+                }
+
+                if (initialStation) {
+                    writer.println(1);
+                } else {
+                    writer.println(0);
+                }
+
             }
         }
         writer.println("]");

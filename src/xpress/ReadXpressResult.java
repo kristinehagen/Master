@@ -121,14 +121,14 @@ public class ReadXpressResult {
         in.close();
 
         //Sort list by arrival time
-        Collections.sort(vehicleArrivals, new Comparator<VehicleArrival>() {
+        vehicleArrivals.sort(new Comparator<VehicleArrival>() {
             @Override
             public int compare(VehicleArrival vehicleArrival1, VehicleArrival vehicleArrival2) {
                 double diff = vehicleArrival1.getTime() - vehicleArrival2.getTime();
 
-                if( diff < 0 ){
+                if (diff < 0) {
                     return -1;
-                } else if ( diff > 0 ) {
+                } else if (diff > 0) {
                     return 1;
                 }
                 return 0;

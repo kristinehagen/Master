@@ -15,13 +15,13 @@ public class Input {
     //Input
     private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
-    private int maxVisit = 2;
+    private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
     private int testInstance = 1;
     private int nrOfVehicles = setNrOfVehclesBasedOnInstance(this.testInstance);
-    private int nrStationBranching = 3;                 //Create n new routes in each branching
+    private int nrStationBranching = 6;                 //Create n new routes in each branching
     private int loadInterval = 12;                      //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                      //Vanlig med 15
     private boolean simulation = false;
@@ -30,10 +30,10 @@ public class Input {
 
     //--------CLUSTER-----------
 
-    private  boolean clustering = false;
+    private  boolean clustering = true;
     private boolean dynamicClustering = false;
-    private double highDemand = 35;     // 10%
-    private double mediumDemand = 4.5;  // 25%
+    private double highDemand = 90;     // 10%
+    private double mediumDemand = 25;  // 25%
 
 
     //--------PRICING PROBLEM---------------
@@ -143,12 +143,10 @@ public class Input {
 
 
     //Run loop
-    public Input(int testInstance, int branchingConstant, int time, SolutionMethod solutionMethod) throws IOException {
+    public Input(int testInstance, int time) throws IOException {
 
         this.testInstance = testInstance;
-        this.nrStationBranching = branchingConstant;
         this.currentMinute = time*60;
-        this.solutionMethod = solutionMethod;
 
         //Station file
         String initialStationFile = getStationFile(this.testInstance, this.currentMinute);
@@ -179,14 +177,14 @@ public class Input {
         this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
     }
 
-    //Create demand scenario
+   /* //Create demand scenario
     public Input(int testInstance, double time) throws FileNotFoundException {
         this.testInstance = testInstance;
         String initialStationFile = getStationFile(this.testInstance, time);
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
-
+*/
 
     private String getVehicleFile(int nrOfVehicles, double time) throws IllegalArgumentException {
         switch (nrOfVehicles) {

@@ -25,9 +25,9 @@ public class Run {
     public static void main(String[] args) throws IOException, XPRMCompileException, InterruptedException {
 
         Input input = new Input();
-        createClusters(input);
+        //createClusters(input);
 
-        WriteXpressFiles.printFixedInput(input);
+        //WriteXpressFiles.printFixedInput(input);
 
         //Simulate
         if (input.isSimulation()) {
@@ -138,67 +138,74 @@ public class Run {
 
         int testInstance;
         int time;
-        int branchingConstant;
-        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+
+        for (int instance = 2; instance <= 4; instance ++) {
+            testInstance = instance;
+            for (int t = 7; t <= 17; t+=10) {
+                time = t;
+
+                Input input = new Input(testInstance, time);
+
+                for (double weightDT = 0; weightDT <= 1; weightDT += 0.10) {
+                    input.setWeightClusterDrivingTime(weightDT);
+                    for (double weightND = 0; weightND <= 1 - weightDT; weightND += 0.10) {
+                        input.setWeightClusterNetDemand(weightND);
+                        input.setWeightClusterEqualSize(1 - weightDT - weightND);
+
+                        System.out.println("Instance: " + instance);
+                        System.out.println("Time: " + time);
+                        System.out.println("Weights: " + weightDT + ", " + weightND + ", " + (1-weightDT-weightND));
+
+                        createClusters(input);
+                        WriteXpressFiles.printFixedInput(input);
+
+                        double computationalTimeXpress;
+                        double computationalTimeIncludingInitialization;
+                        double objectiveValue;
+
+                        switch (input.getSolutionMethod()) {
+                            case HEURISTIC_VERSION_1:
+                                HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
+                                computationalTimeXpress = heuristicVersion1.getComputationalTimeXpress();
+                                computationalTimeIncludingInitialization = heuristicVersion1.getComputationalTimeIncludingInitialization();
+                                objectiveValue = ReadXpressResult.readObjectiveValue();
+                                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                                break;
+
+                            case HEURISTIC_VERSION_2:
+                                HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
+                                computationalTimeXpress = heuristicVersion2.getComputationalTimeXpress();
+                                computationalTimeIncludingInitialization = heuristicVersion2.getComputationalTimeIncludingInitialization();
+                                objectiveValue = ReadXpressResult.readObjectiveValue();
+                                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                                break;
+
+                            case HEURISTIC_VERSION_3:
+                                HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
+                                computationalTimeXpress = heuristicVersion3.getComputationalTimeXpress();
+                                computationalTimeIncludingInitialization = heuristicVersion3.getComputationalTimeIncludingInitialization();
+                                objectiveValue = ReadXpressResult.readObjectiveValue();
+                                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
+                                break;
+
+                            case EXACT_METHOD:
+                                ExactMethod exactMethod = new ExactMethod(input);
+                                computationalTimeXpress = exactMethod.getComputationalTime();
+                                objectiveValue = ReadXpressResult.readObjectiveValue();
+                                PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeXpress);
+                                break;
+
+                            case CURRENT_SOLUTION_IN_OSLO:
+                                throw new IllegalArgumentException("Kan ikke kjøre CURRENT_SOLUTION_IN_OSLO i Xpress");
+
+                            case NO_VEHICLES:
+                                calculateObjectiveFunction(input);
+                                break;
 
 
-        for (int branch = 3; branch <= 7; branch +=2) {
-            branchingConstant = branch;
-            for (int instance = 1; instance <= 4; instance ++) {
-                testInstance = instance;
-                for (int t = 7; t <= 17; t+=10) {
-                    time = t;
-
-                    Input input = new Input(testInstance, branchingConstant, time, solutionMethod);
-                    createClusters(input);
-                    WriteXpressFiles.printFixedInput(input);
-                    input.updateVehiclesAndStationsToInitialState();
-
-                    double computationalTimeXpress;
-                    double computationalTimeIncludingInitialization;
-                    double objectiveValue;
-
-                    switch (input.getSolutionMethod()) {
-                        case HEURISTIC_VERSION_1:
-                            HeuristicVersion1 heuristicVersion1 = new HeuristicVersion1(input);
-                            computationalTimeXpress = heuristicVersion1.getComputationalTimeXpress();
-                            computationalTimeIncludingInitialization = heuristicVersion1.getComputationalTimeIncludingInitialization();
-                            objectiveValue = ReadXpressResult.readObjectiveValue();
-                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
-                            break;
-
-                        case HEURISTIC_VERSION_2:
-                            HeuristicVersion2 heuristicVersion2 = new HeuristicVersion2(input);
-                            computationalTimeXpress = heuristicVersion2.getComputationalTimeXpress();
-                            computationalTimeIncludingInitialization = heuristicVersion2.getComputationalTimeIncludingInitialization();
-                            objectiveValue = ReadXpressResult.readObjectiveValue();
-                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
-                            break;
-
-                        case HEURISTIC_VERSION_3:
-                            HeuristicVersion3 heuristicVersion3 = new HeuristicVersion3(input);
-                            computationalTimeXpress = heuristicVersion3.getComputationalTimeXpress();
-                            computationalTimeIncludingInitialization = heuristicVersion3.getComputationalTimeIncludingInitialization();
-                            objectiveValue = ReadXpressResult.readObjectiveValue();
-                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeIncludingInitialization);
-                            break;
-
-                        case EXACT_METHOD:
-                            ExactMethod exactMethod = new ExactMethod(input);
-                            computationalTimeXpress = exactMethod.getComputationalTime();
-                            objectiveValue = ReadXpressResult.readObjectiveValue();
-                            PrintResults.printOneRouteResultsToExcelFile(input, objectiveValue, computationalTimeXpress, computationalTimeXpress);
-                            break;
-
-                        case CURRENT_SOLUTION_IN_OSLO:
-                            throw new IllegalArgumentException("Kan ikke kjøre CURRENT_SOLUTION_IN_OSLO i Xpress");
-
-                        case NO_VEHICLES:
-                            calculateObjectiveFunction(input);
-                            break;
-
-
+                        }
                     }
+
 
                 }
             }

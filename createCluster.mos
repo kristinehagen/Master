@@ -131,8 +131,6 @@ end-do
 declarations
 	totalNetDemandInCluster1: 		dynamic array(Vehicles)							of linctr;
 	totalNetDemandInCluster2: 		dynamic array(Vehicles)							of linctr;
-	totalDrivingTimeInCluster1:		dynamic array(Stations, Vehicles)				of linctr;
-	totalDrivingTimeInCluster2:		dynamic array(Stations, Vehicles)				of linctr;
 	objective:																		linctr;	
 	sizeDiff:																		linctr;
 	initialStationCon:				dynamic array(Stations)							of linctr;
@@ -150,25 +148,13 @@ forall(vv in Vehicles) do
 	cluster(initialStation(vv), vv) = 1;
 end-do
 
-!Driving time in cluster
-M := 100;
-forall(ii in Stations, vv in Vehicles | ii <> initialStation(vv)) do
-	totalDrivingTimeInCluster1(ii,vv) := 
-		totalDrivingTimeInCluster(ii, vv) >= drivingTime(initialStation(vv),ii) - M*(1-cluster(ii,vv));
-	totalDrivingTimeInCluster2(ii, vv) := 
-		totalDrivingTimeInCluster(ii, vv) <= drivingTime(initialStation(vv),ii) + M*(1-cluster(ii,vv));
-end-do
-
-
 !Diff size
 	sizeDiff := maxSize - minSize;
 
 
-
-
 !Objective
 Objective := 
-	weightNetDemand*sum(vv in Vehicles) totalNetDemandInCluster(vv) + weightDrivingTime*sum(ii in Stations, vv in Vehicles) totalDrivingTimeInCluster(ii,vv) + weightEqualSize*sizeDiff;
+	weightNetDemand*sum(vv in Vehicles) totalNetDemandInCluster(vv) + weightDrivingTime*(sum(ii in Stations, vv in Vehicles) drivingTime(initialStation(vv),ii)*cluster(ii,vv)) + weightEqualSize*sizeDiff;
 	
 minimize(Objective);
 
