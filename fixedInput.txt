@@ -333,15 +333,9 @@ unitHandlingTime: 0.25
 Vehicles : [
 0
 1
-2
-3
-4
 ]
 
 vehicleCapacity : [
-23
-23
-23
 23
 23
 ]
