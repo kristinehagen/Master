@@ -13,14 +13,14 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.EXACT_METHOD;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
-    private int maxVisit = 1;
+    private int maxVisit = 2;
     private double timeHorizon = 20;
-    private double simulationStartTime = 17*60;              //Minutes
+    private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 2;
-    private int nrOfVehicles = 2;
+    private int testInstance = 4;
+    private int nrOfVehicles = setNrVehiclesBasedOnInstance(testInstance);
     private int nrStationBranching = 3;             //Create n new routes in each branching
     private int loadInterval = 12;                   //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                   //Vanlig med 15
@@ -50,9 +50,9 @@ public class Input {
 
     //----------WEIGHTS-----------
     //Criticality score
-    private double weightCritScTimeToViolation = 0.2;
-    private double weightCritScViolationRate = 0.3;
-    private double weightCritScDrivingTime = 0.3;
+    private double weightCritScTimeToViolation = 0.1;
+    private double weightCritScViolationRate = 0.7;
+    private double weightCritScDrivingTime = 0.0;
     private double weightCritScOptimalState = 0.2;
     private double weightPricingProblemScore = 5;
 
@@ -692,5 +692,9 @@ public class Input {
 
     public void setNrOfBranchingPricingProblem(int nrOfBranchingPricingProblem) {
         this.nrOfBranchingPricingProblem = nrOfBranchingPricingProblem;
+    }
+
+    private int setNrVehiclesBasedOnInstance(int instance) {
+        return instance + 1;
     }
 }

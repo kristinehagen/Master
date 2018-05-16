@@ -20,7 +20,7 @@ public class CreateTestInstance {
     static double startHour = 17.0;
     static int instanceSize = 50;
     static HashMap<Station, Integer> testInstance = new HashMap<>();
-    static String filename = "stationInitialInstance2-17.txt";
+    static String filename = "stationInitialInstanceUpdate.txt";
 
     private static void divideStations(Input input) throws FileNotFoundException {
         allStations = input.getStationListWithDemand();
