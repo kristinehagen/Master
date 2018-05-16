@@ -139,11 +139,22 @@ public class Run {
         int testInstance;
         int time;
         int branchingConstant;
-        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
 
 
-        for (int branch = 3; branch <= 7; branch +=2) {
-            branchingConstant = branch;
+        for (int j = 1; j<= 4; j++) {
+
+            if (j == 1)
+                branchingConstant = 5;
+            else if (j == 2) {
+                branchingConstant = 10;
+            } else if (j==3){
+                branchingConstant = 20;
+            } else {
+                branchingConstant = 30;
+            }
+
+
             for (int instance = 1; instance <= 4; instance ++) {
                 testInstance = instance;
                 for (int t = 7; t <= 17; t+=10) {
