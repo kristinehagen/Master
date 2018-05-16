@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -51,9 +51,9 @@ public class Input {
     //----------WEIGHTS-----------
     //Criticality score
     private double weightCritScTimeToViolation = 0.1;
-    private double weightCritScViolationRate = 0.5;
+    private double weightCritScViolationRate = 0.8;
     private double weightCritScDrivingTime = 0.0;
-    private double weightCritScOptimalState = 0.4;
+    private double weightCritScOptimalState = 0.1;
     private double weightPricingProblemScore = 5;
 
     //Criticality score Current solution in Oslo
