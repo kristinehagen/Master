@@ -820,8 +820,13 @@ public class WriteXpressFiles {
 
         int numberOfStations = stations.size();
 
+        int lowCheat = 1;
+        if (input.getMediumDemand() == 0 ){
+            lowCheat = 0;
+        }
+
         double demandLimitHigh = Math.abs(stations.get((int) Math.floor(input.getHighDemand()*numberOfStations/100)-1).getNetDemand(time));
-        double demandLimitMedium = Math.abs(stations.get((int) Math.floor(input.getMediumDemand()*numberOfStations/100)-1).getNetDemand(time));
+        double demandLimitMedium = Math.abs(stations.get((int) Math.floor(input.getMediumDemand()*numberOfStations/100)-lowCheat).getNetDemand(time));
 
         for (Station station : input.getStations().values()) {
             double netDemand = station.getNetDemand(time);

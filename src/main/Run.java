@@ -136,25 +136,21 @@ public class Run {
 
     private static void runOneVehicleRouteGeneration() throws IOException, XPRMCompileException, IllegalArgumentException {
 
-        int testInstance;
-        int time;
+        int testInstance = 3;
+        int time = 17;
 
-        for (int instance = 2; instance <= 4; instance ++) {
-            testInstance = instance;
-            for (int t = 7; t <= 17; t += 10) {
-                time = t;
+
 
                 Input input = new Input(testInstance, time);
 
 
-                for (int lowDemand = 0; lowDemand <= 50; lowDemand += 10) {
-                    input.setMediumDemand(lowDemand);
-                    for (int highDemand = 50; highDemand <= 100; highDemand += 10) {
-                        input.setHighDemand(highDemand);
+               // for (int lowDemand = 0; lowDemand <= 50; lowDemand += 10) {
+                    input.setMediumDemand(50);
+                 //   for (int highDemand = 50; highDemand <= 100; highDemand += 10) {
+                        input.setHighDemand(100);
 
-                        System.out.println("Instance: " + instance);
+                        System.out.println("Instance: " + testInstance);
                         System.out.println("Time: " + time);
-                        System.out.println("Low demand: " + lowDemand + ", high demand: " + highDemand);
 
                         createClusters(input);
                         WriteXpressFiles.printFixedInput(input);
@@ -204,10 +200,10 @@ public class Run {
 
 
                         }
-                    }
-                }
-            }
-        }
+                  //  }
+                //}
+
+
     }
 
     private static void calculateObjectiveFunction(Input input) throws IOException {
