@@ -164,13 +164,13 @@ minimize(Objective);
 
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
-fopen("clusterOutput-Instance"+instance+"-V"+vehicleNr+".txt",F_OUTPUT);
+fopen("clusterOutput.txt",F_OUTPUT);
 	
 	forall (vv in Vehicles) do 
 		forall(ii in Stations | getsol(cluster(ii,vv))>0) do
 			writeln("" + vv + " " + ii + "");
 		end-do
-end-do
+	end-do
 
 fclose(F_OUTPUT);
 	
@@ -180,14 +180,15 @@ end-model
 
 writeln("Objective: " + getsol(Objective));
 forall (vv in Vehicles) do 
-	writeln("In cluster " + vv + " station:");
-	forall(ii in Stations | getsol(cluster(ii,vv))>0) do
-		writeln(ii);
-	end-do
-	writeln("Total driving time: " + sum(ii in Stations)getsol(totalDrivingTimeInCluster(ii,vv)));
+	writeln("Cluster " + vv );
+	writeln("Number of stations: " + sum(ii in Stations) getsol(cluster(ii,vv)));
+	writeln("Total driving time: " + sum(ii in Stations) drivingTime(initialStation(vv),ii)*getsol(cluster(ii,vv)));
 	writeln("Total net demand in cluster: " + getsol(totalNetDemandInCluster(vv)));
 end-do
-writeln("Total net demand in system: " + sum(vv in Vehicles)getsol(totalNetDemandInCluster(vv)));
+
+writeln("Ledd demand: " + (weightNetDemand*sum(vv in Vehicles) getsol(totalNetDemandInCluster(vv))));
+writeln("Ledd driving time: " + weightDrivingTime*(sum(ii in Stations, vv in Vehicles) drivingTime(initialStation(vv),ii)*getsol(cluster(ii,vv))));
+writeln("Ledd size: " + weightEqualSize*getsol(sizeDiff));
 
 
-
+end-model

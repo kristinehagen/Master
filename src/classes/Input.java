@@ -19,7 +19,7 @@ public class Input {
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 1;
+    private int testInstance = 3;
     private int nrOfVehicles = 2;
     private int nrStationBranching = 7;                 //Create n new routes in each branching
     private int loadInterval = 12;                      //Load in Xpress can be load from heuristic 2 +- loadInterval
@@ -30,10 +30,11 @@ public class Input {
 
     //--------CLUSTER-----------
 
+
     private  boolean clustering = true;
     private boolean dynamicClustering = false;
-    private double highDemand = 90;     // 10%
-    private double mediumDemand = 25;  // 25%
+    private double highDemand = 70;     // 10%
+    private double mediumDemand = 30;  // 25%
 
 
     //--------PRICING PROBLEM---------------
@@ -71,9 +72,9 @@ public class Input {
     private double weightDrivingTimePenalty = 0.4;
 
     //Cluster
-    private double weightClusterDrivingTime = 0.6;
-    private double weightClusterNetDemand = 0.2;
-    private double weightClusterEqualSize = 0.2;
+    private double weightClusterDrivingTime = 0.5;
+    private double weightClusterNetDemand = 0.1;
+    private double weightClusterEqualSize = 0.4;
 
 
 

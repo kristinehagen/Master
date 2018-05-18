@@ -29,6 +29,10 @@ public class GenerateCluster {
         GraphViewer graph = new GraphViewer();
         graph.drawClusters(input);
 
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            System.out.println("Antall stasjoner i cluster: " + vehicle.getClusterStationList().size());
+        }
+
     }
 
     private static void readCluster(Input input) throws IOException {
@@ -38,7 +42,7 @@ public class GenerateCluster {
 
         } else if (input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_1 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_2 || input.getSolutionMethod() == SolutionMethod.HEURISTIC_VERSION_3) {
 
-            String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
+            String xpressOutputFile = "clusterOutput.txt";
             ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
 
         }

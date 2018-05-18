@@ -31,6 +31,8 @@ public class ReadClusterList {
 
     public static void readClusterListTextFile(Input input, String filename) throws IOException {
 
+
+
         File inputFile = new File(filename);
         Scanner in = new Scanner(inputFile);
         while (in.hasNextLine()){

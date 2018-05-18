@@ -29,9 +29,9 @@ public class DrawStations {
 
         for (Station station : input.getStations().values()) {
             double netDemand = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
-            if (netDemand >= highDemand || netDemand <= -highDemand) {
+            if (station.getNumberOfClusters() == 2) {
                 nrOfHighCriticalStations++;
-            } else if (netDemand >= mediumDemand || netDemand <= -mediumDemand) {
+            } else if (station.getNumberOfClusters() == 1) {
                 nrOfMediumCriticalStations++;
             } else {
                 nrOfLowCriticalStations++;

@@ -75,31 +75,17 @@ public class GraphViewer {
                 }
             }
 
+
+
             double netDemand = station.getNetDemand(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
             //If demand over highDemand -> red, mediumDemand-HighDemand -> black, 0-mediumDemand grey
-            if (netDemand >= input.getHighDemand() || netDemand <= -input.getHighDemand()) {
+            if (station.getNumberOfClusters() == 2) {
                 node.addAttribute("ui.style", "fill-color: red; size: 5px;");
-            } else if (netDemand >= input.getMediumDemand() || netDemand <= -input.getMediumDemand()){
+            } else if (station.getNumberOfClusters() == 1){
                 node.addAttribute("ui.style", "fill-color: black; size: 5px;");
             }else {
                 node.addAttribute("ui.style", "fill-color: grey; size: 5px;");
             }
-
-
-            if (numberOfVehiclesWithStation == 1 && vehicleId == 0) {
-                node.addAttribute("ui.style", "fill-color: red; size: 5px;");
-            } else if (numberOfVehiclesWithStation == 1 && vehicleId == 1){
-                node.addAttribute("ui.style", "fill-color: black; size: 5px;");
-            } else if (numberOfVehiclesWithStation == 1 && vehicleId == 2){
-                node.addAttribute("ui.style", "fill-color: green; size: 5px;");
-            } else if (numberOfVehiclesWithStation == 1 && vehicleId == 3){
-                node.addAttribute("ui.style", "fill-color: pink; size: 5px;");
-            } else if (numberOfVehiclesWithStation == 2) {
-                node.addAttribute("ui.style", "fill-color: purple; size: 5px;");
-            } else {
-                node.addAttribute("ui.style", "fill-color: black; size: 5px;");
-            }
-
 
 
         }
@@ -107,33 +93,30 @@ public class GraphViewer {
         //EDGE
         for (Vehicle vehicle : input.getVehicles().values()) {
 
-            if (vehicle.getId() == 1) {
-                Edge edge;
+            Edge edge;
 
-                //From station
-                Station fromStationNode = input.getStations().get(vehicle.getNextStation());
-                Node nodeFromStation = graph.getNode("Station" + fromStationNode.getId());
+            //From station
+            Station fromStationNode = input.getStations().get(vehicle.getNextStation());
+            Node nodeFromStation = graph.getNode("Station" + fromStationNode.getId());
 
-                for (Station station : input.getStations().values()) {
+            for (Station station : input.getStations().values()) {
 
-                    if (vehicle.getClusterStationList().contains(station)) {
+                if (vehicle.getClusterStationList().contains(station)) {
 
-                        //To station
-                        Node nodeToStation = graph.getNode("Station" + station.getId());
+                    //To station
+                    Node nodeToStation = graph.getNode("Station" + station.getId());
 
-                        //Edge ID
-                        String edgeId = "V" + vehicle.getId() + "S" + station.getId();
+                    //Edge ID
+                    String edgeId = "V" + vehicle.getId() + "S" + station.getId();
 
-                        //Add edge
-                        edge = graph.addEdge(edgeId, nodeFromStation, nodeToStation, true);
+                    //Add edge
+                    edge = graph.addEdge(edgeId, nodeFromStation, nodeToStation, true);
 
-                        edge.addAttribute("ui.style", "size: 1px; fill-color: black ;");
-
-                    }
+                    edge.addAttribute("ui.style", "size: 1px; fill-color: black ;");
 
                 }
-            }
 
+            }
 
         }
 

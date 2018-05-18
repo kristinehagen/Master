@@ -17,6 +17,7 @@ public class Station {
     private HashMap<Integer, Double> drivingTime;
     private double latitude;
     private double longitude;
+    private int numberOfClusters;
 
 
     public Station(int id, int numberOfBikes) {
@@ -182,4 +183,12 @@ public class Station {
         return "BikdeId: "+ id;
 
     };
+
+    public int getNumberOfClusters() {
+        return numberOfClusters;
+    }
+
+    public void setNumberOfClusters(int numberOfClusters) {
+        this.numberOfClusters = numberOfClusters;
+    }
 }

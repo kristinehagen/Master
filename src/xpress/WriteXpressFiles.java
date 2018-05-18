@@ -755,8 +755,8 @@ public class WriteXpressFiles {
         PrintWriter writer = new PrintWriter(filename, "UTF-8");
 
         writer.println("weightDrivingTime: " + input.getWeightClusterDrivingTime());
-        writer.println("weightNetDemand: " + input.getWeightClusterNetDemand()*6);
-        writer.println("weightEqualSize: " + input.getWeightClusterEqualSize()*18);
+        writer.println("weightNetDemand: " + input.getWeightClusterNetDemand()*4);
+        writer.println("weightEqualSize: " + input.getWeightClusterEqualSize()*6);
         writer.println("instance: " + input.getTestInstance());
         writer.println("vehicleNr: " + input.getVehicles().size());
 
@@ -832,9 +832,9 @@ public class WriteXpressFiles {
             double netDemand = station.getNetDemand(time);
 
             if (netDemand >= demandLimitHigh || netDemand <= -demandLimitHigh) {
-                writer.println(2);
+                station.setNumberOfClusters(2);
             } else if (netDemand >= demandLimitMedium || netDemand <= -demandLimitMedium) {
-                writer.println(1);
+                station.setNumberOfClusters(1);
             } else {
 
                 //Check if initial station
@@ -847,12 +847,15 @@ public class WriteXpressFiles {
                 }
 
                 if (initialStation) {
-                    writer.println(1);
+                    station.setNumberOfClusters(1);
                 } else {
-                    writer.println(0);
+                    station.setNumberOfClusters(0);
                 }
 
             }
+        }
+        for (Station station : input.getStations().values()) {
+            writer.println(station.getNumberOfClusters());
         }
         writer.println("]");
 
