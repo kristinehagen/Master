@@ -3,6 +3,7 @@ weightNetDemand: 0.4
 weightEqualSize: 2.4000000000000004
 instance: 4
 vehicleNr: 2
+Time: 17
 
 Stations : [
 26

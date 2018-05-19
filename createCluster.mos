@@ -49,6 +49,7 @@ declarations
 	drivingTime:								array(Stations, Stations)	of real;
 	instance:																integer;
 	vehicleNr:																integer;
+	Time:																	integer;
 	initialStation:								array(Vehicles)				of integer;
 	weightNetDemand:														real;
 	weightDrivingTime:														real;
@@ -61,6 +62,7 @@ initializations from DataFile
 	drivingTime;
 	instance;
 	vehicleNr;
+	Time;
 	initialStation;
 	weightNetDemand;
 	weightDrivingTime;

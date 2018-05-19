@@ -19,12 +19,27 @@ public class GenerateCluster {
 
 
     public static void main(String[] args) throws IOException, XPRMCompileException {
-        Input input = new Input();
+        int testInstace;
+        int time;
 
-        WriteXpressFiles.writeClusterInformation(input);
-        RunXpress.runXpress("createCluster");
+        for (int instance = 2; instance <= 4; instance ++) {
+            testInstace = instance;
+            for (int t = 7; t <= 17; t += 10) {
+                time = t;
+
+                Input input = new Input(testInstace, time);
+
+                WriteXpressFiles.writeClusterInformation(input);
+                RunXpress.runXpress("createCluster");
 
 
+
+            }
+        }
+
+
+
+/*
         readCluster(input);
         GraphViewer graph = new GraphViewer();
         graph.drawClusters(input);
@@ -32,7 +47,7 @@ public class GenerateCluster {
         for (Vehicle vehicle : input.getVehicles().values()) {
             System.out.println("Antall stasjoner i cluster: " + vehicle.getClusterStationList().size());
         }
-
+*/
     }
 
     private static void readCluster(Input input) throws IOException {

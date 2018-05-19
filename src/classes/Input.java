@@ -42,7 +42,7 @@ public class Input {
     private boolean runPricingProblem = true;
     private int nrOfRunsPricingProblem = 1;         //OBS! Have to be 1 or larger
     private int nrOfBranchingPricingProblem = 3;
-    private int probabilityOfChoosingUnvisitedStation = 50;     //40%
+    private int probabilityOfChoosingUnvisitedStation = 40;     //40%
 
 
 

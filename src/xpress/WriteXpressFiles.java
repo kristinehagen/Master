@@ -759,6 +759,7 @@ public class WriteXpressFiles {
         writer.println("weightEqualSize: " + input.getWeightClusterEqualSize()*6);
         writer.println("instance: " + input.getTestInstance());
         writer.println("vehicleNr: " + input.getVehicles().size());
+        writer.println("Time: " + (int)(input.getCurrentMinute()/60));
 
         //Station IDs
         writer.println();
