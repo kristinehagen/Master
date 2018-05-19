@@ -21,7 +21,7 @@ public class Input {
     private double simulationStopTime = 11*60;
     private int testInstance = 3;
     private int nrOfVehicles = 2;
-    private int nrStationBranching = 7;                 //Create n new routes in each branching
+    private int nrStationBranching = 5;                 //Create n new routes in each branching
     private int loadInterval = 12;                      //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                      //Vanlig med 15
     private boolean simulation = false;
