@@ -39,10 +39,10 @@ public class Input {
 
     //--------PRICING PROBLEM---------------
 
-    private boolean runPricingProblem = false;
-    private int nrOfRunsPricingProblem = 0;         //OBS! Have to be 1 or larger
-    private int nrOfBranchingPricingProblem = 0;
-    private int probabilityOfChoosingUnvisitedStation = 60;     //40%
+    private boolean runPricingProblem = true;
+    private int nrOfRunsPricingProblem = 1;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 3;
+    private int probabilityOfChoosingUnvisitedStation = 50;     //40%
 
 
 
@@ -701,5 +701,9 @@ public class Input {
 
     public int setNrOfVehclesBasedOnInstance(int instance) {
         return instance+1;
+    }
+
+    public void setWeightPricingProblemScore(double weightPricingProblemScore) {
+        this.weightPricingProblemScore = weightPricingProblemScore;
     }
 }
