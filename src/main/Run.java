@@ -151,8 +151,8 @@ public class Run {
 
                 Input input = new Input(testInstance, time);
 
-                for (int critScore = 3; critScore <= 7; critScore++) {
-                    input.setWeightPricingProblemScore(critScore);
+                for (int probability = 20; probability <= 100; probability+=20) {
+                    input.setProbabilityOfChoosingUnvisitedStation(probability);
 
                     for (int rep = 1; rep <= 5; rep++) {
 

@@ -55,7 +55,7 @@ public class Input {
     private double weightCritScViolationRate = 0.7;
     private double weightCritScDrivingTime = 0.0;
     private double weightCritScOptimalState = 0.2;
-    private double weightPricingProblemScore = 5;
+    private double weightPricingProblemScore = 4;
 
     //Criticality score Current solution in Oslo
     private double weightCritScTimeToViolationCurrent = 0.7;
