@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -21,7 +21,7 @@ public class Input {
     private double simulationStopTime = 11*60;
     private int testInstance = 3;
     private int nrOfVehicles = 2;
-    private int nrStationBranching = 7;                 //Create n new routes in each branching
+    private int nrStationBranching = 30;                 //Create n new routes in each branching
     private int loadInterval = 12;                      //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                      //Vanlig med 15
     private boolean simulation = false;
@@ -52,9 +52,9 @@ public class Input {
     //----------WEIGHTS-----------
     //Criticality score
     private double weightCritScTimeToViolation = 0.1;
-    private double weightCritScViolationRate = 0.7;
+    private double weightCritScViolationRate = 0.5;
     private double weightCritScDrivingTime = 0.0;
-    private double weightCritScOptimalState = 0.2;
+    private double weightCritScOptimalState = 0.4;
     private double weightPricingProblemScore = 5;
 
     //Criticality score Current solution in Oslo
