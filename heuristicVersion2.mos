@@ -67,7 +67,7 @@ declarations
 	vehicleCapacity: 			array(Vehicles) 			of integer;	
 	drivingTime:  				array(Stations, Stations) 	of real;
 	visitInterval: 											integer;
-	loadInterval:											integer;
+	flexibilityParameter:											integer;
 	simulation: 											integer;
 end-declarations
 
@@ -78,7 +78,7 @@ initializations from DataFileFixedInput
 	vehicleCapacity;	
 	drivingTime;
 	visitInterval;
-	loadInterval;
+	flexibilityParameter;
 	simulation;
 end-initializations
 
@@ -330,7 +330,7 @@ forall (ii in Stations, jj in Stations, vv in Vehicles) do
 		sum(mm in Visits, nn in Visits) flow(ii,mm,jj,nn,vv) = sum(rr in Routes) intRep(ii,jj,vv,rr)* intRepLambda(vv,rr);
 end-do	
 
-! Hver bil kan bare kjøre én rute
+! Hver bil kan bare kjï¿½re ï¿½n rute
 forall (vv in Vehicles) do
 	maxRoutes(vv) := 
 		sum(rr in Routes) intRepLambda(vv,rr) <= 1;
@@ -338,7 +338,7 @@ end-do
 
 
 
-! Besøk til en node = besøk ut av en node (for å ha kontroll på visitnummer) 
+! Besï¿½k til en node = besï¿½k ut av en node (for ï¿½ ha kontroll pï¿½ visitnummer) 
 forall (vv in Vehicles, jj in Stations, nn in Visits | jj <> artificialStation) do
 	if(jj=vehicleInitialStation(vv) and nn<>1) then
 		!(5.3)
@@ -350,7 +350,7 @@ forall (vv in Vehicles, jj in Stations, nn in Visits | jj <> artificialStation) 
 	end-if
 end-do
 
-!Hvert visitnummer kan bare brukes én gang
+!Hvert visitnummer kan bare brukes ï¿½n gang
 forall (ii in Stations, mm in Visits) do
 	onevisit(ii,mm) := 
 		sum(jj in Stations, nn in Visits, vv in Vehicles) flow(ii,mm,jj,nn,vv) <= 1;
@@ -366,34 +366,34 @@ end-do
 
 forall (ii in Stations, vv in Vehicles) do
 	totalUnloadingMax(ii,vv) :=
-		sum(mm in Visits)unloadingQuantity(ii,mm,vv) <= sum(rr in Routes) (intRepUnloadingQuantity(ii,vv,rr)+ loadInterval)*intRepLambda(vv,rr);
+		sum(mm in Visits)unloadingQuantity(ii,mm,vv) <= sum(rr in Routes) (intRepUnloadingQuantity(ii,vv,rr)+ flexibilityParameter)*intRepLambda(vv,rr);
 end-do
 
 forall (ii in Stations, vv in Vehicles) do
 	totalUnloadingMin(ii,vv) :=
-		sum(mm in Visits)unloadingQuantity(ii,mm,vv) >= sum(rr in Routes) (intRepUnloadingQuantity(ii,vv,rr)- loadInterval)*intRepLambda(vv,rr);
+		sum(mm in Visits)unloadingQuantity(ii,mm,vv) >= sum(rr in Routes) (intRepUnloadingQuantity(ii,vv,rr)- flexibilityParameter)*intRepLambda(vv,rr);
 end-do
 
 
 
 forall (ii in Stations, vv in Vehicles) do
 	totalLoadingMax(ii,vv) :=
-		sum(mm in Visits)loadingQuantity(ii,mm,vv) <= sum(rr in Routes) (intRepLoadingQuantity(ii,vv,rr)+ loadInterval)*intRepLambda(vv,rr);
+		sum(mm in Visits)loadingQuantity(ii,mm,vv) <= sum(rr in Routes) (intRepLoadingQuantity(ii,vv,rr)+ flexibilityParameter)*intRepLambda(vv,rr);
 end-do
 
 forall (ii in Stations, vv in Vehicles) do
 	totalLoadingMin(ii,vv) :=
-		sum(mm in Visits)loadingQuantity(ii,mm,vv) >= sum(rr in Routes) (intRepLoadingQuantity(ii,vv,rr)- loadInterval)*intRepLambda(vv,rr);
+		sum(mm in Visits)loadingQuantity(ii,mm,vv) >= sum(rr in Routes) (intRepLoadingQuantity(ii,vv,rr)- flexibilityParameter)*intRepLambda(vv,rr);
 end-do
 
 forall (ii in Stations) do
 	totalArrivalTimeMin(ii) :=
-		sum(mm in Visits)visitTime(ii,mm) >= sum(rr in Routes, vv in Vehicles) (intRepArrivalTime(ii,vv,rr)- loadInterval*0.25)*intRepLambda(vv,rr);
+		sum(mm in Visits)visitTime(ii,mm) >= sum(rr in Routes, vv in Vehicles) (intRepArrivalTime(ii,vv,rr)- flexibilityParameter*0.25)*intRepLambda(vv,rr);
 end-do
 
 forall (ii in Stations) do
 	totalArrivalTimeMax(ii) :=
-		sum(mm in Visits) visitTime(ii,mm) <= sum(rr in Routes, vv in Vehicles) (intRepArrivalTime(ii,vv,rr)+ loadInterval*0.25)*intRepLambda(vv,rr);
+		sum(mm in Visits) visitTime(ii,mm) <= sum(rr in Routes, vv in Vehicles) (intRepArrivalTime(ii,vv,rr)+ flexibilityParameter*0.25)*intRepLambda(vv,rr);
 end-do
 
 

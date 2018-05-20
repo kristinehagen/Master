@@ -144,9 +144,9 @@ public class Run {
         int testInstance;
         int time;
 
-        for (int instance = 2; instance <= 4; instance += 1) {
+        for (int instance = 2; instance <= 2; instance += 1) {
             testInstance = instance;
-            for (int t = 7; t <= 17; t += 10) {
+            for (int t = 7; t <= 7; t += 10) {
                 time = t;
 
                 Input input = new Input(testInstance, time);

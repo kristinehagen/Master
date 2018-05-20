@@ -114,7 +114,7 @@ public class PrintResults {
             rowOutput.createCell(31).setCellValue(input.getTresholdLengthRoute());
         }
         if (heuristic2) {
-            rowOutput.createCell(29).setCellValue(input.getLoadInterval());
+            rowOutput.createCell(29).setCellValue(input.getFlexibilityParameter());
         }
         rowOutput.createCell(30).setCellValue(input.getNumberOfRuns());
 
@@ -252,7 +252,7 @@ public class PrintResults {
             rowOutput.createCell(25).setCellValue(input.getTresholdLengthRoute());
         }
         if (heuristic2) {
-            rowOutput.createCell(24).setCellValue(input.getLoadInterval());
+            rowOutput.createCell(24).setCellValue(input.getFlexibilityParameter());
         }
 
 

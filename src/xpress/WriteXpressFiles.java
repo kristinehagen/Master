@@ -7,7 +7,6 @@ import functions.TimeConverter;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.sql.Time;
 import java.util.*;
 
 
@@ -680,7 +679,7 @@ public class WriteXpressFiles {
 
         writer.println("artificialStation: 0");
         writer.println("visitInterval: " + input.getVisitInterval());
-        writer.println("loadInterval: " + input.getLoadInterval());
+        writer.println("flexibilityParameter: " + input.getFlexibilityParameter());
         if (input.isSimulation()) {
             writer.println("simulation: 1");
         } else {

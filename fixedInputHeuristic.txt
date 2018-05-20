@@ -1,6 +1,6 @@
 artificialStation: 0
 visitInterval: 8
-loadInterval: 0
+flexibilityParameter: 0
 
 Stations : [
 26
