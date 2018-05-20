@@ -1,6 +1,6 @@
 artificialStation: 0
 visitInterval: 0
-loadInterval: 12
+loadInterval: 23
 simulation: 0
 pricingProblem: 0
 
