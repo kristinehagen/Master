@@ -13,7 +13,7 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
@@ -31,7 +31,7 @@ public class Input {
     //--------CLUSTER-----------
 
 
-    private  boolean clustering = true;
+    private  boolean clustering = false;
     private boolean dynamicClustering = false;
     private double highDemand = 70;     // 10%
     private double mediumDemand = 30;  // 25%
@@ -39,7 +39,7 @@ public class Input {
 
     //--------PRICING PROBLEM---------------
 
-    private boolean runPricingProblem = true;
+    private boolean runPricingProblem = false;
     private int nrOfRunsPricingProblem = 1;         //OBS! Have to be 1 or larger
     private int nrOfBranchingPricingProblem = 3;
     private int probabilityOfChoosingUnvisitedStation = 40;     //40%
@@ -52,9 +52,9 @@ public class Input {
     //----------WEIGHTS-----------
     //Criticality score
     private double weightCritScTimeToViolation = 0.1;
-    private double weightCritScViolationRate = 0.7;
+    private double weightCritScViolationRate = 0.5;
     private double weightCritScDrivingTime = 0.0;
-    private double weightCritScOptimalState = 0.2;
+    private double weightCritScOptimalState = 0.4;
     private double weightPricingProblemScore = 4;
 
     //Criticality score Current solution in Oslo
@@ -144,10 +144,11 @@ public class Input {
 
 
     //Run loop
-    public Input(int testInstance, int time) throws IOException {
+    public Input(int testInstance, int time, int nrOfVehicles) throws IOException {
 
         this.testInstance = testInstance;
         this.currentMinute = time*60;
+        this.nrOfVehicles = nrOfVehicles;
 
         //Station file
         String initialStationFile = getStationFile(this.testInstance, this.currentMinute);

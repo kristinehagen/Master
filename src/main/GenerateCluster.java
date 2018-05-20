@@ -1,4 +1,4 @@
-package main;
+/*package main;
 
 
 import classes.GraphViewer;
@@ -38,8 +38,6 @@ public class GenerateCluster {
         }
 
 
-
-/*
         readCluster(input);
         GraphViewer graph = new GraphViewer();
         graph.drawClusters(input);
@@ -47,7 +45,7 @@ public class GenerateCluster {
         for (Vehicle vehicle : input.getVehicles().values()) {
             System.out.println("Antall stasjoner i cluster: " + vehicle.getClusterStationList().size());
         }
-*/
+
     }
 
     private static void readCluster(Input input) throws IOException {
@@ -65,3 +63,4 @@ public class GenerateCluster {
     }
 
 }
+*/

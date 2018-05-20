@@ -2,7 +2,7 @@ artificialStation: 0
 visitInterval: 0
 loadInterval: 12
 simulation: 0
-pricingProblem: 1
+pricingProblem: 0
 
 Stations : [
 26
@@ -333,9 +333,15 @@ unitHandlingTime: 0.25
 Vehicles : [
 0
 1
+2
+3
+4
 ]
 
 vehicleCapacity : [
+23
+23
+23
 23
 23
 ]
