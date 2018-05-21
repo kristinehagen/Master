@@ -13,15 +13,15 @@ public class Input {
 
 
     //Input
-    private SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+    private SolutionMethod solutionMethod;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime = 7*60;              //Minutes
     private double simulationStopTime = 11*60;
-    private int testInstance = 3;
-    private int nrOfVehicles = 2;
-    private int nrStationBranching = 5;                 //Create n new routes in each branching
+    private int testInstance;
+    private int nrOfVehicles;
+    private int nrStationBranching;                 //Create n new routes in each branching
     private int loadInterval = 18;                      //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                      //Vanlig med 15
     private boolean simulation = false;
@@ -31,7 +31,7 @@ public class Input {
     //--------CLUSTER-----------
 
 
-    private  boolean clustering = true;
+    private  boolean clustering = false;
     private boolean dynamicClustering = false;
     private double highDemand = 70;     // 10%
     private double mediumDemand = 30;  // 25%
@@ -51,10 +51,10 @@ public class Input {
 
     //----------WEIGHTS-----------
     //Criticality score
-    private double weightCritScTimeToViolation = 0.1;
-    private double weightCritScViolationRate = 0.8;
-    private double weightCritScDrivingTime = 0.0;
-    private double weightCritScOptimalState = 0.1;
+    private double weightCritScTimeToViolation;
+    private double weightCritScViolationRate;
+    private double weightCritScDrivingTime;
+    private double weightCritScOptimalState;
     private double weightPricingProblemScore = 4;
 
     //Criticality score Current solution in Oslo
@@ -116,43 +116,66 @@ public class Input {
     //Constructor
     public Input() throws IOException {
 
-        currentMinute = simulationStartTime;
-
-        //Station file
-        String initialStationFile = getStationFile(this.testInstance, this.currentMinute);
-        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles, this.currentMinute);
-        this.xpressFile = determineXpressFile(this.solutionMethod);
-
-        this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
-        this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
-        ReadCoordinates.lookUpCoordinates(stations, stationIdList);
-        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
-        ReadDistanceMatrix.lookUpDrivingTimes(stations, stationIdList);
-
-        if (solutionMethod.equals(SolutionMethod.HEURISTIC_VERSION_3)) {
-            this.maxVisit = 1;}
-
-        //Update to initial values
-        updateVehiclesAndStationsToInitialState();
-
-        //No cluster if only one vehicle
-        if (nrOfVehicles == 1) {
-            clustering = false;
-        }
-
     }
 
 
     //Run loop
-    public Input(int testInstance, int time, int nrOfVehicles) throws IOException {
+    public Input(int testInstance, int time, int nrOfVehicles, SolutionMethod solutionMethod) throws IOException {
+
+        switch(solutionMethod) {
+            case HEURISTIC_VERSION_1:
+                this.weightCritScTimeToViolation = 0.1;
+                this.weightCritScViolationRate = 0.7;
+                this.weightCritScDrivingTime = 0.0;
+                this.weightCritScOptimalState = 0.2;
+                this.clustering = true;
+                if (nrOfVehicles == 2) {
+                    this.nrStationBranching = 7;
+                } else if (nrOfVehicles == 3) {
+                    this.nrStationBranching = 4;
+                } else if (nrOfVehicles == 4) {
+                    this.nrStationBranching = 3;
+                } else if (nrOfVehicles == 5){
+                    this.nrStationBranching = 2;
+                }
+                break;
+
+            case HEURISTIC_VERSION_2:
+                this.weightCritScTimeToViolation = 0.1;
+                this.weightCritScViolationRate = 0.8;
+                this.weightCritScDrivingTime = 0.0;
+                this.weightCritScOptimalState = 0.1;
+                this.clustering = true;
+                if (nrOfVehicles == 2) {
+                    this.nrStationBranching = 7;
+                } else if (nrOfVehicles == 3) {
+                    this.nrStationBranching = 5;
+                } else if (nrOfVehicles == 4) {
+                    this.nrStationBranching = 3;
+                } else if (nrOfVehicles == 5){
+                    this.nrStationBranching = 2;
+                }
+                break;
+
+            case HEURISTIC_VERSION_3:
+                this.weightCritScTimeToViolation = 0.1;
+                this.weightCritScViolationRate = 0.5;
+                this.weightCritScDrivingTime = 0.0;
+                this.weightCritScOptimalState = 0.4;
+                this.clustering = false;
+                this.nrStationBranching = 40;
+                break;
+        }
+
 
         this.testInstance = testInstance;
         this.currentMinute = time*60;
         this.nrOfVehicles = nrOfVehicles;
+        this.solutionMethod = solutionMethod;
 
         //Station file
         String initialStationFile = getStationFile(this.testInstance, this.currentMinute);
-        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles, this.currentMinute);
+        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles, this.currentMinute, testInstance);
         this.xpressFile = determineXpressFile(this.solutionMethod);
 
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
@@ -171,6 +194,7 @@ public class Input {
         if (nrOfVehicles == 1) {
             clustering = false;
         }
+
 
     }
 
@@ -188,7 +212,7 @@ public class Input {
     }
 */
 
-    private String getVehicleFile(int nrOfVehicles, double time) throws IllegalArgumentException {
+    private String getVehicleFile(int nrOfVehicles, double time, int testInstance) throws IllegalArgumentException {
         switch (nrOfVehicles) {
             case 1:
                 if (time == 17*60) {
@@ -218,7 +242,11 @@ public class Input {
                 if (time == 17*60) {
                     return "vehicleInitial5-17.txt";
                 } else {
-                    return "vehicleInitial5.txt";
+                    if (testInstance == 1) {
+                        return "vehicleInitial5Special.txt";
+                    } else {
+                        return "vehicleInitial5.txt";
+                    }
                 }
             default:
                 throw new IllegalArgumentException("Ugyldig antall vehicles");

@@ -21,10 +21,8 @@ public class Run {
 
 
     public static void main(String[] args) throws IOException, XPRMCompileException, InterruptedException {
-
-        Input input = new Input();
         //generateCluster(input);
-
+        Input input = new Input();
         //WriteXpressFiles.printFixedInput(input);
 
         //Simulate
@@ -135,15 +133,29 @@ public class Run {
 
     private static void runOneVehicleRouteGeneration() throws IOException, XPRMCompileException, IllegalArgumentException {
 
+        /*for (int nrOfVehicles = 3; nrOfVehicles <= 5; nrOfVehicles ++) {
+            for (int sol = 3; sol <= 3; sol++) {
+                SolutionMethod solutionMethod;
+                if (sol == 1) {
+                    solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+                } else if (sol == 2) {
+                    solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
+                } else {
+                    solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+                }
 
-        for (int instance = 1; instance <= 1; instance += 1) {
-            for (int time = 7; time <= 17; time += 10) {
-                for (int nrOfVehicles = 5; nrOfVehicles <= 5; nrOfVehicles ++) {
+                for (int instance = 1; instance <= 4; instance ++) {
+                    for (int time = 7; time <= 17; time +=10) {
 
-                    Input input = new Input(instance, time, nrOfVehicles);
+                        //System.out.println("Solution method: " + sol);
+                        System.out.println("Instance: " + instance);
+                        System.out.println("Time: " + time);
+                        //System.out.println("Nr of vehicles: " + nrOfVehicles);*/
 
-                    for (int branch = 7; branch <= 7; branch ++) {
-                        input.setNrStationBranching(branch);
+
+                        Input input = new Input(2, 17, 5, SolutionMethod.EXACT_METHOD);
+
+
                         generateCluster(input);
 
                         WriteXpressFiles.printFixedInput(input);
@@ -193,12 +205,16 @@ public class Run {
 
 
                         }
-                    }
-
+                  /*  }
                 }
-
             }
-        }
+        }*/
+
+
+
+
+
+
     }
 
     private static void calculateObjectiveFunction(Input input) throws IOException {
