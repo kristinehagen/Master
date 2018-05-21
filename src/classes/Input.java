@@ -190,10 +190,6 @@ public class Input {
         //Update to initial values
         updateVehiclesAndStationsToInitialState();
 
-        //No cluster if only one vehicle
-        if (nrOfVehicles == 1) {
-            clustering = false;
-        }
 
 
     }

@@ -133,7 +133,7 @@ public class Run {
 
     private static void runOneVehicleRouteGeneration() throws IOException, XPRMCompileException, IllegalArgumentException {
 
-        /*for (int nrOfVehicles = 3; nrOfVehicles <= 5; nrOfVehicles ++) {
+        /*for (int nrOfVehicles = 2; nrOfVehicles <= 3; nrOfVehicles ++) {
             for (int sol = 3; sol <= 3; sol++) {
                 SolutionMethod solutionMethod;
                 if (sol == 1) {
@@ -142,19 +142,19 @@ public class Run {
                     solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
                 } else {
                     solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
-                }
+                }*/
 
-                for (int instance = 1; instance <= 4; instance ++) {
+                //for (int instance = 1; instance <= 4; instance ++) {
                     for (int time = 7; time <= 17; time +=10) {
 
                         //System.out.println("Solution method: " + sol);
-                        System.out.println("Instance: " + instance);
+                        System.out.println("Instance: " + 1);
                         System.out.println("Time: " + time);
-                        //System.out.println("Nr of vehicles: " + nrOfVehicles);*/
+                        System.out.println("Nr of vehicles: " + 5);
 
 
-                        Input input = new Input(2, 17, 5, SolutionMethod.EXACT_METHOD);
-
+                        Input input = new Input(1, time, 5, SolutionMethod.HEURISTIC_VERSION_1);
+                        
 
                         generateCluster(input);
 
@@ -205,14 +205,10 @@ public class Run {
 
 
                         }
-                  /*  }
-                }
-            }
+                   // }
+             }
+            /*   }
         }*/
-
-
-
-
 
 
     }
