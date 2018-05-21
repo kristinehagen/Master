@@ -135,18 +135,14 @@ public class Run {
 
     private static void runOneVehicleRouteGeneration() throws IOException, XPRMCompileException, IllegalArgumentException {
 
-        int testInstance;
-        int time;
 
-        for (int instance = 4; instance <= 4; instance += 1) {
-            testInstance = instance;
-            for (int t = 7; t <= 17; t += 10) {
-                time = t;
+        for (int instance = 1; instance <= 1; instance += 1) {
+            for (int time = 7; time <= 17; time += 10) {
+                for (int nrOfVehicles = 5; nrOfVehicles <= 5; nrOfVehicles ++) {
 
-                for (int nrOfVehicles = 2; nrOfVehicles <= 5; nrOfVehicles ++) {
-                    Input input = new Input(testInstance, time, nrOfVehicles);
+                    Input input = new Input(instance, time, nrOfVehicles);
 
-                    for (int branch = 40; branch <= 40; branch += 5) {
+                    for (int branch = 7; branch <= 7; branch ++) {
                         input.setNrStationBranching(branch);
                         generateCluster(input);
 

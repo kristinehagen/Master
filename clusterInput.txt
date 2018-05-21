@@ -2,7 +2,7 @@ weightDrivingTime: 0.5
 weightNetDemand: 0.4
 weightEqualSize: 2.4000000000000004
 instance: 4
-vehicleNr: 2
+vehicleNr: 5
 Time: 17
 
 Stations : [
@@ -169,11 +169,17 @@ Stations : [
 initialStation : [
 54
 117
+70
+83
+104
 ]
 
 Vehicles : [
 0
 1
+2
+3
+4
 ]
 
 demand : [
@@ -410,7 +416,7 @@ clusterNr : [
 0
 0
 2
-0
+1
 1
 2
 1
