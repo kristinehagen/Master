@@ -98,7 +98,7 @@ public class Run {
             }
 
             //Hvilke test instanse skal brukes? Kan foreløpig bare bruke 1 og 4
-            for (int testInstance = 1; testInstance <= 1; testInstance += 3) {
+            for (int testInstance = 1; testInstance <= 4; testInstance += 3) {
                 checkIfValidInstance(testInstance);
                 //Hvilke tid skal brukes?
                 for (int time = 7; time <= 17; time += 10) {
@@ -182,27 +182,15 @@ public class Run {
 
         if (testInstance == 1) {
             if (time == 7) {
-                return 0;
+                return 2022.5;
             } else if (time == 17) {
-                return 0;
+                return 802.3;
             }
-        } else if (testInstance == 2) {
+        } else if (testInstance == 4){
             if (time == 7) {
-                return 0;
+                return 18552.5;
             } else if (time == 17) {
-                return 0;
-            }
-        } else if (testInstance == 3) {
-            if (time == 7) {
-                return 0;
-            } else if (time == 17) {
-                return 0;
-            }
-        } else {
-            if (time == 7) {
-                return 0;
-            } else if (time == 17) {
-                return 0;
+                return 14230.2;
             }
         }
         return 0;

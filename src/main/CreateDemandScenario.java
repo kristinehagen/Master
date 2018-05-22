@@ -20,9 +20,9 @@ public class CreateDemandScenario {
     private HashMap<Integer, Station> stations;
     private ArrayList<ArrayList<Double>> arrivalTimes;
     private String outPutFileName;
-    private int testInstance = 4;
+    private int testInstance = 1;
     private double startTime = 17;
-    private double stopTime = 18;
+    private double stopTime = 21;
 
 
     public static void main(String[] args) throws IOException, JSONException {
@@ -41,9 +41,9 @@ public class CreateDemandScenario {
 
     private void CreateScenarios(CreateDemandScenario simulation) throws FileNotFoundException, UnsupportedEncodingException {
 
-        for (int i = 1; i <= 5; i ++) {
+        for (int i = 1; i <= 10; i ++) {
             arrivalTimes.clear();
-            outPutFileName = "simulation_Instance"+ testInstance + "test_T" + (int)(startTime) + "_Nr" + i + ".txt";
+            outPutFileName = "simulation_Instance"+ testInstance + "_T" + (int)(startTime) + "_Nr" + i + ".txt";
             simulation.run(this.startTime, this.stopTime);
             simulation.printArrivalTimes();
 
