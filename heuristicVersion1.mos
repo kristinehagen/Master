@@ -850,6 +850,8 @@ fopen("outputObjectiveXpress.txt",F_OUTPUT);
 
 fclose(F_OUTPUT);
 
+end-model
+
 
 !PRINT TO FILE IKKE ENDRE!!!!!!
 
@@ -861,7 +863,7 @@ forall (ii in Stations, jj in Stations, mm in Visits, nn in Visits, vv in Vehicl
 	writeln('x(' + ii + ',' + mm + ',' + jj + ',' + nn + ',' + vv + ') = ' + getsol(flow(ii,mm,jj,nn,vv)));
 end-do
 
-end-model
+
 
 
 !PRINT

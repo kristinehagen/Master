@@ -80,7 +80,7 @@ public class Run {
     private static void runSimulation() throws IOException, XPRMCompileException, InterruptedException {
 
         //Hvilke solution methods skal bruker?
-        for (int solution = 6; solution <= 6; solution ++) {
+        for (int solution = 4; solution <= 4; solution += 2) {
             SolutionMethod solutionMethod;
 
             if (solution == 1) {
@@ -98,12 +98,12 @@ public class Run {
             }
 
             //Hvilke test instanse skal brukes? Kan foreløpig bare bruke 1 og 4
-            for (int testInstance = 1; testInstance <= 4; testInstance += 3) {
+            for (int testInstance = 4; testInstance <= 4; testInstance += 3) {
                 checkIfValidInstance(testInstance);
                 //Hvilke tid skal brukes?
-                for (int time = 7; time <= 17; time += 10) {
+                for (int time = 7; time <= 7; time += 10) {
                     //Hvor mange biler skal brukes?
-                    for (int numberOfVehicles = 2; numberOfVehicles <= 2; numberOfVehicles++) {
+                    for (int numberOfVehicles = 2; numberOfVehicles <= 5; numberOfVehicles += 3) {
 
                         Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
                         generateCluster(input);
