@@ -114,8 +114,12 @@ public class Input {
 
 
     //Constructor
-    public Input() throws IOException {
 
+    //Kun stasjons-info til test
+    public Input() throws IOException {
+        String initialStationFile = getStationFile(4, 7);
+        this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
+        this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
 
 
@@ -165,6 +169,8 @@ public class Input {
                 this.clustering = false;
                 this.nrStationBranching = 40;
                 break;
+
+            case CURRENT_SOLUTION_IN_OSLO:
         }
 
 

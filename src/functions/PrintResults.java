@@ -14,7 +14,7 @@ public class PrintResults {
     public static void printSimulationResultsToExcelFile(double averageViolation, double averagePercentageViolation, ArrayList<Double> percentageViolationsList, double sdViolations, double sdPercentageViolation,
                                                          double averageNumberOfTimesVehicleRouteGenerated, double avergageTimeToVehicleRouteGenerated,
                                                          double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input,
-                                                         double averageTimePPImprovement) throws IOException {
+                                                         double averageTimePPImprovement, double happyCustomers, double happyCusNoVehicle) throws IOException {
 
         System.out.println("averageComputationalTimeXpress: " + averageComputationalTimeXpress);
         System.out.println("averageComputationalTimeXpressPlusInitialization" + averageComputationalTimeXpressPlusInitialization);
@@ -52,12 +52,13 @@ public class PrintResults {
 
         //Results
         if (exact || allHeuristics) {
-            rowOutput.createCell(0).setCellValue(averageComputationalTimeXpress);
-            rowOutput.createCell(1).setCellValue(averageComputationalTimeXpressPlusInitialization);
-            rowOutput.createCell(3).setCellValue(averageNumberOfTimesVehicleRouteGenerated);
+            rowOutput.createCell(0).setCellValue(averageComputationalTimeXpressPlusInitialization);
             rowOutput.createCell(4).setCellValue(avergageTimeToVehicleRouteGenerated);
         }
-        rowOutput.createCell(2).setCellValue(averagePercentageViolation);
+        rowOutput.createCell(1).setCellValue(averagePercentageViolation);
+        rowOutput.createCell(2).setCellValue(happyCusNoVehicle);
+        rowOutput.createCell(3).setCellValue(happyCustomers-happyCusNoVehicle);
+
 
         if (allHeuristics) {
             //Weights - Criticality score

@@ -17,13 +17,12 @@ import java.util.HashMap;
 
 public class CreateDemandScenario {
 
-    private ArrayList<Integer> stationIdList;
     private HashMap<Integer, Station> stations;
     private ArrayList<ArrayList<Double>> arrivalTimes;
     private String outPutFileName;
     private int testInstance = 4;
     private double startTime = 17;
-    private double stopTime = 21;
+    private double stopTime = 18;
 
 
     public static void main(String[] args) throws IOException, JSONException {
@@ -31,10 +30,20 @@ public class CreateDemandScenario {
         simulation.CreateScenarios(simulation);
     }
 
+
+    //Constructor
+    private CreateDemandScenario() throws IOException, JSONException {
+        Input input = new Input(this.testInstance, this.startTime*60);
+        stations = input.getStations();
+        arrivalTimes = new ArrayList<>();
+    }
+
+
     private void CreateScenarios(CreateDemandScenario simulation) throws FileNotFoundException, UnsupportedEncodingException {
 
-        for (int i = 1; i <= 10; i ++) {
-            outPutFileName = "simulation_Instance"+ testInstance + "_T" + (int)(startTime) + "_Nr" + i + ".txt";
+        for (int i = 1; i <= 5; i ++) {
+            arrivalTimes.clear();
+            outPutFileName = "simulation_Instance"+ testInstance + "test_T" + (int)(startTime) + "_Nr" + i + ".txt";
             simulation.run(this.startTime, this.stopTime);
             simulation.printArrivalTimes();
 
@@ -43,13 +52,6 @@ public class CreateDemandScenario {
     }
 
 
-    //Constructor
-    private CreateDemandScenario() throws IOException, JSONException {
-        Input input = new Input(this.testInstance, this.startTime*60);
-        stationIdList = input.getStationIdList();
-        stations = input.getStations();
-        arrivalTimes = new ArrayList<>();
-    }
 
     private void run(double startTime, double stopTime){
         for (Station station : stations.values()) {

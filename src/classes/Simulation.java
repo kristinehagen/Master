@@ -22,7 +22,7 @@ public class Simulation {
     private double numberOfTimesVehicleRouteGenerated = 0;
     private double congestions = 0;
     private double starvations = 0;
-    private int totalNumberOfCustomers = 0;
+    private double totalNumberOfCustomers = 0;
     private int happyCustomers = 0;
     private ArrayList<Double> timeToNextSimulationList = new ArrayList<>();
     private ArrayList<Double> computationalTimesXpress = new ArrayList<>();
@@ -413,7 +413,7 @@ public class Simulation {
         this.starvations = starvations;
     }
 
-    public int getTotalNumberOfCustomers() {
+    public double getTotalNumberOfCustomers() {
         return totalNumberOfCustomers;
     }
 
@@ -421,7 +421,7 @@ public class Simulation {
         this.totalNumberOfCustomers = totalNumberOfCustomers;
     }
 
-    public int getHappyCustomers() {
+    public double getHappyCustomers() {
         return happyCustomers;
     }
 
