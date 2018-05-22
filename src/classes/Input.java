@@ -17,8 +17,8 @@ public class Input {
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
-    private double simulationStartTime = 7*60;              //Minutes
-    private double simulationStopTime = 11*60;
+    private double simulationStartTime;              //Minutes
+    private double simulationStopTime;
     private int testInstance;
     private int nrOfVehicles;
     private int nrStationBranching;                 //Create n new routes in each branching
@@ -170,6 +170,8 @@ public class Input {
 
         this.testInstance = testInstance;
         this.currentMinute = time*60;
+        this.simulationStartTime = time*60;
+        this.simulationStopTime = (time + 4)*60;
         this.nrOfVehicles = nrOfVehicles;
         this.solutionMethod = solutionMethod;
 

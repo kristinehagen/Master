@@ -69,21 +69,25 @@ public class Run {
 
     private static void runSimulation() throws IOException, XPRMCompileException, InterruptedException {
 
-        for (int solution = 1; solution <=2; solution ++) {
+        //Hvilke solution methods skal bruker?
+        for (int solution = 1; solution <=4; solution ++) {
             SolutionMethod solutionMethod;
 
             if (solution == 1) {
                 solutionMethod = SolutionMethod.EXACT_METHOD;
             } else if (solution == 2) {
-                solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+                solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
             } else if (solution == 3) {
                 solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
             } else {
                 solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
             }
 
-            for (int testInstance = 1; testInstance <= 1; testInstance++) {
+            //Hvilke test instanse skal brukes?
+            for (int testInstance = 1; testInstance <= 4; testInstance += 3) {
+                //Hvilke tid skal bruker?
                 for (int time = 7; time <= 17; time += 10) {
+                    //Hvor mange biler skal brukes?
                     for (int numberOfVehicles = 2; numberOfVehicles <= 2; numberOfVehicles++) {
 
                         Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
@@ -96,14 +100,12 @@ public class Run {
                         ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
                         ArrayList<Double> computationalTimeXpress = new ArrayList<>();
                         ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
-                        double maxComputationalTimeIncludingInitialization = -1;
-                        double minComputationalTimeIncludingInitialization = -1;
                         ArrayList<Double> numberOfTimesPPImprovement = new ArrayList<>();
 
 
                         for (int i = 1; i <= input.getNumberOfRuns(); i++) {
 
-                            String simulationFile = "simulation_Instance" + input.getTestInstance() + "_Nr" + i + ".txt";
+                            String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + input.getSimulationStartTime()/60 + "_Nr" + i + ".txt";
                             System.out.println("Run number: " + i);
 
                             //Run simulation
@@ -113,22 +115,13 @@ public class Run {
 
                             double totalViolations = simulation.getCongestions() + simulation.getStarvations();
                             totalViolationList.add(totalViolations);
-                            percentageViolationsList.add((double) totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
+                            percentageViolationsList.add(totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
                             numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
                             averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
                             computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
                             computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
                             numberOfTimesPPImprovement.add(average(simulation.getNumberOfTimesPPImproved()));
 
-                            double maxTime = simulation.getMaxComputationalTimeIncludingInitialization();
-                            double minTime = simulation.getMinComputationalTimeIncludingInitialization();
-
-                            if (maxComputationalTimeIncludingInitialization == -1 || maxTime > maxComputationalTimeIncludingInitialization) {
-                                maxComputationalTimeIncludingInitialization = maxTime;
-                            }
-                            if (minComputationalTimeIncludingInitialization == -1 || minTime < minComputationalTimeIncludingInitialization) {
-                                minComputationalTimeIncludingInitialization = minTime;
-                            }
                         }
 
                         double averageViolation = average(totalViolationList);
