@@ -24,7 +24,7 @@ public class Input {
     private int nrStationBranching;                 //Create n new routes in each branching
     private int loadInterval = 18;                      //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                      //Vanlig med 15
-    private boolean simulation = false;
+    private boolean simulation = true;
 
 
 
@@ -199,14 +199,14 @@ public class Input {
         this.stationListWithDemand = ReadDemandAndNumberOfBikes.readDemandInformationForGeneratingInstances(demandFile, hour);
     }
 
-   /* //Create demand scenario
+    //Create demand scenario
     public Input(int testInstance, double time) throws FileNotFoundException {
         this.testInstance = testInstance;
         String initialStationFile = getStationFile(this.testInstance, time);
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
     }
-*/
+
 
     private String getVehicleFile(int nrOfVehicles, double time, int testInstance) throws IllegalArgumentException {
         switch (nrOfVehicles) {
@@ -267,8 +267,6 @@ public class Input {
                 return "stationInitialInstance3.txt";
             case 4:
                 return "stationInitialInstance4.txt";
-            case 5:
-                throw new IllegalArgumentException("Ugyldig testinstanse");
             default:
                 throw new IllegalArgumentException("Ugyldig testinstanse");
         }
