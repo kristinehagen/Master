@@ -167,11 +167,11 @@ Stations : [
 ]
 
 initialStation : [
-111
-31
-141
-126
-148
+76
+86
+137
+193
+169
 ]
 
 Vehicles : [
