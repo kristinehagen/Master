@@ -14,7 +14,7 @@ public class Input {
 
     //Input
     private SolutionMethod solutionMethod;
-    private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
+    private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.TEN_MIN;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime;              //Minutes

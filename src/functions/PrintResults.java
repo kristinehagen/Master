@@ -141,13 +141,13 @@ public class PrintResults {
 
 
         //Print results for statistical t-test
-        for (int i = 40; i < input.getNumberOfRuns()+ 40 ; i++) {
+        /*for (int i = 40; i < input.getNumberOfRuns()+ 40 ; i++) {
             rowOutput.createCell(i).setCellValue(percentageViolationsList.get(i-40));
         }
 
         if (heuristic3 && input.isRunPricingProblem()) {
             rowOutput.createCell(50).setCellValue(averageTimePPImprovement);
-        }
+        }*/
 
 
         fileInputStream.close();

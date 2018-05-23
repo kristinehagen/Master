@@ -708,7 +708,6 @@ public class Vehicle {
             }
 
         } else {
-            System.out.println("No feasible stations to visit 2");
             return null;
         }
     }
