@@ -2,7 +2,7 @@ artificialStation: 0
 visitInterval: 0
 loadInterval: 18
 simulation: 1
-pricingProblem: 1
+pricingProblem: 0
 
 Stations : [
 26
