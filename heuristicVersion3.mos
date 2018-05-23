@@ -177,19 +177,15 @@ fclose(F_OUTPUT);
 end-model
 
 
-!PRINT
-
-
-	
-
-
-
-
-
-
 forall (vv in Vehicles, rr in Routes | getsol(intRepLambda(vv,rr)) > 0.1) do
 	writeln("Vehicle " + vv + " drives route: " + rr);
 end-do
+
+!PRINT
+
+
+
+
 
 writeln("Violations: " + (getsol(totalViolationsIfNoVisit) - getsol(violationsPrevented)));
 writeln("Violations if no visit: " + getsol(totalViolationsIfNoVisit));
