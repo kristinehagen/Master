@@ -125,13 +125,12 @@ public class Simulation {
                 case NEW_VEHICLE_ROUTES:
 
                     //Generate new clusters
-                    if (input.isDynamicClustering()) {
+                    if (input.isDynamicClustering() && input.isClustering()) {
 
                         //Clear already created cluster
                         for (Vehicle vehicle : input.getVehicles().values()) {
                             vehicle.getClusterStationList().clear();
                         }
-
                         String xpressOutputFile = "clusterOutput.txt";
                         WriteXpressFiles.writeClusterInformation(input);
                         RunXpress.runXpress("createCluster");
