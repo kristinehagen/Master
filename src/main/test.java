@@ -2,6 +2,7 @@ package main;
 
 import classes.Input;
 import classes.Station;
+import classes.Vehicle;
 import com.dashoptimization.XPRMCompileException;
 
 import java.io.IOException;
@@ -10,18 +11,23 @@ public class test {
 
     public static void main(String[] args) throws IOException {
 
-        double numberOfCusomersDemandingBikesInOneDay = 0;
+        double capacity = 0;
+        double nrOfBikes = 0;
 
         Input input = new Input();
 
         for (Station station : input.getStations().values()) {
-            for (double hour = 17; hour <= 17; hour ++) {
-                numberOfCusomersDemandingBikesInOneDay += (int)(station.getBikeWantedMedian(hour));
-                numberOfCusomersDemandingBikesInOneDay += (int)(station.getBikeReturnedMedian(hour));
-            }
+            capacity += station.getCapacity();
+            nrOfBikes += station.getInitialLoad();
         }
 
-        System.out.println("Total number of customers: " + numberOfCusomersDemandingBikesInOneDay);
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            nrOfBikes += vehicle.getInitialLoad();
+        }
+
+        System.out.println("Total nr of capacities: " + capacity);
+        System.out.println("Total nr of bikes: " + nrOfBikes);
+
 
     }
 

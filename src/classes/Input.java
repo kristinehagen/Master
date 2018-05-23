@@ -20,7 +20,7 @@ public class Input {
     private double simulationStartTime;              //Minutes
     private double simulationStopTime;
     private int testInstance;
-    private int nrOfVehicles;
+    private int nrOfVehicles = 5;
     private int nrStationBranching;                 //Create n new routes in each branching
     private int loadInterval = 18;                      //Load in Xpress can be load from heuristic 2 +- loadInterval
     private int numberOfRuns = 10;                      //Vanlig med 15
@@ -120,6 +120,8 @@ public class Input {
         String initialStationFile = getStationFile(4, 7);
         this.stationIdList = ReadStationInitialState.readStationInitialState(initialStationFile);
         this.stations = ReadDemandAndNumberOfBikes.readStationInformation(stationIdList, demandFile, initialStationFile);
+        String vehicleInitialFile = getVehicleFile(this.nrOfVehicles, this.currentMinute, testInstance);
+        this.vehicles = ReadVehicleInput.readVehicleInput(vehicleInitialFile);
     }
 
 
