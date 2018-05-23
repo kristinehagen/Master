@@ -1,9 +1,14 @@
 package classes;
 
+import com.dashoptimization.XPRMCompileException;
 import enums.RouteLength;
 import enums.SolutionMethod;
+import functions.ReadClusterList;
 import functions.TimeConverter;
+import xpress.RunXpress;
+import xpress.WriteXpressFiles;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.*;
@@ -152,12 +157,13 @@ public class Vehicle {
     }
 
     //Rammeverket for initialisering av ruter
-    public void createRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) {
+    public void createRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) throws IOException, XPRMCompileException {
         this.pricingProblemScores = pricingProblemScores;
 
         if (!input.isNowRunningPricingProblem()) {
             initializedRoutes.clear();
         }
+
 
         //En liste med alle ruter som ikke er ferdig laget enda
         ArrayList<ArrayList<StationVisit>> routesUnderConstruction = new ArrayList<>();

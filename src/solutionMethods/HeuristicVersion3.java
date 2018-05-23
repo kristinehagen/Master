@@ -80,7 +80,7 @@ public class HeuristicVersion3 {
         pricingProblem.setPricingProblemScore(input, pricingProblemScores);
     }
 
-    private static void initiateRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) throws FileNotFoundException, UnsupportedEncodingException {
+    private static void initiateRoutes(Input input, HashMap<Integer, Double> pricingProblemScores) throws IOException, XPRMCompileException {
 
         //Initialize routes for each vehicle
         for (Vehicle vehicle: input.getVehicles().values()) {

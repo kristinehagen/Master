@@ -20,7 +20,7 @@ public class CreateDemandScenario {
     private HashMap<Integer, Station> stations;
     private ArrayList<ArrayList<Double>> arrivalTimes;
     private String outPutFileName;
-    private int testInstance = 1;
+    private int testInstance = 4;
     private double startTime = 17;
     private double stopTime = 21;
 
