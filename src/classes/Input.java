@@ -16,7 +16,7 @@ public class Input {
     private SolutionMethod solutionMethod;
     private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
-    private double timeHorizon = 10;
+    private double timeHorizon = 20;
     private double simulationStartTime;              //Minutes
     private double simulationStopTime;
     private int testInstance;
@@ -66,6 +66,8 @@ public class Input {
 
     //Xpress objective function
     private double weightViolation = 0.6;
+    private double weightCongestion = 0.6;
+    private double weightStarvation = 0.6;
     private double weightDeviation = 0.3;
     private double weightReward = 0.1;
     private double weightDeviationReward  = 0.6;
@@ -169,7 +171,7 @@ public class Input {
                 this.weightCritScDrivingTime = 0.0;
                 this.weightCritScOptimalState = 0.4;
                 this.clustering = false;
-                this.runPricingProblem = true;
+                this.runPricingProblem = false;
                 this.nrStationBranching = 20;
                 break;
 
@@ -739,5 +741,21 @@ public class Input {
 
     public void setWeightPricingProblemScore(double weightPricingProblemScore) {
         this.weightPricingProblemScore = weightPricingProblemScore;
+    }
+
+    public double getWeightCongestion() {
+        return weightCongestion;
+    }
+
+    public void setWeightCongestion(double weightCongestion) {
+        this.weightCongestion = weightCongestion;
+    }
+
+    public double getWeightStarvation() {
+        return weightStarvation;
+    }
+
+    public void setWeightStarvation(double weightStarvation) {
+        this.weightStarvation = weightStarvation;
     }
 }

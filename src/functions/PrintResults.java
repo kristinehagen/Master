@@ -1,6 +1,8 @@
 package functions;
 
 import classes.Input;
+import classes.Station;
+import classes.Vehicle;
 import enums.SolutionMethod;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -14,7 +16,9 @@ public class PrintResults {
     public static void printSimulationResultsToExcelFile(double averageViolation, double averagePercentageViolation, ArrayList<Double> percentageViolationsList, double sdViolations, double sdPercentageViolation,
                                                          double averageNumberOfTimesVehicleRouteGenerated, double avergageTimeToVehicleRouteGenerated,
                                                          double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input,
-                                                         double averageTimePPImprovement, double happyCustomers, double happyCusNoVehicle) throws IOException {
+                                                         double averageTimePPImprovement, double happyCustomers, double happyCusNoVehicle,
+                                                         double averageStarvation, double averageCongestions, double averageTotalCustomers,
+                                                         double geoFenceFactor) throws IOException {
 
         System.out.println("averageComputationalTimeXpress: " + averageComputationalTimeXpress);
         System.out.println("averageComputationalTimeXpressPlusInitialization" + averageComputationalTimeXpressPlusInitialization);
@@ -148,6 +152,25 @@ public class PrintResults {
         if (heuristic3 && input.isRunPricingProblem()) {
             rowOutput.createCell(50).setCellValue(averageTimePPImprovement);
         }
+
+        rowOutput.createCell(51).setCellValue(averageCongestions);
+        rowOutput.createCell(52).setCellValue(averageStarvation);
+        rowOutput.createCell(53).setCellValue(averageViolation);
+        rowOutput.createCell(54).setCellValue(averageTotalCustomers);
+
+        rowOutput.createCell(55).setCellValue(input.getWeightStarvation());
+        rowOutput.createCell(56).setCellValue(input.getWeightCongestion());
+
+        int numberOfBicycles = 0;
+        for (Station station : input.getStations().values()) {
+            numberOfBicycles += station.getInitialLoad();
+        }
+        for (Vehicle vehicle : input.getVehicles().values()) {
+            numberOfBicycles += vehicle.getInitialLoad();
+        }
+
+        rowOutput.createCell(57).setCellValue(geoFenceFactor);
+        rowOutput.createCell(58).setCellValue(numberOfBicycles);
 
 
         fileInputStream.close();

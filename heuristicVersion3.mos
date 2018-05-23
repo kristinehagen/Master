@@ -57,12 +57,14 @@ declarations
 	deviationImproved:							array(Vehicles, Routes)		of real;
 	deviationReward:							array(Vehicles, Routes) 	of real;
 	drivingTimePenalty:							array(Vehicles, Routes) 	of real;
-	weightViolation: 														real;
+	weightCongestion:														real;
+	weightStarvation:														real;
 	weightDeviation: 														real;
 	weightReward: 															real;
 	weightDeviationReward: 													real;
 	weightDrivingTimePenalty: 												real;
-	totalViolationsIfNoVisit:												real;
+	totalCongestionsIfNoVisit:												real;
+	totalStarvationsIfNoVisit:												real;
 	totalDeviationIfNoVisit:												real;
 end-declarations
 
@@ -73,12 +75,14 @@ initializations from DataFileTimeDependentInput
 	deviationImproved;
 	deviationReward;
 	drivingTimePenalty;
-	weightViolation;
+	weightCongestion;
+	weightStarvation;
 	weightDeviation;
 	weightReward;
 	weightDeviationReward;
 	weightDrivingTimePenalty;
-	totalViolationsIfNoVisit;
+	totalCongestionsIfNoVisit;
+	totalStarvationsIfNoVisit;
 	totalDeviationIfNoVisit;
 end-initializations
 
@@ -122,14 +126,18 @@ end-do
 !------------------------ OBJECTIVES--------------------------------
 
 declarations
-	violationsPrevented: 			linctr;
+	congestionsPrevented: 			linctr;
+	starvationsPrevented: 			linctr;
 	totalDeviationImproved: 		linctr;
 	totalReward:					linctr;
 	Objective:						linctr;
 end-declarations
 	
-violationsPrevented := 
-	sum(vv in Vehicles, rr in Routes) ((congestionPrevented(vv,rr) + starvationPrevented(vv,rr))*intRepLambda(vv,rr));
+congestionsPrevented := 
+	sum(vv in Vehicles, rr in Routes) (congestionPrevented(vv,rr)*intRepLambda(vv,rr));
+	
+starvationsPrevented := 
+	sum(vv in Vehicles, rr in Routes) (starvationPrevented(vv,rr)*intRepLambda(vv,rr));
 
 totalDeviationImproved := 
 	sum(vv in Vehicles, rr in Routes)deviationImproved(vv,rr)*intRepLambda(vv,rr);
@@ -139,7 +147,8 @@ totalReward :=
 	+ weightDrivingTimePenalty*sum(vv in Vehicles, rr in Routes) drivingTimePenalty(vv,rr)*intRepLambda(vv,rr);
 
 Objective := 
-	weightViolation*(totalViolationsIfNoVisit - violationsPrevented)
+	weightCongestion*(totalCongestionsIfNoVisit - congestionsPrevented)
+	+ weightStarvation*(totalStarvationsIfNoVisit - starvationsPrevented)
 	+ weightDeviation*(totalDeviationIfNoVisit - totalDeviationImproved)
 	+ weightReward*totalReward;
 	
