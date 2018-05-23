@@ -126,9 +126,15 @@ public class Simulation {
 
                     //Generate new clusters
                     if (input.isDynamicClustering()) {
+
+                        //Clear already created cluster
+                        for (Vehicle vehicle : input.getVehicles().values()) {
+                            vehicle.getClusterStationList().clear();
+                        }
+
+                        String xpressOutputFile = "clusterOutput.txt";
                         WriteXpressFiles.writeClusterInformation(input);
                         RunXpress.runXpress("createCluster");
-                        String xpressOutputFile = "clusterOutput-Instance" + input.getTestInstance() + "-V" + input.getVehicles().size()+".txt";
                         ReadClusterList.readClusterListTextFile(input, xpressOutputFile);
                     }
 

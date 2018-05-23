@@ -40,10 +40,10 @@ public class ReadDemandAndNumberOfBikes {
                     double hour = element.nextDouble();                                 //hour
 
                     //Read mean and standard deviation for arrival and departure
-                    station.setBikeWantedMedian(hour, Double.parseDouble(element.next()));
-                    station.setBikeWantedStd(hour, Double.parseDouble(element.next()));
-                    station.setBikeReturnedMedian(hour, Double.parseDouble(element.next()));
-                    station.setBikeReturnedStd(hour, Double.parseDouble(element.next()));
+                    station.setBikeWantedMedian(hour, Double.parseDouble(element.next())/3);
+                    station.setBikeWantedStd(hour, Double.parseDouble(element.next())/3);
+                    station.setBikeReturnedMedian(hour, Double.parseDouble(element.next())/3);
+                    station.setBikeReturnedStd(hour, Double.parseDouble(element.next())/3);
                     station.setOptimalState(hour, Double.parseDouble(element.next()));
                 }
             }

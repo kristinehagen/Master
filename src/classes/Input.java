@@ -40,8 +40,8 @@ public class Input {
     //--------PRICING PROBLEM---------------
 
     private boolean runPricingProblem = false;
-    private int nrOfRunsPricingProblem = 1;         //OBS! Have to be 1 or larger
-    private int nrOfBranchingPricingProblem = 3;
+    private int nrOfRunsPricingProblem = 2;         //OBS! Have to be 1 or larger
+    private int nrOfBranchingPricingProblem = 15;
     private int probabilityOfChoosingUnvisitedStation = 40;     //40%
 
 
@@ -167,7 +167,8 @@ public class Input {
                 this.weightCritScDrivingTime = 0.0;
                 this.weightCritScOptimalState = 0.4;
                 this.clustering = false;
-                this.nrStationBranching = 40;
+                this.runPricingProblem = true;
+                this.nrStationBranching = 20;
                 break;
 
             case CURRENT_SOLUTION_IN_OSLO:

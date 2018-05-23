@@ -79,8 +79,9 @@ public class Run {
 
     private static void runSimulation() throws IOException, XPRMCompileException, InterruptedException {
 
+
         //Hvilke solution methods skal bruker?
-        for (int solution = 4; solution <= 4; solution += 2) {
+        for (int solution = 2; solution <= 4; solution += 2) {
             SolutionMethod solutionMethod;
 
             if (solution == 1) {
