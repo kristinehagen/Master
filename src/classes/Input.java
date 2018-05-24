@@ -260,11 +260,11 @@ public class Input {
             case 7:
                 return "vehicleInitial7.txt";
             case 8:
-                return "vehicleInitial6.txt";
+                return "vehicleInitial8.txt";
             case 12:
-                return "vehicleInitial6.txt";
+                return "vehicleInitial12.txt";
             case 16:
-                return "vehicleInitial6.txt";
+                return "vehicleInitial16.txt";
             default:
                 throw new IllegalArgumentException("Ugyldig antall vehicles");
         }

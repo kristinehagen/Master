@@ -103,7 +103,7 @@ public class Run {
                     //Hvilke tid skal brukes?
                     for (int time = 7; time <= 7; time += 10) {
                         //Hvor mange biler skal brukes?
-                        for (int numberOfVehicles = 8; numberOfVehicles <= 8; numberOfVehicles++) {
+                        for (int numberOfVehicles = 2; numberOfVehicles <= 2; numberOfVehicles++) {
 
                             Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
 
