@@ -14,7 +14,7 @@ public class Input {
 
     //Input
     private SolutionMethod solutionMethod;
-    private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.TEN_MIN;
+    private ReOptimizationMethod reOptimizationMethod = ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL;
     private int maxVisit = 1;
     private double timeHorizon = 20;
     private double simulationStartTime;              //Minutes
@@ -169,7 +169,7 @@ public class Input {
                 this.weightCritScDrivingTime = 0.0;
                 this.weightCritScOptimalState = 0.4;
                 this.clustering = false;
-                this.runPricingProblem = true;
+                this.runPricingProblem = false;
                 this.nrStationBranching = 20;
                 break;
 
@@ -255,6 +255,16 @@ public class Input {
                         return "vehicleInitial5.txt";
                     }
                 }
+            case 6:
+                return "vehicleInitial6.txt";
+            case 7:
+                return "vehicleInitial7.txt";
+            case 8:
+                return "vehicleInitial6.txt";
+            case 12:
+                return "vehicleInitial6.txt";
+            case 16:
+                return "vehicleInitial6.txt";
             default:
                 throw new IllegalArgumentException("Ugyldig antall vehicles");
         }
