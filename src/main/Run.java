@@ -82,52 +82,13 @@ public class Run {
         int testInstance = 4;
         int time = 7;
         int nrOfVehicles = 5;
-        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+        SolutionMethod solutionMethod = SolutionMethod.NO_VEHICLES;
 
-        for (int run = 1; run <= 12; run++ ) {
+        //for (int run = 1; run <= 12; run++ ) {
 
             Input input = new Input(testInstance, time, nrOfVehicles, solutionMethod);
 
             int geofenceFactor = 0;
-
-            if (run == 1) {
-                adjustNrOfBikesInSystem(input.getStations(), input.getVehicles(), 1500);
-            } else if (run == 2) {
-                adjustNrOfBikesInSystem(input.getStations(), input.getVehicles(), 2000);
-            } else if (run == 3) {
-                adjustNrOfBikesInSystem(input.getStations(), input.getVehicles(), 2500);
-            } else if (run == 4) {
-                allowGeoFencing(input.getStations(), 2);
-                geofenceFactor = 2;
-            } else if (run == 5) {
-                allowGeoFencing(input.getStations(), 3);
-                geofenceFactor = 3;
-            } else if (run == 6) {
-                allowGeoFencing(input.getStations(), 10);
-                geofenceFactor = 10;
-            } else if (run == 7) {
-                allowGeoFencing(input.getStations(), 2);
-                geofenceFactor = 2;
-                adjustNrOfBikesInSystem(input.getStations(), input.getVehicles(), 2000);
-            } else if (run == 8) {
-                allowGeoFencing(input.getStations(), 2);
-                geofenceFactor = 2;
-                adjustNrOfBikesInSystem(input.getStations(), input.getVehicles(), 2500);
-            } else if (run == 9) {
-                input.setWeightStarvation(0.5);
-                input.setWeightCongestion(0.7);
-            } else if (run == 10) {
-                input.setWeightStarvation(0.4);
-                input.setWeightCongestion(0.8);
-            } else if (run == 11) {
-                input.setWeightStarvation(0.3);
-                input.setWeightCongestion(0.9);
-            } else {
-                input.setWeightStarvation(0.2);
-                input.setWeightCongestion(1);
-            }
-
-            System.out.println("Test nr " + run);
 
 
             generateCluster(input);
@@ -190,10 +151,7 @@ public class Run {
                     averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
                     averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles,
                     average(totalStarvationsList), average(totalCongestionsList), average(totalCustomersList), geofenceFactor);
-        }
-
-
-
+        //}
 
 
     }
