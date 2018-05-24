@@ -21,7 +21,7 @@ public class CreateDemandScenario {
     private ArrayList<ArrayList<Double>> arrivalTimes;
     private String outPutFileName;
     private int testInstance = 4;
-    private double startTime = 17;
+    private double startTime = 20;
     private double stopTime = 21;
 
 
@@ -43,7 +43,7 @@ public class CreateDemandScenario {
 
         for (int i = 1; i <= 10; i ++) {
             arrivalTimes.clear();
-            outPutFileName = "simulation_Instance"+ testInstance + "_T" + (int)(startTime) + "_Nr" + i + ".txt";
+            outPutFileName = "simulation_Instance"+ testInstance + "_T" + (int)(startTime) + "-" + (int)(stopTime) + "_Nr" + i + ".txt";
             simulation.run(this.startTime, this.stopTime);
             simulation.printArrivalTimes();
 
