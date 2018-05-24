@@ -101,15 +101,11 @@ public class Run {
                 for (int testInstance = 4; testInstance <= 4; testInstance += 3) {
                     checkIfValidInstance(testInstance);
                     //Hvilke tid skal brukes?
-                    for (int time = 7; time <= 7; time += 10) {
+                    for (int time = 8; time <= 8; time += 10) {
                         //Hvor mange biler skal brukes?
-                        for (int numberOfVehicles = 2; numberOfVehicles <= 2; numberOfVehicles++) {
+                        for (int numberOfVehicles = 6; numberOfVehicles <= 6; numberOfVehicles++) {
 
                             Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
-
-                            for (Vehicle vehicle : input.getVehicles().values()) {
-                                vehicle.setCapacity(60);
-                            }
 
                             generateCluster(input);
                             WriteXpressFiles.printFixedInput(input);
@@ -128,7 +124,7 @@ public class Run {
 
                             for (int i = 1; i <= input.getNumberOfRuns(); i++) {
 
-                                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + (int)(input.getSimulationStartTime()/60) + "_Nr" + i + ".txt";
+                                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + (int)(input.getSimulationStartTime()/60) +"-" + (int)(input.getSimulationStopTime()/60) + "_Nr" + i + ".txt";
                                 System.out.println("Run number: " + i);
 
                                 //Run simulation
