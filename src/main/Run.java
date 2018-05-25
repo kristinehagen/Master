@@ -101,9 +101,9 @@ public class Run {
                 for (int testInstance = 4; testInstance <= 4; testInstance += 3) {
                     checkIfValidInstance(testInstance);
                     //Hvilke tid skal brukes?
-                    for (int time = 8; time <= 8; time += 10) {
+                    for (int time = 8; time <= 17; time += 3) {
                         //Hvor mange biler skal brukes?
-                        for (int numberOfVehicles = 6; numberOfVehicles <= 6; numberOfVehicles++) {
+                        for (int numberOfVehicles = 7; numberOfVehicles <= 8; numberOfVehicles++) {
 
                             Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
 

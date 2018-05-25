@@ -337,9 +337,13 @@ Vehicles : [
 3
 4
 5
+6
+7
 ]
 
 vehicleCapacity : [
+23
+23
 23
 23
 23
