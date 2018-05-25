@@ -2,6 +2,7 @@ package main;
 
 import classes.*;
 import com.dashoptimization.XPRMCompileException;
+import enums.ReOptimizationMethod;
 import enums.SolutionMethod;
 
 import functions.PrintResults;
@@ -82,14 +83,53 @@ public class Run {
         int testInstance = 4;
         int time = 7;
         int nrOfVehicles = 5;
-        SolutionMethod solutionMethod = SolutionMethod.NO_VEHICLES;
+        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
 
-        //for (int run = 1; run <= 12; run++ ) {
+        for (int run = 1; run <= 10; run++ ) {
 
             Input input = new Input(testInstance, time, nrOfVehicles, solutionMethod);
 
-            int geofenceFactor = 0;
+            double geofenceFactor = 1;
+            int nrOfBicylesInSystem = 1790;
 
+            if(run == 1) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 1000;
+            } else if(run == 2) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 3000;
+            } else if (run == 3) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 4000;
+            } else if (run == 4) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 5000;
+            } else if (run == 5) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 6000;
+            } else if (run == 6) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 7000;
+            } else if (run == 7) {
+                geofenceFactor = 1.5;
+            } else if (run == 8) {
+                input.setTimeHorizon(30);
+                input.setReOptimizationMethod(ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL);
+            } else if (run == 9) {
+                input.setTimeHorizon(30);
+                input.setReOptimizationMethod(ReOptimizationMethod.EVERY_THIRD_VEHICLE_ARRIVAL);
+            } else {
+                input.setTimeHorizon(30);
+                input.setReOptimizationMethod(ReOptimizationMethod.TEN_MIN);
+            }
+
+
+            if (geofenceFactor != 1) {
+                allowGeoFencing(input.getStations(), geofenceFactor);
+            }
+            if (nrOfBicylesInSystem != 1790) {
+                adjustNrOfBikesInSystem(input.getStations(), input.getVehicles(), nrOfBicylesInSystem);
+            }
 
             generateCluster(input);
             WriteXpressFiles.printFixedInput(input);
@@ -105,6 +145,8 @@ public class Run {
             ArrayList<Double> computationalTimeXpress = new ArrayList<>();
             ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
             ArrayList<Double> numberOfTimesPPImprovement = new ArrayList<>();
+            int idWithHighestLoad = 0;
+            double highestLoad = 0;
 
             double numberOfHappyCustomersWhenNoVehicles = findNrOfHappyCustomersWithNoVehicles(testInstance, time);
 
@@ -130,6 +172,11 @@ public class Run {
                 computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
                 computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
                 numberOfTimesPPImprovement.add(average(simulation.getNumberOfTimesPPImproved()));
+
+                if (simulation.getHighestLoad() > highestLoad) {
+                    highestLoad = simulation.getHighestLoad();
+                    idWithHighestLoad = simulation.getIdWithHighestLoad();
+                }
             }
 
             double averageViolation = average(totalViolationList);
@@ -150,16 +197,17 @@ public class Run {
             PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
                     averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
                     averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles,
-                    average(totalStarvationsList), average(totalCongestionsList), average(totalCustomersList), geofenceFactor);
-        //}
+                    average(totalStarvationsList), average(totalCongestionsList), average(totalCustomersList), geofenceFactor,
+                    idWithHighestLoad, highestLoad);
+        }
 
 
     }
 
-    private static void allowGeoFencing(HashMap<Integer, Station> stations, int times) {
+    private static void allowGeoFencing(HashMap<Integer, Station> stations, double times) {
 
         for (Station station : stations.values()) {
-            station.setCapacity(station.getCapacity() * times);
+            station.setCapacity((int)(station.getCapacity() * times));
         }
 
     }
@@ -215,7 +263,6 @@ public class Run {
                 }
             }
             while (currentNumberOfBicycles < nrOfBicyclesUpdated) {
-                //Pick a random station, and increase load by 1
                 for (Station station : stations.values()) {
                     if (station.getCapacity() > station.getInitialLoad()) {
                         station.setInitialLoad(station.getInitialLoad()+1);
@@ -226,6 +273,7 @@ public class Run {
                     }
                 }
             }
+            System.out.println("Nr of bikes: " + currentNumberOfBicycles);
         }
 
     }

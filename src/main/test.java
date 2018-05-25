@@ -21,9 +21,9 @@ public class test {
             nrOfBikes += station.getInitialLoad();
         }
 
-        for (Vehicle vehicle : input.getVehicles().values()) {
+        /*for (Vehicle vehicle : input.getVehicles().values()) {
             nrOfBikes += vehicle.getInitialLoad();
-        }
+        }*/
 
         System.out.println("Total nr of capacities: " + capacity);
         System.out.println("Total nr of bikes: " + nrOfBikes);

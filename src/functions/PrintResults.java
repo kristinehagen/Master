@@ -18,7 +18,7 @@ public class PrintResults {
                                                          double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input,
                                                          double averageTimePPImprovement, double happyCustomers, double happyCusNoVehicle,
                                                          double averageStarvation, double averageCongestions, double averageTotalCustomers,
-                                                         double geoFenceFactor) throws IOException {
+                                                         double geoFenceFactor, int idWithHighestLoad, double highestLoad) throws IOException {
 
         System.out.println("averageComputationalTimeXpress: " + averageComputationalTimeXpress);
         System.out.println("averageComputationalTimeXpressPlusInitialization" + averageComputationalTimeXpressPlusInitialization);
@@ -153,13 +153,16 @@ public class PrintResults {
             rowOutput.createCell(50).setCellValue(averageTimePPImprovement);
         }
 
-        rowOutput.createCell(51).setCellValue(averageCongestions);
-        rowOutput.createCell(52).setCellValue(averageStarvation);
-        rowOutput.createCell(53).setCellValue(averageViolation);
-        rowOutput.createCell(54).setCellValue(averageTotalCustomers);
+        rowOutput.createCell(51).setCellValue(570.2-averageCongestions);
+        rowOutput.createCell(52).setCellValue(averageCongestions);
+        rowOutput.createCell(53).setCellValue(1346.3-averageStarvation);
+        rowOutput.createCell(54).setCellValue(averageStarvation);
 
-        rowOutput.createCell(55).setCellValue(input.getWeightStarvation());
-        rowOutput.createCell(56).setCellValue(input.getWeightCongestion());
+        rowOutput.createCell(55).setCellValue(averageViolation);
+        rowOutput.createCell(56).setCellValue(averageTotalCustomers);
+
+        rowOutput.createCell(57).setCellValue(input.getWeightStarvation());
+        rowOutput.createCell(58).setCellValue(input.getWeightCongestion());
 
         int numberOfBicycles = 0;
         for (Station station : input.getStations().values()) {
@@ -169,8 +172,10 @@ public class PrintResults {
             numberOfBicycles += vehicle.getInitialLoad();
         }
 
-        rowOutput.createCell(57).setCellValue(geoFenceFactor);
-        rowOutput.createCell(58).setCellValue(numberOfBicycles);
+        rowOutput.createCell(59).setCellValue(geoFenceFactor);
+        rowOutput.createCell(60).setCellValue(numberOfBicycles);
+        rowOutput.createCell(61).setCellValue(idWithHighestLoad);
+        rowOutput.createCell(62).setCellValue(highestLoad);
 
 
         fileInputStream.close();
