@@ -145,14 +145,14 @@ public class PrintResults {
         }
 
 
-        //Print results for statistical t-test
+        /*//Print results for statistical t-test
         for (int i = 40; i < input.getNumberOfRuns()+ 40 ; i++) {
             rowOutput.createCell(i).setCellValue(percentageViolationsList.get(i-40));
         }
 
         if (heuristic3 && input.isRunPricingProblem()) {
             rowOutput.createCell(50).setCellValue(averageTimePPImprovement);
-        }
+        }*/
 
         rowOutput.createCell(51).setCellValue(570.2-averageCongestions);
         rowOutput.createCell(52).setCellValue(averageCongestions);

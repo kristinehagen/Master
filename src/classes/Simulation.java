@@ -158,6 +158,9 @@ public class Simulation {
 
                     generateVehicleRoute(input);
 
+                    if (vehicleArrivals.get(0).getVehicle() == 0) {
+                        System.out.println("Ny rute for Vehicle 1");
+                    }
 
                     //Update nextVehicleArrival
                     vehicleArrivalCounter = 0;

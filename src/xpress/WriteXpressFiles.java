@@ -577,6 +577,10 @@ public class WriteXpressFiles {
 
     private static void printWeights(Input input, PrintWriter writer) {
         //weightCongestions
+        writer.print("weightViolation : ");
+        writer.println(input.getWeightViolation());
+
+        //weightCongestions
         writer.print("weightCongestion : ");
         writer.println(input.getWeightCongestion());
 

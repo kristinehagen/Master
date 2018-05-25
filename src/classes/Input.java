@@ -171,7 +171,7 @@ public class Input {
                 this.weightCritScDrivingTime = 0.0;
                 this.weightCritScOptimalState = 0.4;
                 this.clustering = false;
-                this.runPricingProblem = false;
+                this.runPricingProblem = true;
                 this.nrStationBranching = 20;
                 break;
 

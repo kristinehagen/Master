@@ -85,15 +85,9 @@ public class Run {
         int nrOfVehicles = 5;
         SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
 
-        for (int run = 1; run <= 2; run ++) {
+        //for (int run = 1; run <= 2; run ++) {
 
-            if (run == 1) {
-                nrOfVehicles = 2;
-                solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
-            } else {
-                nrOfVehicles = 2;
-                solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
-            }
+
 
 
             Input input = new Input(testInstance, time, nrOfVehicles, solutionMethod);
@@ -140,7 +134,9 @@ public class Run {
                 simulation.run(simulationFile, input);
 
                 loadingQuantities.add(average(simulation.getLoadingQuantities()));
+                System.out.println("Loading: " + average(simulation.getLoadingQuantities()));
                 numberOfVehicleArrivals.add(simulation.getNoOfVehicleArrivals());
+                System.out.println("No of vehicle arrivals: " + simulation.getNoOfVehicleArrivals());
                 double totalViolations = simulation.getCongestions() + simulation.getStarvations();
                 happyCustomersList.add(simulation.getHappyCustomers());
                 totalViolationList.add(totalViolations);
@@ -180,7 +176,7 @@ public class Run {
                         averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles,
                         average(totalStarvationsList), average(totalCongestionsList), average(totalCustomersList), geofenceFactor,
                         idWithHighestLoad, highestLoad, average(loadingQuantities), average(numberOfVehicleArrivals));
-        }
+        //}
 
 
 
