@@ -85,44 +85,21 @@ public class Run {
         int nrOfVehicles = 5;
         SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
 
-        for (int run = 1; run <= 10; run++ ) {
+        for (int run = 1; run <= 2; run ++) {
+
+            if (run == 1) {
+                nrOfVehicles = 2;
+                solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
+            } else {
+                nrOfVehicles = 2;
+                solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
+            }
+
 
             Input input = new Input(testInstance, time, nrOfVehicles, solutionMethod);
 
             double geofenceFactor = 1;
             int nrOfBicylesInSystem = 1790;
-
-            if(run == 1) {
-                geofenceFactor = 2;
-                nrOfBicylesInSystem = 1000;
-            } else if(run == 2) {
-                geofenceFactor = 2;
-                nrOfBicylesInSystem = 3000;
-            } else if (run == 3) {
-                geofenceFactor = 2;
-                nrOfBicylesInSystem = 4000;
-            } else if (run == 4) {
-                geofenceFactor = 2;
-                nrOfBicylesInSystem = 5000;
-            } else if (run == 5) {
-                geofenceFactor = 2;
-                nrOfBicylesInSystem = 6000;
-            } else if (run == 6) {
-                geofenceFactor = 2;
-                nrOfBicylesInSystem = 7000;
-            } else if (run == 7) {
-                geofenceFactor = 1.5;
-            } else if (run == 8) {
-                input.setTimeHorizon(30);
-                input.setReOptimizationMethod(ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL);
-            } else if (run == 9) {
-                input.setTimeHorizon(30);
-                input.setReOptimizationMethod(ReOptimizationMethod.EVERY_THIRD_VEHICLE_ARRIVAL);
-            } else {
-                input.setTimeHorizon(30);
-                input.setReOptimizationMethod(ReOptimizationMethod.TEN_MIN);
-            }
-
 
             if (geofenceFactor != 1) {
                 allowGeoFencing(input.getStations(), geofenceFactor);
@@ -145,6 +122,8 @@ public class Run {
             ArrayList<Double> computationalTimeXpress = new ArrayList<>();
             ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
             ArrayList<Double> numberOfTimesPPImprovement = new ArrayList<>();
+            ArrayList<Double> loadingQuantities = new ArrayList<>();
+            ArrayList<Double> numberOfVehicleArrivals = new ArrayList<>();
             int idWithHighestLoad = 0;
             double highestLoad = 0;
 
@@ -152,7 +131,7 @@ public class Run {
 
             for (int i = 1; i <= input.getNumberOfRuns(); i++) {
 
-                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + (int)(input.getSimulationStartTime()/60) + "_Nr" + i + ".txt";
+                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + (int) (input.getSimulationStartTime() / 60) + "_Nr" + i + ".txt";
                 System.out.println("Run number: " + i);
 
                 //Run simulation
@@ -160,6 +139,8 @@ public class Run {
                 Simulation simulation = new Simulation();
                 simulation.run(simulationFile, input);
 
+                loadingQuantities.add(average(simulation.getLoadingQuantities()));
+                numberOfVehicleArrivals.add(simulation.getNoOfVehicleArrivals());
                 double totalViolations = simulation.getCongestions() + simulation.getStarvations();
                 happyCustomersList.add(simulation.getHappyCustomers());
                 totalViolationList.add(totalViolations);
@@ -195,11 +176,12 @@ public class Run {
             System.out.println("Total violations percentage: " + averagePercentageViolations);
 
             PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
-                    averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
-                    averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles,
-                    average(totalStarvationsList), average(totalCongestionsList), average(totalCustomersList), geofenceFactor,
-                    idWithHighestLoad, highestLoad);
+                        averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
+                        averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles,
+                        average(totalStarvationsList), average(totalCongestionsList), average(totalCustomersList), geofenceFactor,
+                        idWithHighestLoad, highestLoad, average(loadingQuantities), average(numberOfVehicleArrivals));
         }
+
 
 
     }

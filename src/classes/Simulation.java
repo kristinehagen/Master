@@ -33,6 +33,8 @@ public class Simulation {
     private ArrayList<Double> numberOfTimesPPImproved = new ArrayList<>();
     private int idWithHighestLoad;
     private double highestLoad;
+    private ArrayList<Double> loadingQuantities = new ArrayList<>();
+    private double noOfVehicleArrivals = 0;
 
     //Constructor
     public Simulation() {
@@ -123,6 +125,7 @@ public class Simulation {
                 if (nextVehicleArrival.getTime() < nextEventTime) {
                     nextEventTime = nextVehicleArrival.getTime();
                     nextEvent = NextEvent.VEHICLE_ARRIVAL;
+                    noOfVehicleArrivals++;
                 }
             }
 
@@ -260,6 +263,8 @@ public class Simulation {
             station.addBikeToStation(-load);
             vehicle.addLoad(load);
         }
+
+        loadingQuantities.add((double) Math.abs(load));
 
         if (station.getLoad() > highestLoad) {
             highestLoad = station.getLoad();
@@ -519,6 +524,22 @@ public class Simulation {
 
     public void setHighestLoad(double highestLoad) {
         this.highestLoad = highestLoad;
+    }
+
+    public ArrayList<Double> getLoadingQuantities() {
+        return loadingQuantities;
+    }
+
+    public void setLoadingQuantities(ArrayList<Double> loadingQuantities) {
+        this.loadingQuantities = loadingQuantities;
+    }
+
+    public double getNoOfVehicleArrivals() {
+        return noOfVehicleArrivals;
+    }
+
+    public void setNoOfVehicleArrivals(double noOfVehicleArrivals) {
+        this.noOfVehicleArrivals = noOfVehicleArrivals;
     }
 }
 

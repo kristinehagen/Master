@@ -18,7 +18,8 @@ public class PrintResults {
                                                          double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input,
                                                          double averageTimePPImprovement, double happyCustomers, double happyCusNoVehicle,
                                                          double averageStarvation, double averageCongestions, double averageTotalCustomers,
-                                                         double geoFenceFactor, int idWithHighestLoad, double highestLoad) throws IOException {
+                                                         double geoFenceFactor, int idWithHighestLoad, double highestLoad,
+                                                         double averageLoadingQuantity, double averageNumberOfVehicleArrivals) throws IOException {
 
         System.out.println("averageComputationalTimeXpress: " + averageComputationalTimeXpress);
         System.out.println("averageComputationalTimeXpressPlusInitialization" + averageComputationalTimeXpressPlusInitialization);
@@ -177,6 +178,8 @@ public class PrintResults {
         rowOutput.createCell(61).setCellValue(idWithHighestLoad);
         rowOutput.createCell(62).setCellValue(highestLoad);
 
+        rowOutput.createCell(63).setCellValue(averageLoadingQuantity);
+        rowOutput.createCell(64).setCellValue(averageNumberOfTimesVehicleRouteGenerated);
 
         fileInputStream.close();
 
