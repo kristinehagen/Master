@@ -101,11 +101,15 @@ public class Run {
                 for (int testInstance = 4; testInstance <= 4; testInstance += 3) {
                     checkIfValidInstance(testInstance);
                     //Hvilke tid skal brukes?
-                    for (int time = 20; time <= 20; time += 3) {
+                    for (int time = 7; time <= 7; time += 3) {
                         //Hvor mange biler skal brukes?
-                        for (int numberOfVehicles = 7; numberOfVehicles <= 7; numberOfVehicles++) {
+                        for (int numberOfVehicles = 9; numberOfVehicles <= 9; numberOfVehicles++) {
 
                             Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
+
+                            for (Vehicle vehicle : input.getVehicles().values()) {
+                                vehicle.setCapacity(60);
+                            }
 
                             generateCluster(input);
                             WriteXpressFiles.printFixedInput(input);

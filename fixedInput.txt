@@ -327,8 +327,8 @@ stationsCapacities : [
 9
 0
 ]
-vehicleParkingTime: 2.0
-unitHandlingTime: 0.25
+vehicleParkingTime: 6.0
+unitHandlingTime: 0.4
 
 Vehicles : [
 0
@@ -338,16 +338,20 @@ Vehicles : [
 4
 5
 6
+7
+8
 ]
 
 vehicleCapacity : [
-23
-23
-23
-23
-23
-23
-23
+60
+60
+60
+60
+60
+60
+60
+60
+60
 ]
 
 drivingTime : [

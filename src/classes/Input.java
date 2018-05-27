@@ -97,8 +97,8 @@ public class Input {
 
 
     //------------Constants----------------
-    private double vehicleHandlingTime = 0.25;
-    private double vehicleParkingTime = 2;
+    private double vehicleHandlingTime = 0.4;
+    private double vehicleParkingTime = 6;
     private String demandFile = "demand.txt";
 
     private boolean isNowRunningPricingProblem = false;
@@ -261,6 +261,9 @@ public class Input {
                 return "vehicleInitial7.txt";
             case 8:
                 return "vehicleInitial8.txt";
+            case 9:
+                return "vehicleInitial9.txt";
+
             case 12:
                 return "vehicleInitial12.txt";
             case 16:
