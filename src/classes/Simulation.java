@@ -31,6 +31,8 @@ public class Simulation {
     private double minComputationalTimeIncludingInitialization = -1;
     private ArrayList<VehicleArrival> vehicleArrivals = new ArrayList<>();
     private ArrayList<Double> numberOfTimesPPImproved = new ArrayList<>();
+    private int idWithHighestLoad;
+    private double highestLoad;
 
     //Constructor
     public Simulation() {
@@ -78,6 +80,16 @@ public class Simulation {
         if (!input.getSolutionMethod().equals(SolutionMethod.NO_VEHICLES)) {
             if (this.vehicleArrivals.size() > 0) {
                 nextVehicleArrival = this.vehicleArrivals.get(vehicleArrivalCounter);                        //Actual time minutes
+            }
+        }
+
+
+
+        //Update station with highest load
+        for (Station station : input.getStations().values()) {
+            if (station.getLoad() > this.highestLoad) {
+                this.highestLoad = station.getLoad();
+                idWithHighestLoad = station.getId();
             }
         }
 
@@ -203,6 +215,12 @@ public class Simulation {
             }
         }
         this.totalNumberOfCustomers++;
+
+        //Update highest load
+        if (station.getLoad() > highestLoad) {
+            highestLoad = station.getLoad();
+            idWithHighestLoad = station.getId();
+        }
     }
 
     //Update load when a vehicle arrives at a station
@@ -241,6 +259,11 @@ public class Simulation {
             }
             station.addBikeToStation(-load);
             vehicle.addLoad(load);
+        }
+
+        if (station.getLoad() > highestLoad) {
+            highestLoad = station.getLoad();
+            idWithHighestLoad = station.getId();
         }
     }
 
@@ -480,6 +503,22 @@ public class Simulation {
 
     public void setNumberOfTimesPPImproved(ArrayList<Double> numberOfTimesPPImproved) {
         this.numberOfTimesPPImproved = numberOfTimesPPImproved;
+    }
+
+    public int getIdWithHighestLoad() {
+        return idWithHighestLoad;
+    }
+
+    public void setIdWithHighestLoad(int idWithHighestLoad) {
+        this.idWithHighestLoad = idWithHighestLoad;
+    }
+
+    public double getHighestLoad() {
+        return highestLoad;
+    }
+
+    public void setHighestLoad(double highestLoad) {
+        this.highestLoad = highestLoad;
     }
 }
 

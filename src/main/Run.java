@@ -2,6 +2,7 @@ package main;
 
 import classes.*;
 import com.dashoptimization.XPRMCompileException;
+import enums.ReOptimizationMethod;
 import enums.SolutionMethod;
 
 import functions.PrintResults;
@@ -79,103 +80,205 @@ public class Run {
 
     private static void runSimulation() throws IOException, XPRMCompileException, InterruptedException {
 
-            //Hvilke solution methods skal bruker?
-            for (int solution = 4; solution <= 4; solution += 2) {
-                SolutionMethod solutionMethod;
+        int testInstance = 4;
+        int time = 7;
+        int nrOfVehicles = 5;
+        SolutionMethod solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
 
-                if (solution == 1) {
-                    solutionMethod = SolutionMethod.EXACT_METHOD;
-                } else if (solution == 2) {
-                    solutionMethod = SolutionMethod.HEURISTIC_VERSION_1;
-                } else if (solution == 3) {
-                    solutionMethod = SolutionMethod.HEURISTIC_VERSION_2;
-                } else if (solution == 4){
-                    solutionMethod = SolutionMethod.HEURISTIC_VERSION_3;
-                } else if (solution == 5){
-                    solutionMethod = SolutionMethod.CURRENT_SOLUTION_IN_OSLO;
-                } else {
-                    solutionMethod = SolutionMethod.NO_VEHICLES;
+        for (int run = 1; run <= 1; run++ ) {
+
+            Input input = new Input(testInstance, time, nrOfVehicles, solutionMethod);
+
+            for (Vehicle vehicle: input.getVehicles().values()) {
+                vehicle.setCapacity(60);
+            }
+
+            double geofenceFactor = 1;
+            int nrOfBicylesInSystem = 1790;
+
+            if(run == 1) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 4000;
+            } else if(run == 2) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 3000;
+            } else if (run == 3) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 4000;
+            } else if (run == 4) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 5000;
+            } else if (run == 5) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 6000;
+            } else if (run == 6) {
+                geofenceFactor = 2;
+                nrOfBicylesInSystem = 7000;
+            } else if (run == 7) {
+                geofenceFactor = 1.5;
+            } else if (run == 8) {
+                input.setTimeHorizon(30);
+                input.setReOptimizationMethod(ReOptimizationMethod.EVERY_VEHICLE_ARRIVAL);
+            } else if (run == 9) {
+                input.setTimeHorizon(30);
+                input.setReOptimizationMethod(ReOptimizationMethod.EVERY_THIRD_VEHICLE_ARRIVAL);
+            } else {
+                input.setTimeHorizon(30);
+                input.setReOptimizationMethod(ReOptimizationMethod.TEN_MIN);
+            }
+
+
+            if (geofenceFactor != 1) {
+                allowGeoFencing(input.getStations(), geofenceFactor);
+            }
+            if (nrOfBicylesInSystem != 1790) {
+                adjustNrOfBikesInSystem(input.getStations(), input.getVehicles(), nrOfBicylesInSystem);
+            }
+
+            generateCluster(input);
+            WriteXpressFiles.printFixedInput(input);
+
+            ArrayList<Double> totalViolationList = new ArrayList<>();
+            ArrayList<Double> happyCustomersList = new ArrayList<>();
+            ArrayList<Double> totalCustomersList = new ArrayList<>();
+            ArrayList<Double> totalCongestionsList = new ArrayList<>();
+            ArrayList<Double> totalStarvationsList = new ArrayList<>();
+            ArrayList<Double> percentageViolationsList = new ArrayList<>();
+            ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
+            ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
+            ArrayList<Double> computationalTimeXpress = new ArrayList<>();
+            ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
+            ArrayList<Double> numberOfTimesPPImprovement = new ArrayList<>();
+            int idWithHighestLoad = 0;
+            double highestLoad = 0;
+
+            double numberOfHappyCustomersWhenNoVehicles = findNrOfHappyCustomersWithNoVehicles(testInstance, time);
+
+            for (int i = 1; i <= input.getNumberOfRuns(); i++) {
+
+                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + (int)(input.getSimulationStartTime()/60) + "_Nr" + i + ".txt";
+                System.out.println("Run number: " + i);
+
+                //Run simulation
+                input.updateVehiclesAndStationsToInitialState();
+                Simulation simulation = new Simulation();
+                simulation.run(simulationFile, input);
+
+                double totalViolations = simulation.getCongestions() + simulation.getStarvations();
+                happyCustomersList.add(simulation.getHappyCustomers());
+                totalViolationList.add(totalViolations);
+                totalCustomersList.add(simulation.getTotalNumberOfCustomers());
+                totalCongestionsList.add(simulation.getCongestions());
+                totalStarvationsList.add(simulation.getStarvations());
+                percentageViolationsList.add(totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
+                numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
+                averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
+                computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
+                computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
+                numberOfTimesPPImprovement.add(average(simulation.getNumberOfTimesPPImproved()));
+
+                if (simulation.getHighestLoad() > highestLoad) {
+                    highestLoad = simulation.getHighestLoad();
+                    idWithHighestLoad = simulation.getIdWithHighestLoad();
                 }
+            }
 
-                //Hvilke test instanse skal brukes? Kan foreløpig bare bruke 1 og 4
-                for (int testInstance = 4; testInstance <= 4; testInstance += 3) {
-                    checkIfValidInstance(testInstance);
-                    //Hvilke tid skal brukes?
-                    for (int time = 7; time <= 7; time += 3) {
-                        //Hvor mange biler skal brukes?
-                        for (int numberOfVehicles = 9; numberOfVehicles <= 9; numberOfVehicles++) {
+            double averageViolation = average(totalViolationList);
+            double averagePercentageViolations = average(percentageViolationsList);
+            double sdViolation = sd(totalViolationList, averageViolation);
+            double sdPercentageViolations = sd(percentageViolationsList, averagePercentageViolations);
+            double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
+            double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
+            double averageComputationalTimeXpress = average(computationalTimeXpress);
+            double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlusInitialization);
+            double averageTimePPImprovement = average(numberOfTimesPPImprovement);
+            double averageHappyCustomers = average(happyCustomersList);
+            System.out.println("Total customers: " + average(totalCustomersList));
+            System.out.println("Total happy custeroms: " + average(happyCustomersList));
+            System.out.println("Total violations: " + averageViolation);
+            System.out.println("Total violations percentage: " + averagePercentageViolations);
 
-                            Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
+            PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
+                    averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
+                    averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles,
+                    average(totalStarvationsList), average(totalCongestionsList), average(totalCustomersList), geofenceFactor,
+                    idWithHighestLoad, highestLoad);
+        }
 
-                            for (Vehicle vehicle : input.getVehicles().values()) {
-                                vehicle.setCapacity(60);
-                            }
 
-                            generateCluster(input);
-                            WriteXpressFiles.printFixedInput(input);
+    }
 
-                            ArrayList<Double> totalViolationList = new ArrayList<>();
-                            ArrayList<Double> happyCustomersList = new ArrayList<>();
-                            ArrayList<Double> totalCustomersList = new ArrayList<>();
-                            ArrayList<Double> percentageViolationsList = new ArrayList<>();
-                            ArrayList<Double> numberOfTimesVehicleRouteGeneratedList = new ArrayList<>();
-                            ArrayList<Double> averageTimeBetweenVehicleRouteGeneratedList = new ArrayList<>();
-                            ArrayList<Double> computationalTimeXpress = new ArrayList<>();
-                            ArrayList<Double> computationalTimeXpressPlusInitialization = new ArrayList<>();
-                            ArrayList<Double> numberOfTimesPPImprovement = new ArrayList<>();
+    private static void allowGeoFencing(HashMap<Integer, Station> stations, double times) {
 
-                            double numberOfHappyCustomersWhenNoVehicles = findNrOfHappyCustomersWithNoVehicles(testInstance, time);
+        for (Station station : stations.values()) {
+            station.setCapacity((int)(station.getCapacity() * times));
+        }
 
-                            for (int i = 1; i <= input.getNumberOfRuns(); i++) {
+    }
 
-                                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + (int)(input.getSimulationStartTime()/60) + "_Nr" + i + ".txt";
-                                System.out.println("Run number: " + i);
+    private static void adjustNrOfBikesInSystem(HashMap<Integer, Station> stations, HashMap<Integer, Vehicle> vehicles, int nrOfBicyclesUpdated) {
+        double currentNumberOfBicycles = 0;
 
-                                //Run simulation
-                                input.updateVehiclesAndStationsToInitialState();
-                                Simulation simulation = new Simulation();
-                                simulation.run(simulationFile, input);
+        for (Station station : stations.values()) {
+            currentNumberOfBicycles += station.getInitialLoad();
+        }
+        for (Vehicle vehicle : vehicles.values()) {
+            currentNumberOfBicycles += vehicle.getInitialLoad();
+        }
 
-                                double totalViolations = simulation.getCongestions() + simulation.getStarvations();
-                                happyCustomersList.add(simulation.getHappyCustomers());
-                                totalViolationList.add(totalViolations);
-                                totalCustomersList.add(simulation.getTotalNumberOfCustomers());
-                                percentageViolationsList.add(totalViolations / (double) simulation.getTotalNumberOfCustomers() * 100);
-                                numberOfTimesVehicleRouteGeneratedList.add(simulation.getNumberOfTimesVehicleRouteGenerated());
-                                averageTimeBetweenVehicleRouteGeneratedList.add(average(simulation.getTimeToNextSimulationList()));
-                                computationalTimeXpress.add(average(simulation.getComputationalTimesXpress()));
-                                computationalTimeXpressPlusInitialization.add(average(simulation.getComputationalTimesXpressPlusInitialization()));
-                                numberOfTimesPPImprovement.add(average(simulation.getNumberOfTimesPPImproved()));
-                            }
+        if (currentNumberOfBicycles > nrOfBicyclesUpdated) {
 
-                            double averageViolation = average(totalViolationList);
-                            double averagePercentageViolations = average(percentageViolationsList);
-                            double sdViolation = sd(totalViolationList, averageViolation);
-                            double sdPercentageViolations = sd(percentageViolationsList, averagePercentageViolations);
-                            double averageNumberOfTimesVehicleRouteGenerated = average(numberOfTimesVehicleRouteGeneratedList);
-                            double averageTimeToVehicleRouteGenerated = average(averageTimeBetweenVehicleRouteGeneratedList);
-                            double averageComputationalTimeXpress = average(computationalTimeXpress);
-                            double averageComputationalTimeXpressPlusInitialization = average(computationalTimeXpressPlusInitialization);
-                            double averageTimePPImprovement = average(numberOfTimesPPImprovement);
-                            double averageHappyCustomers = average(happyCustomersList);
-                            System.out.println("Total customers: " + average(totalCustomersList));
-                            System.out.println("Total happy custeroms: " + average(happyCustomersList));
-                            System.out.println("Total violations: " + averageViolation);
-                            System.out.println("Total violations percentage: " + averagePercentageViolations);
-
-                            PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
-                                    averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
-                                    averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles);
-
+            //Reduce nr of bicycles on every station
+            while (currentNumberOfBicycles - nrOfBicyclesUpdated > 158) {
+                //Remove one bicycle at each station
+                for (Station station : stations.values()) {
+                    if (station.getInitialLoad()>0) {
+                        station.setInitialLoad(station.getInitialLoad()-1);
+                        currentNumberOfBicycles--;
+                    }
+                }
+            }
+            while (currentNumberOfBicycles > nrOfBicyclesUpdated) {
+                //Pick a random station, and reduce load by 1
+                for (Station station : stations.values()) {
+                    if (station.getInitialLoad() > 0) {
+                        station.setInitialLoad(station.getInitialLoad()-1);
+                        currentNumberOfBicycles--;
+                        if (currentNumberOfBicycles == nrOfBicyclesUpdated) {
+                            break;
                         }
                     }
                 }
             }
 
 
+        }
 
 
-
+        else if (currentNumberOfBicycles < nrOfBicyclesUpdated) {
+            //Increase nr of bicycles
+            while (nrOfBicyclesUpdated - currentNumberOfBicycles > 158) {
+                //Add one bicycle to each station
+                for (Station station : stations.values()) {
+                    if (station.getCapacity() > station.getInitialLoad()) {
+                        station.setInitialLoad(station.getInitialLoad()+1);
+                        currentNumberOfBicycles++;
+                    }
+                }
+            }
+            while (currentNumberOfBicycles < nrOfBicyclesUpdated) {
+                for (Station station : stations.values()) {
+                    if (station.getCapacity() > station.getInitialLoad()) {
+                        station.setInitialLoad(station.getInitialLoad()+1);
+                        currentNumberOfBicycles++;
+                        if (currentNumberOfBicycles == nrOfBicyclesUpdated) {
+                            break;
+                        }
+                    }
+                }
+            }
+            System.out.println("Nr of bikes: " + currentNumberOfBicycles);
+        }
 
     }
 

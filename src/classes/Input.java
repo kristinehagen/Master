@@ -66,6 +66,8 @@ public class Input {
 
     //Xpress objective function
     private double weightViolation = 0.6;
+    private double weightCongestion = 0.6;
+    private double weightStarvation = 0.6;
     private double weightDeviation = 0.3;
     private double weightReward = 0.1;
     private double weightDeviationReward  = 0.6;
@@ -97,8 +99,8 @@ public class Input {
 
 
     //------------Constants----------------
-    private double vehicleHandlingTime = 0.4;
-    private double vehicleParkingTime = 6;
+    private double vehicleHandlingTime = 0.4;           //Egentlig 0.25
+    private double vehicleParkingTime = 6;              //Egentlig 2
     private String demandFile = "demand.txt";
 
     private boolean isNowRunningPricingProblem = false;
@@ -263,7 +265,6 @@ public class Input {
                 return "vehicleInitial8.txt";
             case 9:
                 return "vehicleInitial9.txt";
-
             case 12:
                 return "vehicleInitial12.txt";
             case 16:
@@ -752,5 +753,21 @@ public class Input {
 
     public void setWeightPricingProblemScore(double weightPricingProblemScore) {
         this.weightPricingProblemScore = weightPricingProblemScore;
+    }
+
+    public double getWeightCongestion() {
+        return weightCongestion;
+    }
+
+    public void setWeightCongestion(double weightCongestion) {
+        this.weightCongestion = weightCongestion;
+    }
+
+    public double getWeightStarvation() {
+        return weightStarvation;
+    }
+
+    public void setWeightStarvation(double weightStarvation) {
+        this.weightStarvation = weightStarvation;
     }
 }

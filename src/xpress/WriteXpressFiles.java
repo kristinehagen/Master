@@ -67,7 +67,8 @@ public class WriteXpressFiles {
 
         //Violations if no visits
         writer.println();
-        double totalViolationsIfNoVisit = 0;
+        double totalCongestionsIfNoVisit = 0;
+        double totalStarvationsIfNoVisit = 0;
         double totalDeviationsIfNoVisit = 0;
 
         for (Station station: input.getStations().values()) {
@@ -78,18 +79,19 @@ public class WriteXpressFiles {
             double optimalState = station.getOptimalState(TimeConverter.convertMinutesToHourRounded(input.getCurrentMinute()));
 
             if (loadAtHorizon > station.getCapacity()) {
-                totalViolationsIfNoVisit += loadAtHorizon-station.getCapacity();
+                totalCongestionsIfNoVisit += loadAtHorizon-station.getCapacity();
                 loadAtHorizon = station.getCapacity();
             }
             if (loadAtHorizon < 0) {
-                totalViolationsIfNoVisit += -loadAtHorizon;
+                totalStarvationsIfNoVisit += -loadAtHorizon;
                 loadAtHorizon = 0;
             }
             double diffFromOptimalState = Math.abs(optimalState-loadAtHorizon);
             totalDeviationsIfNoVisit += diffFromOptimalState;
 
         }
-        writer.println("totalViolationsIfNoVisit : " + totalViolationsIfNoVisit);
+        writer.println("totalCongestionsIfNoVisit : " + totalCongestionsIfNoVisit);
+        writer.println("totalStarvationsIfNoVisit : " + totalStarvationsIfNoVisit);
 
 
         //Deviations if no visits
@@ -574,9 +576,13 @@ public class WriteXpressFiles {
     }
 
     private static void printWeights(Input input, PrintWriter writer) {
-        //weightViolation
-        writer.print("weightViolation : ");
-        writer.println(input.getWeightViolation());
+        //weightCongestions
+        writer.print("weightCongestion : ");
+        writer.println(input.getWeightCongestion());
+
+        //weightStarvations
+        writer.print("weightStarvation : ");
+        writer.println(input.getWeightStarvation());
 
         //weightDeviation
         writer.print("weightDeviation : ");

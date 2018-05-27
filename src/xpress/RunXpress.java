@@ -11,6 +11,7 @@ public class RunXpress {
         XPRM mosel;
         XPRMModel mod;
 
+
         //Initialize model
         mosel = new XPRM();
 
@@ -29,6 +30,7 @@ public class RunXpress {
             System.out.println("NO SOLUTION FOUND");
             System.exit(1);
         }
+
     }
 
 }

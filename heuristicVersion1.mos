@@ -4,12 +4,15 @@
 ! ------------------------------------------------------------------------------
 
 model subproblem
-
 options explterm
 !options noimplicit
 
+
 uses "mmxprs";
 uses "mmsystem";
+
+setparam("XPRS_PRESOLVE", 0);
+
 
 !DATA FILES
 parameters
