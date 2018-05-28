@@ -11,23 +11,22 @@ public class test {
 
     public static void main(String[] args) throws IOException {
 
-        double capacity = 0;
-        double nrOfBikes = 0;
 
         Input input = new Input();
 
-        for (Station station : input.getStations().values()) {
-            capacity += station.getCapacity();
-            nrOfBikes += station.getInitialLoad();
+        double thisHour;
+
+        for (int time = 7; time <= 20; time += 1) {
+
+            thisHour = 0;
+
+            for (Station station : input.getStations().values()) {
+                thisHour += Math.abs(station.getBikeWantedMedian(time));
+            }
+
+            System.out.println("Total no. of customers at " + time + "-" + (time+1) +": " + thisHour);
+
         }
-
-        for (Vehicle vehicle : input.getVehicles().values()) {
-            nrOfBikes += vehicle.getInitialLoad();
-        }
-
-        System.out.println("Total nr of capacities: " + capacity);
-        System.out.println("Total nr of bikes: " + nrOfBikes);
-
 
     }
 

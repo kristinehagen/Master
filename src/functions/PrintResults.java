@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class PrintResults {
 
-    public static void printSimulationResultsToExcelFile(double averageViolation, double averagePercentageViolation, ArrayList<Double> percentageViolationsList, double sdViolations, double sdPercentageViolation,
+    public static void printSimulationResultsToExcelFile(double totalNoOfCustomers, double averageViolation, double averagePercentageViolation, ArrayList<Double> percentageViolationsList, double sdViolations, double sdPercentageViolation,
                                                          double averageNumberOfTimesVehicleRouteGenerated, double avergageTimeToVehicleRouteGenerated,
                                                          double averageComputationalTimeXpress, double averageComputationalTimeXpressPlusInitialization, Input input,
                                                          double averageTimePPImprovement, double happyCustomers, double happyCusNoVehicle) throws IOException {
@@ -138,6 +138,9 @@ public class PrintResults {
                 rowOutput.createCell(39).setCellValue(input.getProbabilityOfChoosingUnvisitedStation());
             }
         }
+
+        rowOutput.createCell(50).setCellValue(totalNoOfCustomers);
+
 
 
         //Print results for statistical t-test

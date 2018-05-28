@@ -180,7 +180,7 @@ public class Input {
         this.testInstance = testInstance;
         this.currentMinute = time*60;
         this.simulationStartTime = time*60;
-        this.simulationStopTime = (time+4)*60;
+        this.simulationStopTime = (time+1)*60;
         this.nrOfVehicles = nrOfVehicles;
         this.solutionMethod = solutionMethod;
 

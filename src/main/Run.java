@@ -80,7 +80,7 @@ public class Run {
     private static void runSimulation() throws IOException, XPRMCompileException, InterruptedException {
 
             //Hvilke solution methods skal bruker?
-            for (int solution = 4; solution <= 4; solution += 2) {
+            for (int solution = 6; solution <= 6; solution += 2) {
                 SolutionMethod solutionMethod;
 
                 if (solution == 1) {
@@ -101,11 +101,12 @@ public class Run {
                 for (int testInstance = 4; testInstance <= 4; testInstance += 3) {
                     checkIfValidInstance(testInstance);
                     //Hvilke tid skal brukes?
-                    for (int time = 20; time <= 20; time += 3) {
+                    for (int time = 8; time <= 17; time += 3) {
                         //Hvor mange biler skal brukes?
-                        for (int numberOfVehicles = 7; numberOfVehicles <= 7; numberOfVehicles++) {
+                        for (int numberOfVehicles = 2; numberOfVehicles <= 2; numberOfVehicles++) {
 
                             Input input = new Input(testInstance, time, numberOfVehicles, solutionMethod);
+
 
                             generateCluster(input);
                             WriteXpressFiles.printFixedInput(input);
@@ -124,7 +125,8 @@ public class Run {
 
                             for (int i = 1; i <= input.getNumberOfRuns(); i++) {
 
-                                String simulationFile = "simulation_Instance" + input.getTestInstance() + "_T" + (int)(input.getSimulationStartTime()/60) + "_Nr" + i + ".txt";
+                                String simulationFile = "simulation_Instance" + input.getTestInstance() +
+                                        "_T" + (int)(input.getSimulationStartTime()/60) + "-" + (int)(input.getSimulationStopTime()/60) + "_Nr" + i + ".txt";
                                 System.out.println("Run number: " + i);
 
                                 //Run simulation
@@ -159,7 +161,7 @@ public class Run {
                             System.out.println("Total violations: " + averageViolation);
                             System.out.println("Total violations percentage: " + averagePercentageViolations);
 
-                            PrintResults.printSimulationResultsToExcelFile(averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
+                            PrintResults.printSimulationResultsToExcelFile(average(totalCustomersList), averageViolation, averagePercentageViolations, percentageViolationsList, sdViolation, sdPercentageViolations,
                                     averageNumberOfTimesVehicleRouteGenerated, averageTimeToVehicleRouteGenerated, averageComputationalTimeXpress,
                                     averageComputationalTimeXpressPlusInitialization, input, averageTimePPImprovement, averageHappyCustomers, numberOfHappyCustomersWhenNoVehicles);
 
